@@ -55,7 +55,9 @@ export const ProfileRegister = () => {
         name="birthDate"
         render={({ field }) => (
           <FormItem className="flex flex-col">
-            <FormLabel>Date of birth</FormLabel>
+            <FormLabel className="after:content-['*'] after:ml-1 after:text-red-500">
+              Date of birth
+            </FormLabel>
             <Popover>
               <PopoverTrigger className=" " asChild>
                 <Button
@@ -149,7 +151,7 @@ export const ProfileRegister = () => {
                     field.onChange("");
                   }
                 }}
-                value={`${field.value.lat},${field.value.lon}`}
+                value={`${field.value?.lat},${field.value?.lon}`}
                 placeholder="Search location"
                 label="Location"
                 disabled={form.formState.isSubmitting}

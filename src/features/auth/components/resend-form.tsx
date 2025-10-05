@@ -123,7 +123,7 @@ export default function ResendForm({
           Belum menerima email? Periksa folder spam Anda atau minta email verifikasi baru.
         </p>
         <Button className="grid place-items-center " variant={"link"} asChild>
-          <Link href="/auth/signin">Back to sign in</Link>
+          <Link href="/login">Back to sign in</Link>
         </Button>
       </form>
     </Form>

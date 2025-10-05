@@ -101,9 +101,7 @@ export const ProfileExtraRegister = () => {
         name="bio"
         render={({ field }) => (
           <FormItem>
-            <FormLabel className="after:content-['*'] after:ml-1 after:text-red-500">
-              About You
-            </FormLabel>
+            <FormLabel>About You</FormLabel>
             <FormControl>
               <Textarea
                 rows={4}

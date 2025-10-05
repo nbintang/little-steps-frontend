@@ -1,6 +1,6 @@
 export interface BaseResponse {
-  statusCode: number;
-  success: boolean;
+  statusCode?: number;
+  success?: boolean;
   message?: string;
   meta?: Record<string, any>;
   timestamp?: string;
@@ -8,7 +8,7 @@ export interface BaseResponse {
 }
 
 export interface SuccessResponse<T = any> extends BaseResponse {
-  success: true;
+  success?: true;
   data?: T;
 }
 

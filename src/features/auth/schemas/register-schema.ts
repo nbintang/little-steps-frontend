@@ -51,7 +51,7 @@ export const profileSchema = z.object({
     lon: z
       .string()
       .refine((v) => Math.abs(Number(v)) <= 180, "Longitude tidak valid"),
-  }),
+  }).optional(),
 });
 
 export type ProfileValues = z.infer<typeof profileSchema>;

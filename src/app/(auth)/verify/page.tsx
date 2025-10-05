@@ -19,7 +19,6 @@ export default function VerifyPage() {
   return (
     <AuthLayout> 
         <ResendForm isVerifying={isPending} isSuccessVerifying={isSuccess} />
-       
     </AuthLayout>
   );
 }

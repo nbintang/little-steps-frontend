@@ -24,7 +24,7 @@ export const UserRegister = () => {
           render={({ field }) => (
             <FormItem>
               <FormLabel className="after:content-['*'] after:ml-1 after:text-red-500">
-               Nama Depan
+                Nama Depan
               </FormLabel>
               <FormControl>
                 <Input
@@ -117,7 +117,9 @@ export const UserRegister = () => {
         name="confirmPassword"
         render={({ field }) => (
           <FormItem>
-            <FormLabel htmlFor="confirmPassword">Konfirmasi Kata Sandi</FormLabel>
+            <FormLabel className="after:content-['*'] after:ml-1 after:text-red-500">
+              Konfirmasi Kata Sandi
+            </FormLabel>
             <FormControl>
               <Input
                 id="password"
@@ -143,7 +145,9 @@ export const UserRegister = () => {
               />
             </FormControl>
             <div className="grid gap-2">
-              <FormLabel>Terima Syarat dan Ketentuan</FormLabel>
+              <FormLabel className="after:content-['*'] after:ml-1 after:text-red-500">
+                Terima Syarat dan Ketentuan
+              </FormLabel>
               <FormDescription>
                 Dengan mendaftar, saya menyetujui
                 <Link className="text-blue-500 hover:underline" href={"/terms"}>

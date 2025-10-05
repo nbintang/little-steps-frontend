@@ -25,6 +25,13 @@ import GoogleIcon from "@/components/icons/google-icon";
 import { ProfileExtraRegister } from "./profile-extra-register";
 import { ProfileRegister } from "./profile-register";
 import z from "zod";
+import {
+  RegisterInput,
+  registerService,
+} from "../../services/register-service";
+import useUploadImage from "@/hooks/use-upload-image";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 export const { useStepper, utils } = defineStepper(
   { id: "user", label: "Daftar Akun Baru", schema: userRegisterSchema },
   {
@@ -64,8 +71,39 @@ export function RegisterForm({
       },
     },
   });
-  const onSubmit = async (values: z.infer<typeof stepper.current.schema>) => {
-    console.log(`Form values for step ${stepper.current.id}:`, values);
+  const router = useRouter();
+  const uploadImage = useUploadImage();
+  const onSubmit = async () => {
+    try {
+      if (stepper.isLast) {
+        let imageResponse;
+        const avatarUrl = form.getValues("avatarUrl") ?? null;
+        if (avatarUrl) {
+          imageResponse = await uploadImage.mutateAsync(avatarUrl);
+        }
+        const registerInput: RegisterInput = {
+          email: form.getValues("email"),
+          name: `${form.getValues("firstName")}`,
+          password: form.getValues("password"),
+          acceptedTerms: form.getValues("acceptedTerms"),
+          profile: {
+            fullName: `${form.getValues("firstName")} ${form.getValues(
+              "lastName"
+            )}`,
+            bio: form.getValues("bio"),
+            avatarUrl: imageResponse?.data?.secureUrl ?? "",
+            phone: form.getValues("phone"),
+            birthDate: form.getValues("birthDate"),
+          },
+        };
+        const res = await registerService(registerInput);
+        toast.success(res.data.message);
+        router.push("/verify");
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("An unexpected error occurred");
+    }
   };
 
   const currentIndex = utils.getIndex(stepper.current.id);
@@ -111,9 +149,6 @@ export function RegisterForm({
                 className={cn(stepper.isFirst ? "w-full " : "w-auto")}
                 onClick={async () => {
                   const isValid = await form.trigger();
-                  console.log("✅ IsValid:", isValid);
-                  console.log("❌ Errors:", form.formState.errors);
-                  console.log(form.getValues());
                   if (isValid) stepper.next();
                 }}
                 disabled={isSubmitting}
