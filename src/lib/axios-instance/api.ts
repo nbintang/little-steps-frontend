@@ -1,10 +1,10 @@
 import axios from "axios"; 
 import { setupInterceptorsTo } from "./interceptors";
-import { BACKEND_DEV_URL } from "@/constants/api-url";
+import { BACKEND_PROD_URL } from "@/constants/api-url";
 
 export const api = setupInterceptorsTo(
   axios.create({
-    baseURL: `${BACKEND_DEV_URL}/api`,
+    baseURL: `${BACKEND_PROD_URL}/api`,
     withCredentials: true,
   })
 );

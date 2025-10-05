@@ -27,8 +27,9 @@ export default function LoginPage() {
         <Image
           src="/images/auth/children.png"
           alt="Image"
-          width={1000}
-          height={1000}
+          width={800}
+          height={800}
+          priority
           className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
         />
         <div className="absolute inset-0 h-full w-full z-10 bg-black/40"/>

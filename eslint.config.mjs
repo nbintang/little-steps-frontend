@@ -36,7 +36,6 @@ export default [
             "src/lib/**/*",
             "src/helpers/**/*",
             "src/constants/**/*",
-
             "src/types/**/*",
           ],
         },

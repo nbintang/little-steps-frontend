@@ -28,6 +28,7 @@ import { jwtDecode } from "@/lib/jwt-decoder";
 import { isAxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import GoogleIcon from "@/components/icons/google-icon";
+import { saveToken } from "@/helpers/save-token";
 
 export function LoginForm({
   className,
@@ -44,39 +45,49 @@ export function LoginForm({
   const progress = useProgress();
   const onSubmit = async (values: LoginValues) =>
     await toast
-      .promise(loginService(values), {
-        loading: "Signing in...",
-        success: (res) => {
+      .promise(
+        loginService(values).then((res) => {
           progress.start();
           const accessToken = res.data.data?.accessToken;
-          if (!accessToken) return "Something went wrong. Please try again.";
-          Cookies.set("accessToken", accessToken);
-          const decodedToken = jwtDecode(accessToken);
-          const role = decodedToken.role;
-          if (role === "ADMINISTRATOR") router.push("/admin/dashboard");
-          if (role === "PARENT") router.push("/parent/dashboard");
-          return "Signed in successfully";
-        },
-        error: (err) => {
-          if (isAxiosError(err)) {
-            if (err.response?.status === 401) {
-              return "Invalid email or password";
-            } else if (err.response?.status === 500) {
-              return "Server error. Please try again later.";
-            } else if (err.response?.status === 400) {
-              return "Invalid request. Please check your input.";
-            } else {
-              return `Error: ${err.response?.data?.message || err.message}`;
-            }
+          if (!accessToken) throw new Error("No access token returned");
+          saveToken({ token: accessToken });
+          const role = jwtDecode(accessToken).role;
+          switch (role) {
+            case "ADMINISTRATOR":
+              router.push("/admin/dashboard");
+              break;
+            case "PARENT":
+              router.push("/parent/dashboard");
+              break;
+            default:
+              throw new Error("Unknown role");
           }
-          return "Something went wrong. Please try again.";
-        },
-        finally: () => {
-          progress.stop();
-          form.reset();
-        },
-        richColors: true,
-      })
+          return "Signed in successfully";
+        }),
+        {
+          loading: "Signing in...",
+          success: (msg) => msg,
+          error: (err) => {
+            if (isAxiosError(err)) {
+              if (err.response?.status === 401) {
+                return "Invalid email or password";
+              } else if (err.response?.status === 500) {
+                return "Server error. Please try again later.";
+              } else if (err.response?.status === 400) {
+                return "Invalid request. Please check your input.";
+              } else {
+                return `Error: ${err.response?.data?.message || err.message}`;
+              }
+            }
+            return "Something went wrong. Please try again.";
+          },
+          finally: () => {
+            progress.stop();
+            form.reset();
+          },
+          richColors: true,
+        }
+      )
       .unwrap();
 
   return (
@@ -119,7 +130,7 @@ export function LoginForm({
             render={({ field }) => (
               <FormItem>
                 <div className="flex items-center">
-                  <FormLabel htmlFor="password">Password</FormLabel>
+                  <FormLabel htmlFor="password">Kata Sandi</FormLabel>
                   <Link
                     href="/auth/forgot-password"
                     className="ml-auto text-xs underline-offset-4 hover:underline"
@@ -159,10 +170,13 @@ export function LoginForm({
               <p> Masuk dengan Google</p>
             </Button>
             <FieldDescription className="text-center">
-              Don&apos;t have an account?{" "}
-              <a href="#" className="underline underline-offset-4">
-                Sign up
-              </a>
+              Belum punya akun?{" "}
+              <Link
+                href="/auth/register"
+                className="underline underline-offset-4"
+              >
+                Daftar sekarang!
+              </Link>
             </FieldDescription>
           </Field>
         </FieldGroup>
