@@ -32,6 +32,7 @@ import {
 import useUploadImage from "@/hooks/use-upload-image";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 export const { useStepper, utils } = defineStepper(
   { id: "user", label: "Daftar Akun Baru", schema: userRegisterSchema },
   {
@@ -199,7 +200,7 @@ export function RegisterForm({
               <p> Masuk dengan Google</p>
             </Button>
             <FieldDescription className="px-6 text-center">
-              Already have an account? <a href="#">Sign in</a>
+              Already have an account? <Link href="/login">Sign in</Link>
             </FieldDescription>
           </Field>
         </FieldGroup>

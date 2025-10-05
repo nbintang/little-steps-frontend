@@ -30,6 +30,7 @@ import { useRouter } from "next/navigation";
 import GoogleIcon from "@/components/icons/google-icon";
 import { saveToken } from "@/helpers/save-token";
 import { AuthFormHeader } from "./auth-form-header";
+import { BACKEND_PROD_URL } from "@/constants/api-url";
 
 export function LoginForm({
   className,
@@ -90,6 +91,9 @@ export function LoginForm({
         }
       )
       .unwrap();
+
+  const handleLoginGoole = () =>
+    (window.location.href = `${BACKEND_PROD_URL}/api/auth/google-login`);
 
   return (
     <Form {...form}>
@@ -164,6 +168,7 @@ export function LoginForm({
               className="flex items-center gap-2"
               variant="outline"
               type="button"
+              onClick={handleLoginGoole}
             >
               <GoogleIcon className="!size-4" />
               <p> Masuk dengan Google</p>
