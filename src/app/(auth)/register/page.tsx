@@ -1,6 +1,6 @@
-import { GalleryVerticalEnd } from "lucide-react"
-
-import { SignupForm } from "@/components/signup-form"
+import { RegisterForm } from "@/features/auth/components/register-form";
+import { GalleryVerticalEnd, Tornado } from "lucide-react";
+import Image from "next/image";
 
 export default function SignupPage() {
   return (
@@ -9,24 +9,28 @@ export default function SignupPage() {
         <div className="flex justify-center gap-2 md:justify-start">
           <a href="#" className="flex items-center gap-2 font-medium">
             <div className="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md">
-              <GalleryVerticalEnd className="size-4" />
+              <Tornado className="size-4 rotate-180" />
             </div>
-            Acme Inc.
+            Little Steps
           </a>
         </div>
         <div className="flex flex-1 items-center justify-center">
-          <div className="w-full max-w-xs">
-            <SignupForm />
+          <div className="w-full max-w-sm">
+            <RegisterForm />
           </div>
         </div>
       </div>
       <div className="bg-muted relative hidden lg:block">
-        <img
-          src="/placeholder.svg"
+        <Image
+          src="/images/auth/children.png"
           alt="Image"
+          width={1000}
+          height={1000}
+          priority
           className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
         />
+        <div className="absolute inset-0 h-full w-full z-10 bg-black/40" />
       </div>
     </div>
-  )
+  );
 }

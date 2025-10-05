@@ -29,6 +29,7 @@ import { isAxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import GoogleIcon from "@/components/icons/google-icon";
 import { saveToken } from "@/helpers/save-token";
+import { FormHeader } from "./form-header";
 
 export function LoginForm({
   className,
@@ -98,13 +99,11 @@ export function LoginForm({
         {...props}
       >
         <FieldGroup>
-          <div className="flex flex-col items-center gap-1 text-center">
-            <h1 className="text-2xl font-bold">Masuk ke akun Anda</h1>
-            <p className="text-muted-foreground text-sm ">
-              Masukkan email dan password Anda di bawah ini untuk masuk ke akun
-              Anda.
-            </p>
-          </div>
+          <FormHeader
+            label="Masuk ke akun Anda"
+            description="Masukkan email dan password Anda di bawah ini untuk masuk ke akun
+              Anda."
+          />
           <FormField
             control={form.control}
             name="email"
@@ -171,10 +170,7 @@ export function LoginForm({
             </Button>
             <FieldDescription className="text-center">
               Belum punya akun?{" "}
-              <Link
-                href="/auth/register"
-                className="underline underline-offset-4"
-              >
+              <Link href="/register" className="underline underline-offset-4">
                 Daftar sekarang!
               </Link>
             </FieldDescription>
