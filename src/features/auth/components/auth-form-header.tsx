@@ -1,11 +1,11 @@
 import React from "react";
 
-export const FormHeader = ({
+export const AuthFormHeader = ({
   label,
-  description = "Masukkan informasi akun anda.",
+  description 
 }: {
   label: string;
-  description: string;
+  description?: string;
 }) => (
   <div className="flex flex-col items-center gap-1 text-center">
     <h1 className="text-2xl font-bold">{label}</h1>

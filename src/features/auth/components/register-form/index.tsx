@@ -18,7 +18,7 @@ import {
 } from "../../schemas/register-schema";
 import { Form } from "@/components/ui/form";
 import { UserRegister } from "./user-register";
-import { FormHeader } from "../form-header";
+import { AuthFormHeader } from "../auth-form-header";
 import { ChevronsLeft, ChevronsRight, LogInIcon } from "lucide-react";
 import { Spinner } from "@/components/ui/spinner";
 import GoogleIcon from "@/components/icons/google-icon";
@@ -77,7 +77,7 @@ export function RegisterForm({
           {stepper.switch({
             user: ({ id, label }) => (
               <>
-                <FormHeader
+                <AuthFormHeader
                   label={label}
                   description="Masukkan informasi akun anda di bawah ini."
                 />
@@ -86,7 +86,7 @@ export function RegisterForm({
             ),
             profile: ({ id, label }) => (
               <>
-                <FormHeader
+                <AuthFormHeader
                   label={label}
                   description="Masukkan informasi profil anda di bawah ini. "
                 />
@@ -95,7 +95,7 @@ export function RegisterForm({
             ),
             profileExtra: ({ id, label }) => (
               <>
-                <FormHeader
+                <AuthFormHeader
                   label={label}
                   description="Masukkan informasi profil anda di bawah ini. "
                 />
