@@ -1,0 +1,20 @@
+import { imageSchema } from "@/schemas/image-schema";
+import { z } from "zod";
+
+export const articleSchema = z.object({
+  title: z.string().min(3, "Title must be at least 3 characters long"),
+  excerpt: z.string().min(10, "Excerpt must be at least 10 characters long"),
+  coverImage: z
+    .array(
+      imageSchema({
+        MAX_FILE_SIZE: 1024 * 1024 * 1,
+      })
+    )
+    .min(1, "Please select at least one file")
+    .max(2, "Please select up to 2 files"),
+  status: z.enum(["DRAFT", "PUBLISHED", "ARCHIVED"]),
+  categoryId: z.uuid("Invalid category ID format"),
+  contentJson: z.any(),
+});
+
+export type ArticleInput = z.infer<typeof articleSchema>;

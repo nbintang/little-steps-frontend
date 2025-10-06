@@ -32,11 +32,12 @@ import {
   Tornado,
   LayoutDashboard,
 } from "lucide-react";
+import Link from "next/link";
 
 const data = {
   navMain: [
     {
-      title: "Dashboard",
+      title: "Home",
       url: "/admin/dashboard",
       icon: LayoutDashboard,
     },
@@ -47,7 +48,7 @@ const data = {
       items: [ 
         {
           title: "Create Article",
-          url: "/admin/dashboard/articles/create",
+          url: "/admin/dashboard/articles/new",
         },
       ],
     },
@@ -123,7 +124,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     isError,
     error,
   } = useFetch<ProfileAPI>({
-    key: "profile",
+    keys: "profile",
     endpoint: "profile/me",
   });
 
@@ -133,7 +134,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
-              <a href="#">
+              <Link href="#">
                 <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
                   <Tornado className="size-4 rotate-180" />
                 </div>
@@ -141,7 +142,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   <span className="truncate font-medium">Little Steps</span>
                   <span className="truncate text-xs">Parenting App</span>
                 </div>
-              </a>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

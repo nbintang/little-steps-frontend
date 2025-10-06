@@ -1,11 +1,11 @@
-import * as React from "react"
-import type { Editor } from "@tiptap/react"
-import type { Content, UseEditorOptions } from "@tiptap/react"
-import { StarterKit } from "@tiptap/starter-kit"
-import { useEditor, useEditorState } from "@tiptap/react"
-import { Typography } from "@tiptap/extension-typography"
-import { TextStyle } from "@tiptap/extension-text-style"
-import { Placeholder, Selection } from "@tiptap/extensions"
+import * as React from "react";
+import type { Editor } from "@tiptap/react";
+import type { Content, UseEditorOptions } from "@tiptap/react";
+import { StarterKit } from "@tiptap/starter-kit";
+import { useEditor, useEditorState } from "@tiptap/react";
+import { Typography } from "@tiptap/extension-typography";
+import { TextStyle } from "@tiptap/extension-text-style";
+import { Placeholder, Selection } from "@tiptap/extensions";
 import {
   Image,
   HorizontalRule,
@@ -14,41 +14,40 @@ import {
   UnsetAllMarks,
   ResetMarksOnEnter,
   FileHandler,
-} from "../extensions"
-import { cn } from "@/lib/utils"
-import { fileToBase64, getOutput, randomId } from "../utils"
-import { useThrottle } from "../hooks/use-throttle"
-import { toast } from "sonner"
+} from "../extensions";
+import { cn } from "@/lib/utils";
+import { countImages, fileToBase64, getOutput, randomId } from "../utils";
+import { useThrottle } from "../hooks/use-throttle";
+import { toast } from "sonner";
+import { imageUploadService } from "@/services/image-upload-service";
 
 export interface UseMinimalTiptapEditorProps extends UseEditorOptions {
-  value?: Content
-  output?: "html" | "json" | "text"
-  placeholder?: string
-  editorClassName?: string
-  throttleDelay?: number
-  onUpdate?: (content: Content) => void
-  onBlur?: (content: Content) => void
-  uploader?: (file: File) => Promise<string>
+  value?: Content;
+  output?: "html" | "json" | "text";
+  placeholder?: string;
+  editorClassName?: string;
+  throttleDelay?: number;
+  onUpdate?: (content: Content) => void;
+  onBlur?: (content: Content) => void;
+  uploader?: (file: File) => Promise<string>;
 }
 
 async function fakeuploader(file: File): Promise<string> {
   // NOTE: This is a fake upload function. Replace this with your own upload logic.
   // This function should return the uploaded image URL.
+  console.log("file", file);
 
-  // wait 3s to simulate upload
-  await new Promise((resolve) => setTimeout(resolve, 3000))
+  const res = await imageUploadService(file);
 
-  const src = await fileToBase64(file)
-
-  return src
+  return res.data?.secureUrl ?? "";
 }
 
 const createExtensions = ({
   placeholder,
   uploader,
 }: {
-  placeholder: string
-  uploader?: (file: File) => Promise<string>
+  placeholder: string;
+  uploader?: (file: File) => Promise<string>;
 }) => [
   StarterKit.configure({
     blockquote: { HTMLAttributes: { class: "block-node" } },
@@ -82,17 +81,27 @@ const createExtensions = ({
   }),
   Image.configure({
     allowedMimeTypes: ["image/*"],
-    maxFileSize: 5 * 1024 * 1024,
+    maxFileSize: 2 * 1024 * 1024,
     allowBase64: true,
     uploadFn: async (file) => {
-      return uploader ? await uploader(file) : await fakeuploader(file)
+      return uploader ? await uploader(file) : await fakeuploader(file);
     },
     onToggle(editor, files, pos) {
+      const MAX_IMAGES = 3;
+      const currentCount = countImages(editor);
+      const allowedCount = Math.max(0, MAX_IMAGES - currentCount);
+
+      if (allowedCount <= 0) {
+        toast.error(`Maximum ${MAX_IMAGES} images allowed`);
+        return;
+      }
+
+      const filesToInsert = files.slice(0, allowedCount);
       editor.commands.insertContentAt(
         pos,
-        files.map((image) => {
-          const blobUrl = URL.createObjectURL(image)
-          const id = randomId()
+        filesToInsert.map((image) => {
+          const blobUrl = URL.createObjectURL(image);
+          const id = randomId();
 
           return {
             type: "image",
@@ -103,74 +112,76 @@ const createExtensions = ({
               title: image.name,
               fileName: image.name,
             },
-          }
+          };
         })
-      )
+      );
     },
     onImageRemoved({ id, src }) {
-      console.log("Image removed", { id, src })
+      console.log("Image removed", { id, src });
     },
     onValidationError(errors) {
       errors.forEach((error) => {
         toast.error("Image validation error", {
           position: "bottom-right",
           description: error.reason,
-        })
-      })
+        });
+      });
     },
     onActionSuccess({ action }) {
       const mapping = {
         copyImage: "Copy Image",
         copyLink: "Copy Link",
         download: "Download",
-      }
+      };
       toast.success(mapping[action], {
         position: "bottom-right",
         description: "Image action success",
-      })
+      });
     },
     onActionError(error, { action }) {
       const mapping = {
         copyImage: "Copy Image",
         copyLink: "Copy Link",
         download: "Download",
-      }
+      };
       toast.error(`Failed to ${mapping[action]}`, {
         position: "bottom-right",
         description: error.message,
-      })
+      });
     },
   }),
   FileHandler.configure({
     allowBase64: true,
     allowedMimeTypes: ["image/*"],
     maxFileSize: 5 * 1024 * 1024,
-    onDrop: (editor, files, pos) => {
-      files.forEach(async (file) => {
-        const src = await fileToBase64(file)
-        editor.commands.insertContentAt(pos, {
-          type: "image",
-          attrs: { src },
-        })
-      })
-    },
-    onPaste: (editor, files) => {
-      files.forEach(async (file) => {
-        const src = await fileToBase64(file)
-        editor.commands.insertContent({
-          type: "image",
-          attrs: { src },
-        })
-      })
-    },
-    onValidationError: (errors) => {
-      errors.forEach((error) => {
-        toast.error("Image validation error", {
-          position: "bottom-right",
-          description: error.reason,
-        })
-      })
-    },
+    // onDrop: (editor, files, pos) => {
+    //   files.forEach(async (file) => {
+    //       const res = await imageUploadService(file);
+    //     const src = res.data?.secureUrl ?? "";
+    //     editor.commands.insertContentAt(pos, {
+    //       type: "image",
+    //       attrs: { src },
+    //     });
+    //   });
+    // },
+    // onPaste: (editor, files) => {
+    //   files.forEach(async (file) => {
+    //     const res = await imageUploadService(file);
+    //     const src = res.data?.secureUrl ?? "";
+    //     editor.commands.insertContent({
+    //       type: "image",
+    //       attrs: { src },
+    //     });
+    //   });
+    // },
+    // onValidationError: (errors) => {
+    //   errors.forEach((error) => {
+    //     toast.error("Image validation error", {
+    //       position: "bottom-right",
+    //       description: error.reason,
+    //     });
+    //   });
+    // },
   }),
   Color,
   TextStyle,
@@ -181,7 +192,7 @@ const createExtensions = ({
   ResetMarksOnEnter,
   CodeBlockLowlight,
   Placeholder.configure({ placeholder: () => placeholder }),
-]
+];
 
 export const useMinimalTiptapEditor = ({
   value,
@@ -197,26 +208,26 @@ export const useMinimalTiptapEditor = ({
   const throttledSetValue = useThrottle(
     (value: Content) => onUpdate?.(value),
     throttleDelay
-  )
+  );
 
   const handleUpdate = React.useCallback(
     (editor: Editor) => throttledSetValue(getOutput(editor, output)),
     [output, throttledSetValue]
-  )
+  );
 
   const handleCreate = React.useCallback(
     (editor: Editor) => {
       if (value && editor.isEmpty) {
-        editor.commands.setContent(value)
+        editor.commands.setContent(value);
       }
     },
     [value]
-  )
+  );
 
   const handleBlur = React.useCallback(
     (editor: Editor) => onBlur?.(getOutput(editor, output)),
     [output, onBlur]
-  )
+  );
 
   const editor = useEditor({
     immediatelyRender: false,
@@ -233,7 +244,7 @@ export const useMinimalTiptapEditor = ({
     onCreate: ({ editor }) => handleCreate(editor),
     onBlur: ({ editor }) => handleBlur(editor),
     ...props,
-  })
+  });
 
   const { editor: mainEditor } = useEditorState({
     editor,
@@ -243,18 +254,18 @@ export const useMinimalTiptapEditor = ({
           editor: null,
           editorState: undefined,
           canCommand: undefined,
-        }
+        };
       }
 
       return {
         editor: context.editor,
         editorState: context.editor.state,
         canCommand: context.editor.can,
-      }
+      };
     },
-  })
+  });
 
-  return mainEditor
-}
+  return mainEditor;
+};
 
-export default useMinimalTiptapEditor
+export default useMinimalTiptapEditor;

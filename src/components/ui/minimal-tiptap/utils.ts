@@ -229,3 +229,8 @@ export const filterFiles = <T extends FileInput>(
 
   return [validFiles, errors]
 }
+
+export const countImages = (editor: Editor) =>
+  editor.getJSON().content?.flatMap((node: any) =>
+    node.type === "image" ? [node] : node.content ?? []
+  ).length || 0;

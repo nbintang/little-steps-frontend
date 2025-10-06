@@ -1,5 +1,6 @@
 import { base64ToFile } from "@/helpers/base64-to-file";
 import { api } from "@/lib/axios-instance/api";
+import { imageUploadService } from "@/services/image-upload-service";
 import { SuccessResponse } from "@/types/response";
 import { useMutation, UseMutationOptions } from "@tanstack/react-query";
 import { isAxiosError } from "axios";
@@ -46,34 +47,9 @@ const useUploadImage = ({ existedUrl, ...options }: UseUploadImageProps = {}) =>
         };
       }
 
-      // siapkan formData
-      const formData = new FormData();
-
-      // handle base64 string
-      let convertedFile: File;
-      if (typeof file === "string" && file.startsWith("data:image/")) {
-        convertedFile = base64ToFile(file, "image.png");
-      } else if (file instanceof File) {
-        convertedFile = file;
-      } else {
-        throw new Error("Invalid image format");
-      }
-
-      formData.append("image", convertedFile);
-
       // upload ke backend
-      const res = await api.post<SuccessResponse<UploadImageApiResponse>>(
-        "/media/image/upload",
-        formData,
-        {
-          params: {
-            folder: MediaFolder.LITTLE_STEPS_IMAGES,
-            existedUrl: existedUrl ?? null,
-          },
-        }
-      );
-
-      return res.data;
+      const res = await imageUploadService(file, existedUrl);
+      return res;
     },
     onError: (err) => {
       if (isAxiosError(err)) {

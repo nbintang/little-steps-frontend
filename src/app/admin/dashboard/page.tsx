@@ -7,7 +7,7 @@ import { TableFilters } from "@/features/admin/components/table/table-filter";
 import { TableMain } from "@/features/admin/components/table/table-main";
 import { TablePagination } from "@/features/admin/components/table/table-pagination";
 import { TableSkeleton } from "@/features/admin/components/table/table-skeleton";
-import { useTable } from "@/features/admin/components/table/use-table";
+import { useTable } from "@/features/admin/hooks/use-table";
 import { userColumns } from "@/features/admin/components/columns/user-columns";
 import { useFetch } from "@/hooks/use-fetch";
 import { useFetchPaginated } from "@/hooks/use-fetch-paginated";

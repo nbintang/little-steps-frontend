@@ -1,3 +1,4 @@
+import * as React from "react"
 import "./styles/index.css"
 
 import type { Content, Editor } from "@tiptap/react"
@@ -13,6 +14,7 @@ import { SectionFive } from "./components/section/five"
 import { LinkBubbleMenu } from "./components/bubble-menu/link-bubble-menu"
 import { useMinimalTiptapEditor } from "./hooks/use-minimal-tiptap"
 import { MeasuredContainer } from "./components/measured-container"
+import { ScrollArea, ScrollBar } from "../scroll-area"
 
 export interface MinimalTiptapProps
   extends Omit<UseMinimalTiptapEditorProps, "onUpdate"> {
@@ -23,11 +25,11 @@ export interface MinimalTiptapProps
 }
 
 const Toolbar = ({ editor }: { editor: Editor }) => (
-  <div className="border-border flex h-12 shrink-0 overflow-x-auto border-b p-2">
+  <ScrollArea className=" border-b border-border p-2">
     <div className="flex w-max items-center gap-px">
       <SectionOne editor={editor} activeLevels={[1, 2, 3, 4, 5, 6]} />
 
-      <Separator orientation="vertical" className="mx-2" />
+      <Separator orientation="vertical" className="mx-2 h-7" />
 
       <SectionTwo
         editor={editor}
@@ -42,11 +44,11 @@ const Toolbar = ({ editor }: { editor: Editor }) => (
         mainActionCount={3}
       />
 
-      <Separator orientation="vertical" className="mx-2" />
+      <Separator orientation="vertical" className="mx-2 h-7" />
 
       <SectionThree editor={editor} />
 
-      <Separator orientation="vertical" className="mx-2" />
+      <Separator orientation="vertical" className="mx-2 h-7" />
 
       <SectionFour
         editor={editor}
@@ -54,7 +56,7 @@ const Toolbar = ({ editor }: { editor: Editor }) => (
         mainActionCount={0}
       />
 
-      <Separator orientation="vertical" className="mx-2" />
+      <Separator orientation="vertical" className="mx-2 h-7" />
 
       <SectionFive
         editor={editor}
@@ -62,7 +64,8 @@ const Toolbar = ({ editor }: { editor: Editor }) => (
         mainActionCount={0}
       />
     </div>
-  </div>
+    <ScrollBar orientation="horizontal" />
+  </ScrollArea>
 )
 
 export const MinimalTiptapEditor = ({

@@ -37,6 +37,8 @@ export default [
             "src/helpers/**/*",
             "src/constants/**/*",
             "src/types/**/*",
+            "src/services/**/*",
+            "src/schemas/**/*",
           ],
         },
         {

@@ -7,7 +7,7 @@ import {
 import { ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Table } from "@tanstack/react-table";
-interface DataTableProps<TData> {
+export interface DataTableProps<TData> {
   table: Table<TData>;
   filterSearch?: string;
 }
@@ -15,12 +15,10 @@ export function TableFilters<TData>({ table }: DataTableProps<TData>) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        className="focus-visible:ring-0 w-1/4 md:w-auto"
         asChild
       >
         <Button variant="outline" className="cursor-pointer">
           Filter <ChevronDown className="ml-2 h-4 w-4" />{" "}
-          {/* Added margin to icon */}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start">
@@ -36,7 +34,7 @@ export function TableFilters<TData>({ table }: DataTableProps<TData>) {
                 onCheckedChange={(value) => column.toggleVisibility(!!value)}
               >
                 {typeof column.columnDef.header === "function"
-                  ? column.id // fallback atau custom rendering
+                  ? column.id
                   : column.columnDef.header}
               </DropdownMenuCheckboxItem>
             );

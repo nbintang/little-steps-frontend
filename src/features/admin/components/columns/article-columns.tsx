@@ -38,7 +38,7 @@ export const articleColumns: ColumnDef<Articles>[] = [
     accessorKey: "category.name",
     header: "Category",
     cell: ({ row }) => (
-      <Badge variant="secondary">{row.original.category.name}</Badge>
+      <Badge variant="secondary">{row.original.category.name ?? "-"}</Badge>
     ),
   },
   {

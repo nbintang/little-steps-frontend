@@ -25,7 +25,9 @@
         "src/lib/**/*",
         "src/helpers/**/*",
         "src/constants/**/*",
-        "src/types/**/*"
+        "src/types/**/*",
+        "src/services/**/*",
+        "src/schemas/**/*"
       ],
       "allowImportsFrom": ["{sharedImports}"],
       "errorMessage": "🔥 Shared folders are not allowed to import items from the `features` and `app` folders. 🔥"
@@ -46,7 +48,9 @@
       "src/lib/**/*",
       "src/helpers/**/*",
       "src/constants/**/*",
-      "src/types/**/*"
+      "src/services/**/*",
+      "src/types/**/*",
+      "src/schemas/**/*"
     ]
   }
 }

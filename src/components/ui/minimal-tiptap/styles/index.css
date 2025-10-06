@@ -1,11 +1,10 @@
+@reference "../../../../app/globals.css";
 @import "./partials/code.css";
 @import "./partials/placeholder.css";
 @import "./partials/lists.css";
 @import "./partials/typography.css";
 @import "./partials/zoom.css";
-
-@reference "../../../global.css";
-
+ 
 :root {
   --mt-overlay: rgba(251, 251, 251, 0.75);
   --mt-transparent-foreground: rgba(0, 0, 0, 0.4);
