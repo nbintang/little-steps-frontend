@@ -62,8 +62,7 @@ export const UserRegister = () => {
           )}
         />
       </div>
-      <div>
-        <FormField
+ <FormField
           control={form.control}
           name="email"
           render={({ field }) => (
@@ -85,7 +84,6 @@ export const UserRegister = () => {
             </FormItem>
           )}
         />
-      </div>
 
       <FormField
         control={form.control}
@@ -142,6 +140,7 @@ export const UserRegister = () => {
               <Checkbox
                 checked={field.value}
                 onCheckedChange={field.onChange}
+                disabled={form.formState.isSubmitting}
               />
             </FormControl>
             <div className="grid gap-2">

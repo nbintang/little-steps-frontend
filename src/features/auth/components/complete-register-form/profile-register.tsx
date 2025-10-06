@@ -1,6 +1,4 @@
-import React from "react";
 import { useFormContext } from "react-hook-form";
-import { profileSchema, ProfileValues, userRegisterSchema } from "../../schemas/register-schema";
 import {
   FormControl,
   FormDescription,
@@ -22,13 +20,54 @@ import { CalendarIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { AsyncSelect } from "@/components/ui/async-select";
 import axios from "axios";
-const schema = profileSchema.and(
-      userRegisterSchema.pick({ firstName: true, lastName: true })
-    )
+import { CompleteProfile } from "../../schemas/complete-register-schema";
 export const ProfileRegister = () => {
-  const form = useFormContext<typeof schema>();
+  const form = useFormContext<CompleteProfile>();
   return (
     <>
+      <FormField
+        control={form.control}
+        name="firstName"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel className="after:content-['*'] after:ml-1 after:text-red-500">
+              Nama Depan
+            </FormLabel>
+            <FormControl>
+              <Input
+                id="firstName"
+                placeholder="Masukkan Nama Depan"
+                type="text"
+                disabled={form.formState.isSubmitting}
+                {...field}
+              />
+            </FormControl>
+            <FormMessage className="text-xs" />
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={form.control}
+        name="lastName"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel className="after:content-['*'] after:ml-1 after:text-red-500">
+              Nama Belakang
+            </FormLabel>
+            <FormControl>
+              <Input
+                id="lastName"
+                placeholder="Masukkan Nama Belakang"
+                type="text"
+                disabled={form.formState.isSubmitting}
+                {...field}
+              />
+            </FormControl>
+
+            <FormMessage className="text-xs" />
+          </FormItem>
+        )}
+      />
       <FormField
         control={form.control}
         name="phone"

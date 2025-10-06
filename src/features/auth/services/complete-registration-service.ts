@@ -10,5 +10,5 @@ export interface ProfileInput {
   latitude?: number;
 }
 
-export const completeRegistrationService = async (data: ProfileInput) =>
-  await api.post("/auth/complete-registration", data);
+export const completeRegistrationService = async (data: ProfileInput, oauthToken: string) =>
+  await api.post(`/auth/google-login/complete-registration?oauth-token=${oauthToken}`, data);

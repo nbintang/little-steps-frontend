@@ -45,8 +45,11 @@ export const ProfileExtraRegister = () => {
   const handleImageUpdate = useCallback(
     (base64: string | null) => {
       setCroppedImage(base64);
-      form.setValue("avatarUrl", base64 || "No File Selected");
-      form.trigger("avatarUrl");
+      if (base64) {
+        form.setValue("avatarUrl", base64);
+      } else {
+        form.setValue("avatarUrl", undefined);
+      }
     },
     [form]
   );

@@ -33,6 +33,7 @@ import useUploadImage from "@/hooks/use-upload-image";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import useTimerCountDown from "../../hooks/use-timer-count-down";
 export const { useStepper, utils } = defineStepper(
   { id: "user", label: "Daftar Akun Baru", schema: userRegisterSchema },
   {
@@ -51,6 +52,7 @@ export function RegisterForm({
   className,
   ...props
 }: React.ComponentProps<"form">) {
+  const { startTimer } = useTimerCountDown();
   const stepper = useStepper();
   const form = useForm<z.infer<typeof stepper.current.schema>>({
     resolver: zodResolver(stepper.current.schema),
@@ -82,6 +84,7 @@ export function RegisterForm({
         if (avatarUrl) {
           imageResponse = await uploadImage.mutateAsync(avatarUrl);
         }
+        const location = form.getValues("location");
         const registerInput: RegisterInput = {
           email: form.getValues("email"),
           name: `${form.getValues("firstName")}`,
@@ -95,10 +98,13 @@ export function RegisterForm({
             avatarUrl: imageResponse?.data?.secureUrl ?? "",
             phone: form.getValues("phone"),
             birthDate: form.getValues("birthDate"),
+            latitude: location?.lat ? parseFloat(location.lat) : undefined,
+            longitude: location?.lon ? parseFloat(location.lon) : undefined,
           },
         };
         const res = await registerService(registerInput);
         toast.success(res.data.message);
+        startTimer();
         router.push("/verify");
       }
     } catch (error) {
@@ -154,7 +160,7 @@ export function RegisterForm({
                 }}
                 disabled={isSubmitting}
               >
-                Next
+               Lanjut
                 <ChevronsRight className="ml-2 h-4 w-4" />
               </Button>
             )}
@@ -167,7 +173,7 @@ export function RegisterForm({
                 disabled={isSubmitting}
               >
                 <ChevronsLeft className="mr-2 h-4 w-4" />
-                Back
+                Kembali
               </Button>
             )}
             {stepper.isLast && (
@@ -178,31 +184,35 @@ export function RegisterForm({
               >
                 {!isSubmitting ? (
                   <>
-                    <LogInIcon className="mr-2 h-4 w-4" /> Sign up
+                    <LogInIcon className="mr-2 h-4 w-4" /> Daftar
                   </>
                 ) : (
                   <span className="flex items-center gap-2">
-                    Signing up
+                 Mendaftar...
                     <Spinner />
                   </span>
                 )}
               </Button>
             )}
           </Field>
-          <FieldSeparator>Or continue with</FieldSeparator>
-          <Field>
-            <Button
-              className="flex items-center gap-2"
-              variant="outline"
-              type="button"
-            >
-              <GoogleIcon className="!size-4" />
-              <p> Masuk dengan Google</p>
-            </Button>
-            <FieldDescription className="px-6 text-center">
-              Already have an account? <Link href="/login">Sign in</Link>
-            </FieldDescription>
-          </Field>
+          {stepper.isFirst && (
+            <>
+              <FieldSeparator>Or continue with</FieldSeparator>
+              <Field>
+                <Button
+                  className="flex items-center gap-2"
+                  variant="outline"
+                  type="button"
+                >
+                  <GoogleIcon className="!size-4" />
+                  <p> Masuk dengan Google</p>
+                </Button>
+                <FieldDescription className="px-6 text-center">
+                 Sudah punya akun? <Link href="/login">Masuk</Link>
+                </FieldDescription>
+              </Field>
+            </>
+          )}
         </FieldGroup>
       </form>
     </Form>

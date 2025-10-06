@@ -26,7 +26,7 @@ import { loginService } from "../services/login-service";
 import Cookies from "js-cookie";
 import { jwtDecode } from "@/lib/jwt-decoder";
 import { isAxiosError } from "axios";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import GoogleIcon from "@/components/icons/google-icon";
 import { saveToken } from "@/helpers/save-token";
 import { AuthFormHeader } from "./auth-form-header";
@@ -36,6 +36,7 @@ export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"form">) {
+
   const form = useForm<LoginValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {

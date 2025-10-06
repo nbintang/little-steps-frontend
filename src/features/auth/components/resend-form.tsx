@@ -58,7 +58,7 @@ export default function ResendForm({
       >
         <AuthFormHeader
           label="Verifikasi Email"
-          description="Masukkan email anda untuk mengirim ulang verifikasi."
+          description="Segera periksa email anda. Kami telah mengirimkan email verifikasi ke email anda."
         />
         <FormField
           control={form.control}

@@ -2,30 +2,16 @@
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import {
-  Field,
-  FieldDescription,
-  FieldGroup,
-  FieldSeparator,
-} from "@/components/ui/field";
+import { Field, FieldDescription, FieldGroup } from "@/components/ui/field";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { defineStepper } from "@/components/ui/stepper";
-import {
-  profileSchema,
-  profileExtraSchema,
-  userRegisterSchema,
-} from "../../schemas/register-schema";
+import { profileExtraSchema } from "../../schemas/register-schema";
 import { Form } from "@/components/ui/form";
 import { AuthFormHeader } from "../auth-form-header";
 import { ChevronsLeft, ChevronsRight, LogInIcon } from "lucide-react";
 import { Spinner } from "@/components/ui/spinner";
-import GoogleIcon from "@/components/icons/google-icon";
 import z from "zod";
-import {
-  RegisterInput,
-  registerService,
-} from "../../services/register-service";
 import useUploadImage from "@/hooks/use-upload-image";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
@@ -34,13 +20,15 @@ import {
   completeRegistrationService,
   ProfileInput,
 } from "../../services/complete-registration-service";
+import { completeProfileSchema } from "../../schemas/complete-register-schema";
+import { ProfileRegister } from "./profile-register";
+import { ProfileExtraRegister } from "../register-form/profile-extra-register";
+
 export const { useStepper, utils } = defineStepper(
   {
     id: "profile",
     label: "Daftar Informasi Profil Tambahan",
-    schema: profileSchema.and(
-      userRegisterSchema.pick({ firstName: true, lastName: true })
-    ),
+    schema: completeProfileSchema,
   },
   {
     id: "profileExtra",
@@ -49,10 +37,11 @@ export const { useStepper, utils } = defineStepper(
   }
 );
 
-export function RegisterForm({
+export function CompleteRegisterForm({
   className,
+  oauthToken,
   ...props
-}: React.ComponentProps<"form">) {
+}: React.ComponentProps<"form"> & { oauthToken: string }) {
   const stepper = useStepper();
   const form = useForm<z.infer<typeof stepper.current.schema>>({
     resolver: zodResolver(stepper.current.schema),
@@ -61,7 +50,7 @@ export function RegisterForm({
       firstName: "",
       lastName: "",
       bio: "",
-      avatarUrl: "",
+      avatarUrl: undefined,
       phone: "",
       birthDate: new Date(),
       location: {
@@ -73,6 +62,8 @@ export function RegisterForm({
   const router = useRouter();
   const uploadImage = useUploadImage();
   const onSubmit = async () => {
+    const isValid = await form.trigger();
+    console.log(isValid); 
     try {
       if (stepper.isLast) {
         let imageResponse;
@@ -80,18 +71,21 @@ export function RegisterForm({
         if (avatarUrl) {
           imageResponse = await uploadImage.mutateAsync(avatarUrl);
         }
+        const location = form.getValues("location");
         const profileInput: ProfileInput = {
           fullName: `${form.getValues("firstName")} ${form.getValues(
             "lastName"
           )}`,
           bio: form.getValues("bio"),
-          avatarUrl: imageResponse?.data?.secureUrl ?? "",
+          avatarUrl: imageResponse?.data?.secureUrl ?? undefined,
           phone: form.getValues("phone"),
           birthDate: form.getValues("birthDate"),
+          latitude: location?.lat ? parseFloat(location.lat) : undefined,
+          longitude: location?.lon ? parseFloat(location.lon) : undefined,
         };
-        const res = await completeRegistrationService(profileInput);
+        const res = await completeRegistrationService(profileInput, oauthToken);
         toast.success(res.data.message);
-        router.push("/verify");
+        router.push("/parent/dashboard");
       }
     } catch (error) {
       console.log(error);
@@ -133,6 +127,8 @@ export function RegisterForm({
                 className={cn(stepper.isFirst ? "w-full " : "w-auto")}
                 onClick={async () => {
                   const isValid = await form.trigger();
+                  console.log(isValid);
+
                   if (isValid) stepper.next();
                 }}
                 disabled={isSubmitting}
@@ -172,20 +168,9 @@ export function RegisterForm({
               </Button>
             )}
           </Field>
-          <FieldSeparator>Or continue with</FieldSeparator>
-          <Field>
-            <Button
-              className="flex items-center gap-2"
-              variant="outline"
-              type="button"
-            >
-              <GoogleIcon className="!size-4" />
-              <p> Masuk dengan Google</p>
-            </Button>
-            <FieldDescription className="px-6 text-center">
-              Already have an account? <Link href="/login">Sign in</Link>
-            </FieldDescription>
-          </Field>
+          <FieldDescription className="px-6 text-center">
+            Sudah punya akun? <Link href="/login">Masuk</Link>
+          </FieldDescription>
         </FieldGroup>
       </form>
     </Form>
