@@ -30,67 +30,65 @@ import {
   Settings,
   MessageSquare,
   Tornado,
+  LayoutDashboard,
 } from "lucide-react";
 
 const data = {
   navMain: [
     {
+      title: "Dashboard",
+      url: "/admin/dashboard",
+      icon: LayoutDashboard,
+    },
+    {
       title: "Articles",
-      url: "/admin/articles",
+      url: "/admin/dashboard/articles",
       icon: FileText,
-      items: [
-        {
-          title: "All Articles",
-          url: "/admin/articles",
-        },
+      items: [ 
         {
           title: "Create Article",
-          url: "/admin/articles/create",
+          url: "/admin/dashboard/articles/create",
         },
       ],
     },
     {
       title: "Quizzes",
-      url: "/admin/quizzes",
+      url: "/admin/dashboard/quizzes",
       icon: ListChecks,
-      items: [
-        {
-          title: "All Quizzes",
-          url: "/admin/quizzes",
-        },
+      items: [ 
         {
           title: "Create Quiz",
-          url: "/admin/quizzes/create",
+          url: "/admin/dashboard/quizzes/create",
         },
         {
           title: "Questions",
-          url: "/admin/questions",
+          url: "/admin/dashboard/questions",
         },
         {
           title: "Answers",
-          url: "/admin/answers",
+          url: "/admin/dashboard/answers",
         },
       ],
     },
     {
       title: "Users",
-      url: "/admin/users",
+      url: "/admin/dashboard/users",
       icon: Users,
       items: [
         {
           title: "Manage Users",
-          url: "/admin/users",
+          url: "/admin/dashboard/users",
         },
       ],
     },
     {
       title: "Forum",
-      url: "/admin/forum",
+      url: "/admin/dashboard/forum",
       icon: MessageSquare,
       items: [
         {
           title: "Forum Topics",
-          url: "/admin/forum",
+          url: "/admin/dashboard/forum",
         },
       ],
     },

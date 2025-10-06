@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { articleColumns } from "@/features/admin/components/columns/article-columns";
 import { StatCard } from "@/features/admin/components/stat-card";
 import { TableFilters } from "@/features/admin/components/table/table-filter";
 import { TableMain } from "@/features/admin/components/table/table-main";
@@ -9,10 +10,10 @@ import { TablePagination } from "@/features/admin/components/table/table-paginat
 import { TableSkeleton } from "@/features/admin/components/table/table-skeleton";
 import { useTable } from "@/features/admin/components/table/use-table";
 import { userColumns } from "@/features/admin/components/columns/user-columns";
-import { useFetch } from "@/hooks/use-fetch";
 import { useFetchPaginated } from "@/hooks/use-fetch-paginated";
+import { Articles } from "@/types/articles";
 import { UsersAPI } from "@/types/user";
-import { ArrowRight, ArrowUpRight, Loader2 } from "lucide-react";
+import { ArrowUpRight, Loader2 } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useDebounce } from "use-debounce";
@@ -26,12 +27,13 @@ export default function Page() {
   const [isSearching, setIsSearching] = useState<boolean>(false);
   const [debounceSearch, debounceSearchState] = useDebounce(searchKeyword, 500);
   const { data, isLoading, isError, isSuccess, isFetching, error } =
-    useFetchPaginated<UsersAPI[]>({
+    useFetchPaginated<Articles[]>({
       key: "users",
-      endpoint: "users",
+      endpoint: "contents",
       query: {
         page,
         limit,
+        type: "article",
         keyword: debounceSearch,
       },
     });
@@ -41,8 +43,8 @@ export default function Page() {
     }
   }, [debounceSearchState]);
 
-  const { table } = useTable<UsersAPI>({
-    columns: userColumns,
+  const { table } = useTable<Articles>({
+    columns: articleColumns,
     data: data?.data ?? [],
   });
   if (isLoading) {
@@ -60,17 +62,16 @@ export default function Page() {
   if (isLoading || isSearching || isFetching) {
     return (
       <>
-        <StatCard />
         <div className="flex flex-1 flex-col mx-3 md:mx-5 gap-2 py-4  md:gap-4 md:py-6">
           <div className="flex items-start gap-x-3 justify-start rounded-b-md  ">
-            {/* <TableFilters<UsersAPI> table={table} /> */}
+            <TableFilters<Articles> table={table} />
             <div className="relative w-full max-w-md">
-              {/* <Input
-                placeholder="Search users..."
+              <Input
+                placeholder="Search articles..."
                 value={searchKeyword}
                 onChange={(e) => setSearchKeyword(e.target.value)}
                 className="w-full"
-              /> */}
+              />
               {isFetching && (
                 <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
                   <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
@@ -94,15 +95,20 @@ export default function Page() {
   return (
     <>
       <div className="flex flex-1 flex-col mx-3 md:mx-5 gap-2 py-4  md:gap-4 md:py-6">
-        <div className="text-2xl font-bold">Dashboard</div>
-        <StatCard />
+        <div>
+          <div className="text-2xl font-bold">Articles</div>
+          <p className="text-muted-foreground">
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias
+            quam illum assumenda.
+          </p>
+        </div>
         {isSuccess && (
           <>
             <div className="flex items-start gap-x-3 justify-start rounded-b-md  ">
-              {/* <TableFilters<UsersAPI> table={table} />
+              <TableFilters<Articles> table={table} />
               <div className="relative w-full max-w-md">
                 <Input
-                  placeholder="Search users..."
+                  placeholder="Search articles..."
                   value={searchKeyword}
                   onChange={(e) => setSearchKeyword(e.target.value)}
                   className="w-full"
@@ -112,21 +118,15 @@ export default function Page() {
                     <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
                   </div>
                 )}
-              </div> */}
+              </div>
             </div>
-            <TableMain<UsersAPI> table={table} />
-            {/* <TablePagination<UsersAPI>
+            <TableMain<Articles> table={table} />
+            <TablePagination<Articles>
               limit={limit}
               page={page}
               table={table}
               total={data.meta?.totalItems ?? 0}
-            /> */}
-            <div className="flex items-center justify-start gap-2">
-              <Button variant={"outline"} className="flex  gap-2">
-                See More Users
-                <ArrowUpRight />
-              </Button>
-            </div>
+            />
           </>
         )}
       </div>

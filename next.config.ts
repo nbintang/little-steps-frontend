@@ -6,12 +6,27 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "res.cloudinary.com",
-        pathname: "/**", // semua path di Cloudinary
+        pathname: "/**",
       },
       {
         protocol: "https",
         hostname: "lh3.googleusercontent.com",
-        pathname: "/**", // semua path Google avatar
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "loremflickr.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "media.gettyimages.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "png.pngtree.com",
+        pathname: "/**",
       },
     ],
   },
