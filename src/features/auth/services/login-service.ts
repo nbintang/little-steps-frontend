@@ -6,4 +6,4 @@ import { api } from "@/lib/axios-instance/api";
 export const loginService = async (values: LoginValues) =>
   await api.post<
     SuccessResponse<{ accessToken: string; refreshToken: string }>
-  >(`${BACKEND_PROD_URL}/auth/login`, values);
+  >(`/auth/login`, values);

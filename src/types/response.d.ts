@@ -2,7 +2,12 @@ export interface BaseResponse {
   statusCode?: number;
   success?: boolean;
   message?: string;
-  meta?: Record<string, any>;
+  meta?: {
+    currentPage: number;
+    totalPages: number;
+    totalItems: number;
+    itemsPerPage: number;
+  };
   timestamp?: string;
   path?: string;
 }
@@ -10,6 +15,16 @@ export interface BaseResponse {
 export interface SuccessResponse<T = any> extends BaseResponse {
   success?: true;
   data?: T;
+}
+export interface SuccessResponsePaginated<T = any> extends BaseResponse {
+  success?: true;
+  data?: T;
+  meta?: {
+    currentPage: number;
+    totalPages: number;
+    totalItems: number;
+    itemsPerPage: number;
+  };
 }
 
 export interface ErrorField {
