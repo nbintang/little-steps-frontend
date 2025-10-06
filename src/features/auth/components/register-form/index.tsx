@@ -34,6 +34,7 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import useTimerCountDown from "../../hooks/use-timer-count-down";
+import { AuthFooter } from "../auth-footer";
 export const { useStepper, utils } = defineStepper(
   { id: "user", label: "Daftar Akun Baru", schema: userRegisterSchema },
   {
@@ -160,7 +161,7 @@ export function RegisterForm({
                 }}
                 disabled={isSubmitting}
               >
-               Lanjut
+                Lanjut
                 <ChevronsRight className="ml-2 h-4 w-4" />
               </Button>
             )}
@@ -188,7 +189,7 @@ export function RegisterForm({
                   </>
                 ) : (
                   <span className="flex items-center gap-2">
-                 Mendaftar...
+                    Mendaftar...
                     <Spinner />
                   </span>
                 )}
@@ -198,19 +199,11 @@ export function RegisterForm({
           {stepper.isFirst && (
             <>
               <FieldSeparator>Or continue with</FieldSeparator>
-              <Field>
-                <Button
-                  className="flex items-center gap-2"
-                  variant="outline"
-                  type="button"
-                >
-                  <GoogleIcon className="!size-4" />
-                  <p> Masuk dengan Google</p>
-                </Button>
-                <FieldDescription className="px-6 text-center">
-                 Sudah punya akun? <Link href="/login">Masuk</Link>
-                </FieldDescription>
-              </Field>
+              <AuthFooter
+                message="Sudah punya akun?"
+                redirectMessage="Masuk"
+                redirectUrl="/login"
+              />
             </>
           )}
         </FieldGroup>

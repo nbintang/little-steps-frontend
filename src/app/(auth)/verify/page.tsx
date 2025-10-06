@@ -1,8 +1,8 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { AuthLayout } from "@/features/auth/components/auth-layout";
-import ResendForm from "@/features/auth/components/resend-form";
+import { AuthLayout } from "@/features/auth/components/auth-layout"; 
+import { ResendForm } from "@/features/auth/components/resend-form";
 import { useVerify } from "@/features/auth/hooks/use-verify";
 import { Mail } from "lucide-react";
 import Link from "next/link";

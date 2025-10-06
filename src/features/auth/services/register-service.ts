@@ -1,5 +1,5 @@
 import { api } from "@/lib/axios-instance/api";
-import { ProfileInput } from "./complete-registration-service";
+import { ProfileInput } from "./complete-register-service";
 
 export interface RegisterInput {
   email: string;

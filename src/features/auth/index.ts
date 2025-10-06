@@ -1,4 +1,4 @@
-import { LoginForm } from './components/login-form';
-import { RegisterForm } from './components/register-form';
-
-export { LoginForm, RegisterForm };
+export * from "./components/login-form";
+export * from "./components/register-form";
+export { CompleteRegisterForm } from "./components/complete-register-form";
+export * from "./components/resend-form";

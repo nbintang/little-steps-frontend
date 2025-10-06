@@ -31,12 +31,12 @@ import GoogleIcon from "@/components/icons/google-icon";
 import { saveToken } from "@/helpers/save-token";
 import { AuthFormHeader } from "./auth-form-header";
 import { BACKEND_PROD_URL } from "@/constants/api-url";
+import { AuthFooter } from "./auth-footer";
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"form">) {
-
   const form = useForm<LoginValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -164,23 +164,11 @@ export function LoginForm({
             </Button>
           </Field>
           <FieldSeparator>Atau lanjutkan dengan</FieldSeparator>
-          <Field>
-            <Button
-              className="flex items-center gap-2"
-              variant="outline"
-              type="button"
-              onClick={handleLoginGoole}
-            >
-              <GoogleIcon className="!size-4" />
-              <p> Masuk dengan Google</p>
-            </Button>
-            <FieldDescription className="text-center">
-              Belum punya akun?{" "}
-              <Link href="/register" className="underline underline-offset-4">
-                Daftar sekarang!
-              </Link>
-            </FieldDescription>
-          </Field>
+          <AuthFooter
+            message="Belum punya akun? "
+            redirectMessage="Daftar sekarang"
+            redirectUrl="/register"
+          />
         </FieldGroup>
       </form>
     </Form>

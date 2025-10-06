@@ -13,6 +13,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { DotsVerticalIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
+import { format } from "date-fns";
+import { id } from "date-fns/locale";
 
 export const userColumns: ColumnDef<UsersAPI>[] = [
   {
@@ -79,7 +81,10 @@ export const userColumns: ColumnDef<UsersAPI>[] = [
   {
     accessorKey: "createdAt",
     header: "Created At",
-    cell: ({ row }) => new Date(row.getValue("createdAt")).toLocaleString(),
+    cell: ({ row }) =>
+      format(row.original.createdAt, "dd MMMM, yyyy", {
+        locale: id,
+      }),
   },
   {
     id: "actions",

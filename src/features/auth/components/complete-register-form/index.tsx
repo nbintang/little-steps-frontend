@@ -17,12 +17,13 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
-  completeRegistrationService,
+  completeRegisterService,
   ProfileInput,
-} from "../../services/complete-registration-service";
+} from "../../services/complete-register-service";
 import { completeProfileSchema } from "../../schemas/complete-register-schema";
 import { ProfileRegister } from "./profile-register";
 import { ProfileExtraRegister } from "../register-form/profile-extra-register";
+import { saveToken } from "@/helpers/save-token";
 
 export const { useStepper, utils } = defineStepper(
   {
@@ -63,7 +64,7 @@ export function CompleteRegisterForm({
   const uploadImage = useUploadImage();
   const onSubmit = async () => {
     const isValid = await form.trigger();
-    console.log(isValid); 
+    console.log(isValid);
     try {
       if (stepper.isLast) {
         let imageResponse;
@@ -83,7 +84,9 @@ export function CompleteRegisterForm({
           latitude: location?.lat ? parseFloat(location.lat) : undefined,
           longitude: location?.lon ? parseFloat(location.lon) : undefined,
         };
-        const res = await completeRegistrationService(profileInput, oauthToken);
+        const res = await completeRegisterService(profileInput, oauthToken);
+        const accessToken = res.data?.data?.accessToken!;
+        saveToken({ token: accessToken });
         toast.success(res.data.message);
         router.push("/parent/dashboard");
       }

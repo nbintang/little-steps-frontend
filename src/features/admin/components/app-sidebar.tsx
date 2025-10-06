@@ -1,24 +1,11 @@
 "use client";
 
 import * as React from "react";
-import {
-  BookOpen,
-  Bot,
-  Command,
-  Frame,
-  LifeBuoy,
-  Map,
-  PieChart,
-  Send,
-  Settings2,
-  SquareTerminal,
-  Tornado,
-} from "lucide-react";
 
-import { NavMain } from "@/features/dashboard/components/navigation/nav-main";
-import { NavProjects } from "@/features/dashboard/components/navigation/nav-projects";
-import { NavSecondary } from "@/features/dashboard/components/navigation/nav-secondary";
-import { NavUser } from "@/features/dashboard/components/navigation/nav-user";
+import { NavMain } from "@/features/admin/components/navigation/nav-main";
+import { NavProjects } from "@/features/admin/components/navigation/nav-projects";
+import { NavSecondary } from "@/features/admin/components/navigation/nav-secondary";
+import { NavUser } from "@/features/admin/components/navigation/nav-user";
 import {
   Sidebar,
   SidebarContent,
@@ -35,129 +22,100 @@ import { Spinner } from "@/components/ui/spinner";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 
+import {
+  FileText,
+  ListChecks,
+  HelpCircle,
+  Users,
+  Settings,
+  MessageSquare,
+  Tornado,
+} from "lucide-react";
+
 const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
   navMain: [
     {
-      title: "Playground",
-      url: "#",
-      icon: SquareTerminal,
-      isActive: true,
+      title: "Articles",
+      url: "/admin/articles",
+      icon: FileText,
       items: [
         {
-          title: "History",
-          url: "#",
+          title: "All Articles",
+          url: "/admin/articles",
         },
         {
-          title: "Starred",
-          url: "#",
-        },
-        {
-          title: "Settings",
-          url: "#",
+          title: "Create Article",
+          url: "/admin/articles/create",
         },
       ],
     },
     {
-      title: "Models",
-      url: "#",
-      icon: Bot,
+      title: "Quizzes",
+      url: "/admin/quizzes",
+      icon: ListChecks,
       items: [
         {
-          title: "Genesis",
-          url: "#",
+          title: "All Quizzes",
+          url: "/admin/quizzes",
         },
         {
-          title: "Explorer",
-          url: "#",
+          title: "Create Quiz",
+          url: "/admin/quizzes/create",
         },
         {
-          title: "Quantum",
-          url: "#",
+          title: "Questions",
+          url: "/admin/questions",
+        },
+        {
+          title: "Answers",
+          url: "/admin/answers",
         },
       ],
     },
     {
-      title: "Documentation",
-      url: "#",
-      icon: BookOpen,
+      title: "Users",
+      url: "/admin/users",
+      icon: Users,
       items: [
         {
-          title: "Introduction",
-          url: "#",
-        },
-        {
-          title: "Get Started",
-          url: "#",
-        },
-        {
-          title: "Tutorials",
-          url: "#",
-        },
-        {
-          title: "Changelog",
-          url: "#",
+          title: "Manage Users",
+          url: "/admin/users",
         },
       ],
     },
     {
-      title: "Settings",
-      url: "#",
-      icon: Settings2,
+      title: "Forum",
+      url: "/admin/forum",
+      icon: MessageSquare,
       items: [
         {
-          title: "General",
-          url: "#",
-        },
-        {
-          title: "Team",
-          url: "#",
-        },
-        {
-          title: "Billing",
-          url: "#",
-        },
-        {
-          title: "Limits",
-          url: "#",
+          title: "Forum Topics",
+          url: "/admin/forum",
         },
       ],
     },
   ],
   navSecondary: [
     {
-      title: "Support",
+      title: "Help Center",
       url: "#",
-      icon: LifeBuoy,
+      icon: HelpCircle,
     },
     {
-      title: "Feedback",
-      url: "#",
-      icon: Send,
-    },
-  ],
-  projects: [
-    {
-      name: "Design Engineering",
-      url: "#",
-      icon: Frame,
-    },
-    {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: PieChart,
-    },
-    {
-      name: "Travel",
-      url: "#",
-      icon: Map,
+      title: "Settings",
+      url: "/admin/settings/profile",
+      icon: Settings,
+      items: [
+        {
+          title: "Profile",
+          url: "/admin/settings/profile",
+        },
+      ],
     },
   ],
 };
+
+export default data;
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { state } = useSidebar();
@@ -193,7 +151,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavProjects projects={data.projects} />
+        {/* <NavProjects projects={data.projects} /> */}
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
 

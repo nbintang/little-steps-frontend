@@ -20,7 +20,7 @@ import { useResend } from "../hooks/use-resend";
 import { AuthFormHeader } from "./auth-form-header";
 import Link from "next/link";
 
-export default function ResendForm({
+export function ResendForm({
   isVerifying,
   isSuccessVerifying,
 }: {

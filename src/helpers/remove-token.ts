@@ -1,2 +1,7 @@
-import Cookies from "js-cookie";
-export const removeToken = (key: string = "accessToken") => Cookies.remove(key);
+"use server"
+import { cookies } from "next/headers";
+
+export const removeToken = async (key: string = "accessToken") => {
+    const cookieStore = await cookies();
+    cookieStore.delete(key);
+}

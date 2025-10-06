@@ -1,4 +1,4 @@
-import { AppSidebar } from "@/features/dashboard/components/app-sidebar";
+import { AppSidebar } from "@/features/admin/components/app-sidebar";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -54,7 +54,7 @@ export default async function Layout({
             </Breadcrumb>
           </div>
         </header>
-        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">{children}</div>
+        <div className="flex flex-1 flex-col  p-4 pt-0">{children}</div>
       </SidebarInset>
     </SidebarProvider>
   );

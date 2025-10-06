@@ -1,8 +1,8 @@
 "use client";
-import { removeToken } from "@/helpers/remove-token";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { logoutService } from "../services/logout-service";
+import { removeToken } from "@/helpers/remove-token";
 
 export const useLogout = () => {
   const router = useRouter();
@@ -10,12 +10,15 @@ export const useLogout = () => {
     toast
       .promise(logoutService, {
         loading: "Logging out...",
-        success: () => {
-          removeToken();
+        success: (res) => {
+          removeToken();  
           router.push("/login");
-          return "Logged out successfully";
+          return res
         },
-        error: "Failed to log out",
+        error: async (err: any) => {
+          console.log(err);
+          return Promise.resolve("Something went wrong. Please try again.");
+        },
       })
       .unwrap();
   return { handleLogout };
