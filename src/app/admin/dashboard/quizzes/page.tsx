@@ -61,7 +61,7 @@ export default function QuizPage() {
 
   if (isLoading || isSearching || isFetching) {
     return (
-      <DashboardPageLayout title="Artikel">
+      <DashboardPageLayout title="Quiz">
         <div className="flex items-center flex-wrap gap-4 mb-2 justify-between">
           <TableToolbar<QuizzesAPI>
             searchKeyword={searchKeyword}
@@ -116,9 +116,9 @@ export default function QuizPage() {
             />
 
             <Button variant={"default"} asChild>
-              <Link href={"/admin/dashboard/articles/new"}>
+              <Link href={"/admin/dashboard/quizzes/new"}>
                 <PlusCircle />
-                Buat Quiz Baru
+                Buat quiz Baru
               </Link>
             </Button>
           </div>

@@ -1,10 +1,10 @@
 import { QuizzesAPI } from "./quizzes";
 
 export interface QuizWithQuestionsAPI extends QuizzesAPI {
-    questions: Array<Questions>;
+    questions: Array<QuestionAPI>;
 }
 
-export type Questions =   {
+export type QuestionAPI =   {
     id: string;
     questionJson: any;
     answers: Array<{

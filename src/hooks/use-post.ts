@@ -58,5 +58,6 @@ export const usePost = <T = any, I = any>({
     onSettled: () => {
       if (allowToast) toast.dismiss(keys[0]);
     },
+    
   });
 };

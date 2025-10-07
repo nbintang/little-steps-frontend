@@ -57,6 +57,7 @@ interface SectionFiveProps extends VariantProps<typeof toggleVariants> {
   activeActions?: InsertElementAction[];
   mainActionCount?: number;
   allowImagesUpload?: boolean;
+  allowLinkUpload?: boolean;
 }
 
 export const SectionFive: React.FC<SectionFiveProps> = ({
@@ -66,10 +67,11 @@ export const SectionFive: React.FC<SectionFiveProps> = ({
   size,
   variant,
   allowImagesUpload = true,
+  allowLinkUpload = true,
 }) => {
   return (
     <>
-      <LinkEditPopover editor={editor} size={size} variant={variant} />
+      {allowLinkUpload && <LinkEditPopover editor={editor} size={size} />}
       {allowImagesUpload && (
         <ImageEditDialog editor={editor} size={size} variant={variant} />
       )}

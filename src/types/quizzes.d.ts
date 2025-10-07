@@ -12,3 +12,19 @@ export type QuizzesAPI = {
   } | null;
   questionCount: number;
 };
+
+
+
+export type QuizMutateResponseAPI = {
+  id: string;
+  title: string;
+  description: string;
+  timeLimit: number;
+  rating: number;
+  category: {
+    id: string;
+    slug: string;
+    name: string;
+  } | null;
+  createdAt: Date |  string;
+}

@@ -1,8 +1,9 @@
 "use client";
 import { DashboardPageLayout } from "@/features/admin/components/dashboard-page-layout";
+import { UpdateQuizForm } from "@/features/admin/components/form/quiz/update-quiz-form";
 import { useFetch } from "@/hooks/use-fetch";
 import { useFetchPaginated } from "@/hooks/use-fetch-paginated";
-import { Questions } from "@/types/questions";
+import { QuestionAPI } from "@/types/questions";
 import { QuizzesAPI } from "@/types/quizzes";
 import { useSearchParams } from "next/navigation";
 import React, { use, useEffect, useState } from "react";
@@ -21,8 +22,8 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
     keys: ["quizzes", id],
     endpoint: `quizzes/${id}`,
   });
-  const { data, isLoading, isError, isSuccess, isFetching, error } =
-    useFetchPaginated<Questions[]>({
+  const { data: questions, isLoading, isError, isSuccess, isFetching, error } =
+    useFetchPaginated<QuestionAPI[]>({
       key: "questions",
       endpoint: `quizzes/${id}/questions`,
       query: {
@@ -50,18 +51,13 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
     );
   }
 
-  if (isError || !data) {
+  if (isError || !questions || !quiz) {
     return <div>{error?.message}</div>;
   }
 
-  console.log("quiz", quiz);
-  console.log("questions", data);
-
   return (
     <DashboardPageLayout title={`Update ${quiz?.title}`}>
-        <div className="">
-
-        </div>
+      <UpdateQuizForm quiz={quiz} questions={questions.data ?? []} />
     </DashboardPageLayout>
   );
 }
