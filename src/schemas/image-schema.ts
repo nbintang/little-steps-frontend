@@ -14,8 +14,8 @@ type ImageSchemaOptions = {
 export const schemaOptions = {
   ACCEPTED_IMAGE_TYPES: ["image/jpeg", "image/jpg", "image/png"],
   MAX_FILE_SIZE: 1024 * 1024 * 1,
-  MAX_DIMENSIONS: { width: 1600, height: 900 },
-  MIN_DIMENSIONS: { width: 400, height: 250 },
+  MAX_DIMENSIONS: { width: 1200, height: 600 },
+  MIN_DIMENSIONS: { width: 200, height: 50 },
 };
 
 const formatBytes = (bytes: number, decimals = 2) => {

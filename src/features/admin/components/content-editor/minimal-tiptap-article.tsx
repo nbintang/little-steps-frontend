@@ -1,28 +1,29 @@
-import * as React from "react"
-import "./styles/index.css"
+import * as React from "react";
+import "@/components/ui/minimal-tiptap/styles/index.css";
 
-import type { Content, Editor } from "@tiptap/react"
-import type { UseMinimalTiptapEditorProps } from "./hooks/use-minimal-tiptap"
-import { EditorContent } from "@tiptap/react"
-import { Separator } from "@/components/ui/separator"
-import { cn } from "@/lib/utils"
-import { SectionOne } from "./components/section/one"
-import { SectionTwo } from "./components/section/two"
-import { SectionThree } from "./components/section/three"
-import { SectionFour } from "./components/section/four"
-import { SectionFive } from "./components/section/five"
-import { LinkBubbleMenu } from "./components/bubble-menu/link-bubble-menu"
-import { useMinimalTiptapEditor } from "./hooks/use-minimal-tiptap"
-import { MeasuredContainer } from "./components/measured-container"
-import { ScrollArea, ScrollBar } from "../scroll-area"
+import type { Content, Editor } from "@tiptap/react";
+import { EditorContent } from "@tiptap/react";
+import { Separator } from "@/components/ui/separator";
+import { cn } from "@/lib/utils";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import SectionOne from "@/components/ui/minimal-tiptap/components/section/one";
+import SectionTwo from "@/components/ui/minimal-tiptap/components/section/two";
+import SectionThree from "@/components/ui/minimal-tiptap/components/section/three";
+import SectionFour from "@/components/ui/minimal-tiptap/components/section/four";
+import SectionFive from "@/components/ui/minimal-tiptap/components/section/five";
+import useMinimalTiptapEditor, {
+  type UseMinimalTiptapEditorProps,
+} from "@/components/ui/minimal-tiptap/hooks/use-minimal-tiptap";
+import { MeasuredContainer } from "@/components/ui/minimal-tiptap/components/measured-container";
+import { LinkBubbleMenu } from "@/components/ui/minimal-tiptap/components/bubble-menu/link-bubble-menu";
+
 
 export interface MinimalTiptapProps
   extends Omit<UseMinimalTiptapEditorProps, "onUpdate"> {
-  value?: Content
-  onChange?: (value: Content) => void
-  className?: string
+  value?: Content;
+  onChange?: (value: Content) => void;
+  className?: string;
   editorContentClassName?: string;
-
 }
 
 const Toolbar = ({ editor }: { editor: Editor }) => (
@@ -61,15 +62,16 @@ const Toolbar = ({ editor }: { editor: Editor }) => (
 
       <SectionFive
         editor={editor}
+        allowImagesUpload={false}
         activeActions={["codeBlock", "blockquote", "horizontalRule"]}
         mainActionCount={0}
       />
     </div>
     <ScrollBar orientation="horizontal" />
   </ScrollArea>
-)
+);
 
-export const MinimalTiptapEditor = ({
+export const MinimalTiptapArticleEditor = ({
   value,
   onChange,
   className,
@@ -80,10 +82,10 @@ export const MinimalTiptapEditor = ({
     value,
     onUpdate: onChange,
     ...props,
-  })
+  });
 
   if (!editor) {
-    return null
+    return null;
   }
 
   return (
@@ -103,9 +105,9 @@ export const MinimalTiptapEditor = ({
       />
       <LinkBubbleMenu editor={editor} />
     </MeasuredContainer>
-  )
-}
+  );
+};
 
-MinimalTiptapEditor.displayName = "MinimalTiptapEditor"
+MinimalTiptapArticleEditor.displayName = "MinimalTiptapArticleEditor";
 
-export default MinimalTiptapEditor
+export default MinimalTiptapArticleEditor;

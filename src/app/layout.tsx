@@ -4,6 +4,7 @@ import "@/app/globals.css";
 import ReactQueryProvider from "@/providers/react-query-provider";
 import LoaderProvider from "@/providers/loader-provider";
 import { Toaster } from "@/components/ui/sonner";
+import WarningDialog from "@/components/warning-dialog";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,8 +32,11 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ReactQueryProvider>
-          <LoaderProvider>{children}</LoaderProvider>
-             <Toaster position="top-right" />
+          <LoaderProvider>
+            {children}
+            <WarningDialog />
+          </LoaderProvider>
+          <Toaster position="top-right" />
         </ReactQueryProvider>
       </body>
     </html>

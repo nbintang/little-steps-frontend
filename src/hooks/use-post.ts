@@ -11,7 +11,6 @@ import { toast } from "sonner";
 
 type PostProps = {
   keys: string | string[];
-  triggerKeys?: string[];
   endpoint: string;
   redirectUrl?: string;
   allowToast?: boolean;
@@ -21,7 +20,6 @@ type PostProps = {
 
 export const usePost = <T = any, I = any>({
   keys,
-  triggerKeys,
   endpoint,
   redirectUrl,
   allowToast = true,
@@ -42,22 +40,23 @@ export const usePost = <T = any, I = any>({
       return res.data;
     },
     onMutate: () => {
-      if (allowToast) toast.loading("Loading...", {
-        id: keys[0] ,
-      });
+      if (allowToast) {
+        toast.loading("Loading...", {
+          id: keys[0],
+        });
+      }
     },
     onSuccess: (res) => {
-      queryClient.invalidateQueries({
-        queryKey: triggerKeys,
-      });
+      queryClient.invalidateQueries({ queryKey: mutationKey });
       if (allowToast) toast.success(toastMessage ?? res.message);
       if (redirectUrl) router.push(redirectUrl);
     },
     onError: (error) => {
-      if (allowToast) toast.error(error.message);
+      if (allowToast)
+        toast.error(error.message || "An unexpected error occurred");
     },
     onSettled: () => {
       if (allowToast) toast.dismiss(keys[0]);
-    }
+    },
   });
 };

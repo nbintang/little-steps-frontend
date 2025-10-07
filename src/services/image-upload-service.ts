@@ -9,27 +9,31 @@ export const imageUploadService = async (
   file: File | string | null,
   existedUrl?: string | null
 ) => {
-  const formData = new FormData();
+  try {
+    const formData = new FormData();
 
-  let convertedFile: File;
-  if (typeof file === "string" && file.startsWith("data:image/")) {
-    convertedFile = base64ToFile(file, "image.png");
-  } else if (file instanceof File) {
-    convertedFile = file;
-  } else {
-    throw new Error("Invalid image format");
-  }
-
-  formData.append("image", convertedFile);
-  const res = await api.post<SuccessResponse<UploadImageApiResponse>>(
-    "/media/image/upload",
-    formData,
-    {
-      params: {
-        folder: MediaFolder.LITTLE_STEPS_IMAGES,
-        existedUrl: existedUrl ?? null,
-      },
+    let convertedFile: File;
+    if (typeof file === "string" && file.startsWith("data:image/")) {
+      convertedFile = base64ToFile(file, "image.png");
+    } else if (file instanceof File) {
+      convertedFile = file;
+    } else {
+      throw new Error("Invalid image format");
     }
-  );
-  return res.data;
+
+    formData.append("image", convertedFile);
+    const res = await api.post<SuccessResponse<UploadImageApiResponse>>(
+      "/media/image/upload",
+      formData,
+      {
+        params: {
+          folder: MediaFolder.LITTLE_STEPS_IMAGES,
+          existedUrl: existedUrl ?? null,
+        },
+      }
+    );
+    return res.data;
+  } catch (error) {
+    throw error;
+  }
 };

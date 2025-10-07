@@ -1,5 +1,5 @@
 "use client";
-import React, { useCallback, useRef } from "react";
+import { useCallback, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { ArticleInput, articleSchema } from "../../schemas/article-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -25,7 +25,7 @@ import {
   FileUploadList,
   FileUploadTrigger,
 } from "@/components/ui/file-upload";
-import { CloudUpload, Upload, X } from "lucide-react";
+import { Plus, Upload, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -34,18 +34,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import Link from "next/link";
 import { AsyncSelect } from "@/components/ui/async-select";
 import { CategoryAPI } from "@/types/category";
-import { api } from "@/lib/axios-instance/api";
-import { MinimalTiptapEditor } from "@/components/ui/minimal-tiptap";
 import { cn } from "@/lib/utils";
-import { Editor } from "@tiptap/react";
+import { Content, Editor } from "@tiptap/react";
 import { categoryService } from "@/services/category-service";
 import { Spinner } from "@/components/ui/spinner";
 import { usePost } from "@/hooks/use-post";
 import { ArticleMutateResponse } from "@/types/articles";
 import useUploadImage from "@/hooks/use-upload-image";
+import MinimalTiptapArticleEditor from "../content-editor/minimal-tiptap-article";
 
 export const CreateArticleForm = () => {
   const editorRef = useRef<Editor | null>(null);
@@ -57,13 +55,26 @@ export const CreateArticleForm = () => {
       coverImage: [],
       status: "DRAFT",
       categoryId: "",
-      contentJson: "",
+      contentJson: {
+        type: "doc",
+        content: [
+          {
+            type: "paragraph",
+            content: [
+              {
+                type: "text",
+                text: "",
+              },
+            ],
+          },
+        ],
+      },
     },
   });
   const handleCreate = useCallback(
     ({ editor }: { editor: Editor }) => {
       if (form.getValues("contentJson") && editor.isEmpty) {
-        editor.commands.setContent(form.getValues("contentJson"));
+        editor.commands.setContent(form.getValues("contentJson") as Content);
       }
       editorRef.current = editor;
     },
@@ -102,9 +113,9 @@ export const CreateArticleForm = () => {
           name="title"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Article title</FormLabel>
+              <FormLabel>Judul Artikel </FormLabel>
               <FormControl>
-                <Input placeholder="Create a title" {...field} />
+                <Input placeholder="Buat Judul Artikel" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -115,9 +126,14 @@ export const CreateArticleForm = () => {
           name="excerpt"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Description</FormLabel>
+              <FormLabel>Deksripsi</FormLabel>
               <FormControl>
-                <Textarea placeholder="Short description" {...field} />
+                <Textarea
+                  placeholder="Deskripsi singkat"
+                  rows={3}
+                  className="resize-none h-[100px]"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -126,9 +142,13 @@ export const CreateArticleForm = () => {
         <FormField
           control={form.control}
           name="coverImage"
-          render={({ field }) => (
+          render={({ field, fieldState }) => (
             <FormItem>
-              <FormLabel>Attachments</FormLabel>
+              <FormLabel>Cover Artikel</FormLabel>
+
+              <FormDescription>
+                Unggah gambar cover artikel maksimal 2MB
+              </FormDescription>
               <FormControl>
                 <FileUpload
                   value={field.value}
@@ -144,51 +164,61 @@ export const CreateArticleForm = () => {
                   multiple
                 >
                   <FileUploadDropzone>
-                    <div className="flex flex-col items-center gap-1 text-center">
-                      <div className="flex items-center justify-center rounded-full border p-2.5">
-                        <Upload className="size-6 text-muted-foreground" />
-                      </div>
-                      <p className="font-medium text-sm">
-                        Drag & drop files here
-                      </p>
-                      <p className="text-muted-foreground text-xs">
-                        Or click to browse (max 10 files, up to 5MB each)
-                      </p>
-                    </div>
-                    <FileUploadTrigger asChild>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="mt-2 w-fit"
-                      >
-                        Browse files
-                      </Button>
-                    </FileUploadTrigger>
-                  </FileUploadDropzone>
-                  <FileUploadList>
-                    {field.value.map((file, index) => (
-                      <FileUploadItem key={index} value={file} className="p-0">
-                        <FileUploadItemPreview className="size-20">
-                          <FileUploadItemProgress variant="fill" />
-                        </FileUploadItemPreview>
-                        <FileUploadItemMetadata className="sr-only" />
-                        <FileUploadItemDelete asChild>
-                          <Button
-                            variant="secondary"
-                            size="icon"
-                            className="-top-1 -right-1 absolute size-5 rounded-full"
+                    {fieldState.isDirty ? (
+                      <FileUploadList orientation="horizontal">
+                        {field.value.map((file, index) => (
+                          <FileUploadItem
+                            key={index}
+                            value={file}
+                            className="p-0 "
                           >
-                            <X className="size-3" />
+                            <FileUploadItemPreview className="size-64 w-96">
+                              <FileUploadItemProgress variant="fill" />
+                            </FileUploadItemPreview>
+                            <FileUploadItemMetadata className="sr-only" />
+                            <FileUploadItemDelete asChild>
+                              <Button
+                                variant="secondary"
+                                size="icon"
+                                className="-top-1 -right-1 absolute size-5 rounded-full"
+                              >
+                                <X className="size-3" />
+                              </Button>
+                            </FileUploadItemDelete>
+                          </FileUploadItem>
+                        ))}
+                      </FileUploadList>
+                    ) : (
+                      <>
+                        <div
+                          className={cn(
+                            "flex flex-col items-center gap-1 text-center"
+                          )}
+                        >
+                          <div className="flex items-center justify-center rounded-full border p-2.5">
+                            <Upload className="size-6 text-muted-foreground" />
+                          </div>
+                          <p className="font-medium text-sm">
+                            Drag & drop files here
+                          </p>
+                          <p className="text-muted-foreground text-xs">
+                            Or click to browse (max 1 files, up to 2MB)
+                          </p>
+                        </div>
+                        <FileUploadTrigger asChild>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="mt-2 w-fit"
+                          >
+                            Browse files
                           </Button>
-                        </FileUploadItemDelete>
-                      </FileUploadItem>
-                    ))}
-                  </FileUploadList>
+                        </FileUploadTrigger>
+                      </>
+                    )}
+                  </FileUploadDropzone>
                 </FileUpload>
               </FormControl>
-              <FormDescription>
-                Upload up to 2 images up to 5MB each.
-              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -200,10 +230,6 @@ export const CreateArticleForm = () => {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Status</FormLabel>
-                <FormDescription>
-                  You can manage email addresses in your{" "}
-                  <Link href="/examples/forms">email settings</Link>.
-                </FormDescription>
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
@@ -219,6 +245,9 @@ export const CreateArticleForm = () => {
                   </SelectContent>
                 </Select>
 
+                <FormDescription>
+                  Kamu bisa mengatur status artikel disini
+                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -229,10 +258,6 @@ export const CreateArticleForm = () => {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Kategori</FormLabel>
-                <FormDescription>
-                  Lorem ipsum dolor sit amet consectetur, adipisicing elit.
-                  Itaque eius quisquam quidem!
-                </FormDescription>
                 <FormControl>
                   <AsyncSelect<CategoryAPI>
                     fetcher={categoryService}
@@ -258,6 +283,10 @@ export const CreateArticleForm = () => {
                     {...field}
                   />
                 </FormControl>
+                <FormDescription>
+                  Lorem ipsum dolor sit amet consectetur, adipisicing elit.
+                  Itaque eius quisquam quidem!
+                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -267,16 +296,16 @@ export const CreateArticleForm = () => {
             name="contentJson"
             render={({ field }) => (
               <FormItem className="lg:col-span-2">
-                <FormLabel>Content</FormLabel>
+                <FormLabel>Konten</FormLabel>{" "}
                 <FormDescription>
                   Lorem ipsum dolor sit amet consectetur, adipisicing elit.
                   Itaque eius quisquam quidem!
                 </FormDescription>
                 <FormControl>
-                  <MinimalTiptapEditor
+                  <MinimalTiptapArticleEditor
                     {...field}
                     throttleDelay={0}
-                    className={cn("w-full min-h-[400px]", {
+                    className={cn("w-full min-h-[600px]", {
                       "border-destructive focus-within:border-destructive":
                         form.formState.errors.contentJson?.message,
                     })}
@@ -296,16 +325,21 @@ export const CreateArticleForm = () => {
             )}
           />
         </div>
-        <Button type="submit" disabled={isLoading}>
-          {!isLoading ? (
-            "Buat Artikel"
-          ) : (
-            <>
-              <Spinner />
-              Membuat..
-            </>
-          )}
-        </Button>
+        {form.formState.isDirty && (
+          <Button type="submit" className="w-full max-w-[200px]" disabled={isLoading}>
+            {!isLoading ? (
+           <>
+             <Plus /> 
+              Buat Artikel
+           </>
+            ) : (
+              <>
+                <Spinner />
+                Membuat..
+              </>
+            )}
+          </Button>
+        )}
       </form>
     </Form>
   );

@@ -3,7 +3,7 @@ import { CreateArticleForm } from "@/features/admin/components/form/create-artic
 
 export default function Page() {
   return (
-    <DashboardPageLayout title="New Article">
+    <DashboardPageLayout title="Tambah Artikel">
       <CreateArticleForm />
     </DashboardPageLayout>
   );

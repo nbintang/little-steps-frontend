@@ -1,5 +1,5 @@
 "use client";
-import React, { useCallback, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { ArticleInput, articleSchema } from "../../schemas/article-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -25,7 +25,7 @@ import {
   FileUploadList,
   FileUploadTrigger,
 } from "@/components/ui/file-upload";
-import { CloudUpload, Upload, X } from "lucide-react";
+import { Pencil, Upload, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -37,33 +37,41 @@ import {
 import Link from "next/link";
 import { AsyncSelect } from "@/components/ui/async-select";
 import { CategoryAPI } from "@/types/category";
-import { api } from "@/lib/axios-instance/api";
 import { MinimalTiptapEditor } from "@/components/ui/minimal-tiptap";
 import { cn } from "@/lib/utils";
-import { Editor } from "@tiptap/react";
+import { Content, Editor } from "@tiptap/react";
 import { categoryService } from "@/services/category-service";
 import { Spinner } from "@/components/ui/spinner";
-import { usePost } from "@/hooks/use-post";
 import { Article, ArticleMutateResponse } from "@/types/articles";
 import useUploadImage from "@/hooks/use-upload-image";
+import { urlToFile } from "@/helpers/url-to-file";
+import { usePatch } from "@/hooks/use-patch";
 
-export const UpdateArticleForm = ({article}: {article: Article}) => {
+export const UpdateArticleForm = ({ article }: { article: Article }) => {
   const editorRef = useRef<Editor | null>(null);
   const form = useForm<ArticleInput>({
     resolver: zodResolver(articleSchema),
     defaultValues: {
-      title: "",
-      excerpt: "",
+      title: article.title,
+      excerpt: article.excerpt,
       coverImage: [],
-      status: "DRAFT",
-      categoryId: "",
-      contentJson: "",
+      status: article.status,
+      categoryId: article.category.id,
+      contentJson: article.contentJson,
     },
   });
+
+  useEffect(() => {
+    if (article.coverImage) {
+      urlToFile(article.coverImage, "cover.jpg").then((file) => {
+        form.setValue("coverImage", [file]);
+      });
+    }
+  }, [article.coverImage]);
   const handleCreate = useCallback(
     ({ editor }: { editor: Editor }) => {
       if (form.getValues("contentJson") && editor.isEmpty) {
-        editor.commands.setContent(form.getValues("contentJson"));
+        editor.commands.setContent(form.getValues("contentJson") as Content);
       }
       editorRef.current = editor;
     },
@@ -71,12 +79,12 @@ export const UpdateArticleForm = ({article}: {article: Article}) => {
   );
 
   const { mutateAsync: uploadCoverImage } = useUploadImage();
-  const { mutate: createArticle, isPending } = usePost<ArticleMutateResponse>({
-    keys: ["articles"],
-    endpoint: "contents",
+  const { mutate: updateArticle, isPending } = usePatch<ArticleMutateResponse>({
+    keys: ["articles", article.slug],
+    endpoint: `contents/${article.slug}`,
     redirectUrl: "/admin/dashboard/articles",
     allowToast: true,
-    toastMessage: "Article created successfully",
+    toastMessage: "Article updated successfully",
     config: {
       params: {
         type: "article",
@@ -87,7 +95,7 @@ export const UpdateArticleForm = ({article}: {article: Article}) => {
   const onSubmit = async (data: ArticleInput) => {
     const resImage = await uploadCoverImage(data.coverImage[0]);
     const secureUrl = resImage.data?.secureUrl ?? null;
-    await createArticle({
+    await updateArticle({
       ...data,
       coverImage: secureUrl,
     });
@@ -126,7 +134,7 @@ export const UpdateArticleForm = ({article}: {article: Article}) => {
         <FormField
           control={form.control}
           name="coverImage"
-          render={({ field }) => (
+          render={({ field, fieldState }) => (
             <FormItem>
               <FormLabel>Attachments</FormLabel>
               <FormControl>
@@ -144,51 +152,85 @@ export const UpdateArticleForm = ({article}: {article: Article}) => {
                   multiple
                 >
                   <FileUploadDropzone>
-                    <div className="flex flex-col items-center gap-1 text-center">
-                      <div className="flex items-center justify-center rounded-full border p-2.5">
-                        <Upload className="size-6 text-muted-foreground" />
-                      </div>
-                      <p className="font-medium text-sm">
-                        Drag & drop files here
-                      </p>
-                      <p className="text-muted-foreground text-xs">
-                        Or click to browse (max 10 files, up to 5MB each)
-                      </p>
-                    </div>
-                    <FileUploadTrigger asChild>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="mt-2 w-fit"
-                      >
-                        Browse files
-                      </Button>
-                    </FileUploadTrigger>
-                  </FileUploadDropzone>
-                  <FileUploadList>
-                    {field.value.map((file, index) => (
-                      <FileUploadItem key={index} value={file} className="p-0">
-                        <FileUploadItemPreview className="size-20">
-                          <FileUploadItemProgress variant="fill" />
-                        </FileUploadItemPreview>
-                        <FileUploadItemMetadata className="sr-only" />
-                        <FileUploadItemDelete asChild>
-                          <Button
-                            variant="secondary"
-                            size="icon"
-                            className="-top-1 -right-1 absolute size-5 rounded-full"
+                    {fieldState.isDirty ? (
+                      <FileUploadList orientation="horizontal">
+                        {field.value.map((file, index) => (
+                          <FileUploadItem
+                            key={index}
+                            value={file}
+                            className="p-0 "
                           >
-                            <X className="size-3" />
+                            <FileUploadItemPreview className="size-64 w-96">
+                              <FileUploadItemProgress variant="fill" />
+                            </FileUploadItemPreview>
+                            <FileUploadItemMetadata className="sr-only" />
+                            <FileUploadItemDelete asChild>
+                              <Button
+                                variant="secondary"
+                                size="icon"
+                                className="-top-1 -right-1 absolute size-5 rounded-full"
+                              >
+                                <X className="size-3" />
+                              </Button>
+                            </FileUploadItemDelete>
+                          </FileUploadItem>
+                        ))}
+                      </FileUploadList>
+                    ) : field.value.length > 0 ? (
+                      <FileUploadList orientation="horizontal">
+                        {field.value.map((file, index) => (
+                          <FileUploadItem
+                            key={index}
+                            value={file}
+                            className="p-0 "
+                          >
+                            <FileUploadItemPreview className="size-64 w-96">
+                              <FileUploadItemProgress variant="fill" />
+                            </FileUploadItemPreview>
+                            <FileUploadItemMetadata className="sr-only" />
+                            <FileUploadItemDelete asChild>
+                              <Button
+                                variant="secondary"
+                                size="icon"
+                                className="-top-1 -right-1 absolute size-5 rounded-full"
+                              >
+                                <X className="size-3" />
+                              </Button>
+                            </FileUploadItemDelete>
+                          </FileUploadItem>
+                        ))}
+                      </FileUploadList>
+                    ) : (
+                      <>
+                        <div
+                          className={cn(
+                            "flex flex-col items-center gap-1 text-center"
+                          )}
+                        >
+                          <div className="flex items-center justify-center rounded-full border p-2.5">
+                            <Upload className="size-6 text-muted-foreground" />
+                          </div>
+                          <p className="font-medium text-sm">
+                            Drag & drop files here
+                          </p>
+                          <p className="text-muted-foreground text-xs">
+                            Or click to browse (max 1 files, up to 2MB)
+                          </p>
+                        </div>
+                        <FileUploadTrigger asChild>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="mt-2 w-fit"
+                          >
+                            Browse files
                           </Button>
-                        </FileUploadItemDelete>
-                      </FileUploadItem>
-                    ))}
-                  </FileUploadList>
+                        </FileUploadTrigger>
+                      </>
+                    )}
+                  </FileUploadDropzone>
                 </FileUpload>
               </FormControl>
-              <FormDescription>
-                Upload up to 2 images up to 5MB each.
-              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -296,16 +338,25 @@ export const UpdateArticleForm = ({article}: {article: Article}) => {
             )}
           />
         </div>
-        <Button type="submit" disabled={isLoading}>
-          {!isLoading ? (
-            "Buat Artikel"
-          ) : (
-            <>
-              <Spinner />
-              Membuat..
-            </>
-          )}
-        </Button>
+        {form.formState.isDirty && (
+          <Button
+            type="submit"
+            className="w-full max-w-[200px]"
+            disabled={isLoading}
+          >
+            {!isLoading ? (
+              <>
+                <Pencil />
+                Perbarui Artikel
+              </>
+            ) : (
+              <>
+                <Spinner />
+                Memperbarui..
+              </>
+            )}
+          </Button>
+        )}
       </form>
     </Form>
   );

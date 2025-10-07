@@ -27,7 +27,7 @@ export default function Page() {
 
   const { data, isLoading, isError, isSuccess, isFetching, error, refetch } =
     useFetchPaginated<Articles[]>({
-      key: "users",
+      key: "articles",
       endpoint: "contents",
       query: {
         page,
@@ -63,7 +63,7 @@ export default function Page() {
   if (isLoading || isSearching || isFetching) {
     return (
       <DashboardPageLayout title="Artikel">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center flex-wrap gap-4 mb-2 justify-between">
           <TableToolbar<Articles>
             searchKeyword={searchKeyword}
             setSearchKeyword={setSearchKeyword}
@@ -100,7 +100,7 @@ export default function Page() {
     <DashboardPageLayout title="Artikel">
       {isSuccess && (
         <React.Fragment>
-          <div className="flex items-center justify-between">
+          <div className="flex items-center flex-wrap gap-4 mb-2 justify-between">
             <TableToolbar<Articles>
               searchKeyword={searchKeyword}
               setSearchKeyword={setSearchKeyword}

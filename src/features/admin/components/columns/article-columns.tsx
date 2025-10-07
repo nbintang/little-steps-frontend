@@ -1,7 +1,7 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { Articles } from "@/types/articles";
+import { ArticleMutateResponse, Articles } from "@/types/articles";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,10 +10,19 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal, Pen, Trash2Icon } from "lucide-react";
+import {
+  BookOpen,
+  BookOpenCheck,
+  MoreHorizontal,
+  Pen,
+  Trash2Icon,
+} from "lucide-react";
 import { format } from "date-fns";
 import Image from "next/image";
 import Link from "next/link";
+import { useDisplayWarningDialog } from "@/hooks/use-display-warning-dialog";
+import { useDelete } from "@/hooks/use-delete";
+import { usePatch } from "@/hooks/use-patch";
 
 export const articleColumns: ColumnDef<Articles>[] = [
   {
@@ -76,9 +85,50 @@ export const articleColumns: ColumnDef<Articles>[] = [
     ),
   },
   {
-    id: "actions", 
+    id: "actions",
     cell: ({ row }) => {
       const article = row.original;
+      const setOpenDeleteDialog = useDisplayWarningDialog(
+        (state) => state.setOpenDialog
+      );
+      const closeDialog = useDisplayWarningDialog((state) => state.closeDialog);
+      const { mutate: deleteArticle } = useDelete({
+        keys: "articles",
+        toastMessage: "Article deleted successfully",
+        endpoint: `contents/${article.slug}`,
+      });
+      const getNextStatus = (currentStatus: string) => {
+        return currentStatus === "PUBLISHED" ? "DRAFT" : "PUBLISHED";
+      };
+      const { mutate: publish } = usePatch<ArticleMutateResponse>({
+        keys: ["articles"],
+        endpoint: `contents/${article.slug}`,
+        allowToast: true,
+        toastMessage: `Article ${article.status === "PUBLISHED" ? "unpublished" : "published"} successfully`,
+        config: {
+          params: {
+            type: "article",
+          },
+        },
+      });
+      const handleDelete = () =>
+        setOpenDeleteDialog({
+          isOpen: true,
+          title: "Hapus Artikel",
+          description: "Apakah anda yakin ingin menghapus artikel ini?",
+          onConfirm: () => (closeDialog(), deleteArticle()),
+        });
+      const handleToggleStatus = () =>
+        setOpenDeleteDialog({
+          isOpen: true,
+          title: "Ubah Status Artikel",
+          description: "Apakah anda yakin ingin mengubah status artikel ini?",
+          onConfirm: () => (
+            closeDialog(), publish({ status: getNextStatus(article.status) })
+          ),
+          buttonVariants: "default",
+        });
+
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -88,16 +138,27 @@ export const articleColumns: ColumnDef<Articles>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem asChild>
-              <Link href={`/admin/articles/${article.id}/edit`}>
+              <Link href={`/admin/dashboard/articles/${article.slug}/edit`}>
                 <Pen />
                 Edit
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem
-              onClick={() => console.log("Delete", article.id)}
+              onClick={handleDelete}
               className="text-destructive focus:text-destructive"
             >
               <Trash2Icon className="text-destructive" /> Delete
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleToggleStatus}>
+              {article.status === "PUBLISHED" ? (
+                <>
+                  <BookOpen /> Unpublish
+                </>
+              ) : (
+                <>
+                  <BookOpenCheck /> Publish
+                </>
+              )}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
