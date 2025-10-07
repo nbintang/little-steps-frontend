@@ -2,7 +2,7 @@
 import { DashboardPageLayout } from "@/features/admin/components/dashboard-page-layout";
 import { UpdateArticleForm } from "@/features/admin/components/form/update-article-form";
 import { useFetch } from "@/hooks/use-fetch";
-import { Article } from "@/types/articles";
+import { ContentAPI } from "@/types/content";
 import React, { use } from "react";
 
 export default function ArticlePage({
@@ -12,7 +12,7 @@ export default function ArticlePage({
 }) {
   const { slug } = use(params);
 
-  const { data, isLoading, error, isError } = useFetch<Article>({
+  const { data, isLoading, error, isError } = useFetch<ContentAPI>({
     keys: ["articles", slug],
     endpoint: `contents/${slug}`,
   });

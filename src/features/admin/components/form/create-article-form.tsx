@@ -1,7 +1,7 @@
 "use client";
 import { useCallback, useRef } from "react";
 import { useForm } from "react-hook-form";
-import { ArticleInput, articleSchema } from "../../schemas/article-schema";
+import { ArticleSchema, articleSchema } from "../../schemas/article-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
@@ -41,13 +41,13 @@ import { Content, Editor } from "@tiptap/react";
 import { categoryService } from "@/services/category-service";
 import { Spinner } from "@/components/ui/spinner";
 import { usePost } from "@/hooks/use-post";
-import { ArticleMutateResponse } from "@/types/articles";
+import { ContentMutateResponseAPI } from "@/types/content";
 import useUploadImage from "@/hooks/use-upload-image";
 import MinimalTiptapArticleEditor from "../content-editor/minimal-tiptap-article";
 
 export const CreateArticleForm = () => {
   const editorRef = useRef<Editor | null>(null);
-  const form = useForm<ArticleInput>({
+  const form = useForm<ArticleSchema>({
     resolver: zodResolver(articleSchema),
     defaultValues: {
       title: "",
@@ -82,7 +82,7 @@ export const CreateArticleForm = () => {
   );
 
   const { mutateAsync: uploadCoverImage } = useUploadImage();
-  const { mutate: createArticle, isPending } = usePost<ArticleMutateResponse>({
+  const { mutate: createArticle, isPending } = usePost<ContentMutateResponseAPI>({
     keys: ["articles"],
     endpoint: "contents",
     redirectUrl: "/admin/dashboard/articles",
@@ -95,7 +95,7 @@ export const CreateArticleForm = () => {
     },
   });
 
-  const onSubmit = async (data: ArticleInput) => {
+  const onSubmit = async (data: ArticleSchema) => {
     const resImage = await uploadCoverImage(data.coverImage[0]);
     const secureUrl = resImage.data?.secureUrl ?? null;
     await createArticle({

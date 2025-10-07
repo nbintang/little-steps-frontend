@@ -1,4 +1,4 @@
-export interface Articles {
+export interface ContentsAPI {
   id: string;
   slug: string;
   title: string;
@@ -15,11 +15,11 @@ export interface Articles {
     id: string;
     slug: string;
     name: string;
-  };
+  } | null;
   createdAt: string;
   updatedAt: string;
 }
-export type Article = {
+export type ContentAPI = {
   id: string
   slug: string
   title: string
@@ -32,12 +32,12 @@ export type Article = {
     id: string
     slug: string
     name: string
-  }
+  }| null
   createdAt: string
   updatedAt: string
 }
 
-export type ArticleMutateResponse = {
+export type ContentMutateResponseAPI = {
   id: string;
   title: string;
   slug: string;
@@ -56,7 +56,7 @@ export type ArticleMutateResponse = {
     id: string;
     slug: string;
     name: string;
-  };
+  }| null;
   author: {
     id: string;
     name: string;

@@ -1,7 +1,7 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { ArticleMutateResponse, Articles } from "@/types/articles";
+import { ContentMutateResponseAPI, ContentsAPI } from "@/types/content";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -24,7 +24,7 @@ import { useDisplayWarningDialog } from "@/hooks/use-display-warning-dialog";
 import { useDelete } from "@/hooks/use-delete";
 import { usePatch } from "@/hooks/use-patch";
 
-export const articleColumns: ColumnDef<Articles>[] = [
+export const articleColumns: ColumnDef<ContentsAPI>[] = [
   {
     accessorKey: "title",
     header: "Title",
@@ -47,7 +47,7 @@ export const articleColumns: ColumnDef<Articles>[] = [
     accessorKey: "category.name",
     header: "Category",
     cell: ({ row }) => (
-      <Badge variant="secondary">{row.original.category.name ?? "-"}</Badge>
+      <Badge variant="secondary">{row.original.category?.name ?? "-"}</Badge>
     ),
   },
   {
@@ -80,7 +80,7 @@ export const articleColumns: ColumnDef<Articles>[] = [
     header: "Created At",
     cell: ({ row }) => (
       <span className="text-muted-foreground">
-        {format(new Date(row.original.createdAt), "dd MMM yyyy")}
+        {format(new Date(row.original.createdAt), "dd MMM, yyyy")}
       </span>
     ),
   },
@@ -100,7 +100,7 @@ export const articleColumns: ColumnDef<Articles>[] = [
       const getNextStatus = (currentStatus: string) => {
         return currentStatus === "PUBLISHED" ? "DRAFT" : "PUBLISHED";
       };
-      const { mutate: publish } = usePatch<ArticleMutateResponse>({
+      const { mutate: publish } = usePatch<ContentMutateResponseAPI>({
         keys: ["articles"],
         endpoint: `contents/${article.slug}`,
         allowToast: true,

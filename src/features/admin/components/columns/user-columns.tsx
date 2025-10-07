@@ -111,7 +111,7 @@ export const userColumns: ColumnDef<UsersAPI>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-40">
             <DropdownMenuItem className="cursor-pointer" asChild>
-              <Link href={`/administrator/dashboard/users/${id}`}>
+              <Link href={`/admin/dashboard/users/${id}`}>
                 <Eye />
                 <span>View Details</span>
               </Link>

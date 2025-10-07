@@ -24,4 +24,4 @@ export const articleSchema = z.object({
   contentJson: z.custom<Content>().optional(),
 });
 
-export type ArticleInput = z.infer<typeof articleSchema>;
+export type ArticleSchema = z.infer<typeof articleSchema>;

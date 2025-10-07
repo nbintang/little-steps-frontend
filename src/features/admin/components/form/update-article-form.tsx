@@ -1,7 +1,7 @@
 "use client";
 import { useCallback, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
-import { ArticleInput, articleSchema } from "../../schemas/article-schema";
+import { ArticleSchema, articleSchema } from "../../schemas/article-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
@@ -39,24 +39,24 @@ import { AsyncSelect } from "@/components/ui/async-select";
 import { CategoryAPI } from "@/types/category";
 import { MinimalTiptapEditor } from "@/components/ui/minimal-tiptap";
 import { cn } from "@/lib/utils";
-import { Content, Editor } from "@tiptap/react";
+import { type Content as EditorContent, Editor } from "@tiptap/react";
 import { categoryService } from "@/services/category-service";
 import { Spinner } from "@/components/ui/spinner";
-import { Article, ArticleMutateResponse } from "@/types/articles";
+import { ContentAPI, ContentMutateResponseAPI } from "@/types/content";
 import useUploadImage from "@/hooks/use-upload-image";
 import { urlToFile } from "@/helpers/url-to-file";
 import { usePatch } from "@/hooks/use-patch";
 
-export const UpdateArticleForm = ({ article }: { article: Article }) => {
+export const UpdateArticleForm = ({ article }: { article: ContentAPI }) => {
   const editorRef = useRef<Editor | null>(null);
-  const form = useForm<ArticleInput>({
+  const form = useForm<ArticleSchema>({
     resolver: zodResolver(articleSchema),
     defaultValues: {
       title: article.title,
       excerpt: article.excerpt,
       coverImage: [],
       status: article.status,
-      categoryId: article.category.id,
+      categoryId: article.category?.id,
       contentJson: article.contentJson,
     },
   });
@@ -71,7 +71,7 @@ export const UpdateArticleForm = ({ article }: { article: Article }) => {
   const handleCreate = useCallback(
     ({ editor }: { editor: Editor }) => {
       if (form.getValues("contentJson") && editor.isEmpty) {
-        editor.commands.setContent(form.getValues("contentJson") as Content);
+        editor.commands.setContent(form.getValues("contentJson") as EditorContent);
       }
       editorRef.current = editor;
     },
@@ -79,7 +79,7 @@ export const UpdateArticleForm = ({ article }: { article: Article }) => {
   );
 
   const { mutateAsync: uploadCoverImage } = useUploadImage();
-  const { mutate: updateArticle, isPending } = usePatch<ArticleMutateResponse>({
+  const { mutate: updateArticle, isPending } = usePatch<ContentMutateResponseAPI>({
     keys: ["articles", article.slug],
     endpoint: `contents/${article.slug}`,
     redirectUrl: "/admin/dashboard/articles",
@@ -92,7 +92,7 @@ export const UpdateArticleForm = ({ article }: { article: Article }) => {
     },
   });
 
-  const onSubmit = async (data: ArticleInput) => {
+  const onSubmit = async (data: ArticleSchema) => {
     const resImage = await uploadCoverImage(data.coverImage[0]);
     const secureUrl = resImage.data?.secureUrl ?? null;
     await updateArticle({
