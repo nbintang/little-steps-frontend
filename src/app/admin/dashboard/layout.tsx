@@ -32,6 +32,7 @@ export default async function Layout({
       className="relative"
       defaultOpen={sidebarState}
     >
+
       <LoaderOverlay />
       <AppSidebar />
       <SidebarInset>

@@ -1,21 +1,19 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { StatCard } from "@/features/admin/components/stat-card";
-import { TableFilters } from "@/features/admin/components/table/table-filter";
 import { TableMain } from "@/features/admin/components/table/table-main";
-import { TablePagination } from "@/features/admin/components/table/table-pagination";
 import { TableSkeleton } from "@/features/admin/components/table/table-skeleton";
 import { useTable } from "@/features/admin/hooks/use-table";
 import { userColumns } from "@/features/admin/components/columns/user-columns";
-import { useFetch } from "@/hooks/use-fetch";
 import { useFetchPaginated } from "@/hooks/use-fetch-paginated";
 import { UsersAPI } from "@/types/user";
-import { ArrowRight, ArrowUpRight, Loader2 } from "lucide-react";
+import { ArrowUpRight, Loader2 } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useDebounce } from "use-debounce";
+import { ErrorDynamicPage } from "@/components/error-dynamic";
+import Link from "next/link";
 
 export default function Page() {
   const searchParams = useSearchParams();
@@ -85,11 +83,7 @@ export default function Page() {
   }
 
   if (isError || error) {
-    return (
-      <div className="flex items-center justify-center gap-2">
-        <span className="text-destructive">{error?.message}</span>
-      </div>
-    );
+    return <ErrorDynamicPage statusCode={500} message={error?.message} />;
   }
   return (
     <>
@@ -122,9 +116,10 @@ export default function Page() {
               total={data.meta?.totalItems ?? 0}
             /> */}
             <div className="flex items-center justify-start gap-2">
-              <Button variant={"outline"} className="flex  gap-2">
-                See More Users
-                <ArrowUpRight />
+              <Button variant={"outline"} className="flex  gap-2" asChild>
+                <Link href="/admin/dashboard/users">
+                  See More Users <ArrowUpRight />
+                </Link>
               </Button>
             </div>
           </>

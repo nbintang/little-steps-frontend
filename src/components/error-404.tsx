@@ -10,12 +10,12 @@ import {
   EmptyTitle,
 } from "@/components/ui/empty";
 
-export function Empty404() {
+export function Error404() {
   return (
     <Empty >
       <EmptyHeader>
         <EmptyMedia variant="icon">
-          <AlertTriangle className="w-12 h-12 text-destructive" />
+          <AlertTriangle className="w-12 h-12" />
         </EmptyMedia>
         <EmptyTitle>404 - Ups!, Halaman Tidak Ditemukan</EmptyTitle>
         <EmptyDescription>

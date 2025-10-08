@@ -1,5 +1,5 @@
-import { Empty404 } from "@/components/empty-404";
+import { Error404 } from "@/components/error-404";
 
 export default function NotFound() {
-  return <Empty404 />;
+  return <Error404 />;
 }

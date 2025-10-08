@@ -13,6 +13,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useFetchPaginated } from "@/hooks/use-fetch-paginated";
 import { useTable } from "@/features/admin/hooks/use-table";
+import { ErrorDynamicPage } from "@/components/error-dynamic";
 
 type AdminTablePageProps<T> = {
   title: string;
@@ -74,12 +75,14 @@ export function AdminTablePage<T>({
             }}
             className="w-full max-w-md"
           />
-          <Button variant={"default"} asChild>
-            <Link href={"/admin/dashboard/quizzes/new"}>
-              <PlusCircle />
-              Buat quiz Baru
-            </Link>
-          </Button>
+          {newButton && (
+            <Button asChild>
+              <Link href={newButton.href}>
+                <PlusCircle />
+                {newButton.label}
+              </Link>
+            </Button>
+          )}
         </div>
         <TableSkeleton />
       </DashboardPageLayout>
@@ -87,13 +90,7 @@ export function AdminTablePage<T>({
   }
 
   if (isError || error) {
-    return (
-      <DashboardPageLayout title={title}>
-        <div className="flex items-center justify-center gap-2">
-          <span className="text-destructive">{error?.message}</span>
-        </div>
-      </DashboardPageLayout>
-    );
+    return <ErrorDynamicPage statusCode={500} message={error?.message} />;
   }
   return (
     <DashboardPageLayout title={title}>

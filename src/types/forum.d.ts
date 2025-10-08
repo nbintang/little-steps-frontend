@@ -1,27 +1,30 @@
 export interface Author {
-  id: string
-  name: string
-  avatarUrl?: string
+  id: string;
+  name: string;
+  profile: {
+    avatarUrl?: string;
+  };
 }
 
-export interface ForumThreadListItem {
-  id: string
-  title: string
-  createdAt: string 
-  author: Author
+export interface ForumThreadListItemAPI {
+  id: string;
+  title: string;
+  description: string | null;
+  createdAt: Date | string;
+  author: Author;
 }
 
 export interface Post {
-  id: string
-  content: string
-  createdAt: string // ISO string
-  author: Author
+  id: string;
+  content: string;
+  createdAt: Date | string; // ISO string
+  author: Author;
 }
 
-export interface ForumThreadDetail {
-  id: string
-  title: string
-  createdAt: string // ISO string
-  author: Author
-  posts: Post[]
+export interface ForumThreadDetailAPI {
+  id: string;
+  title: string;
+  createdAt: Date | string; // ISO string
+  author: Author;
+  posts: Post[];
 }

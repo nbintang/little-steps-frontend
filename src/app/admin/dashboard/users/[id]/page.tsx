@@ -49,7 +49,6 @@ export default function UserPage({
     <div className="flex flex-col gap-4">
       <UserDetailCard user={user} />
       <div>
-        {" "}
         <Button variant={"destructive"} onClick={handleDelete}>
           <Trash2Icon /> Delete User
         </Button>
