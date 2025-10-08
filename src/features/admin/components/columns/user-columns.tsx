@@ -15,6 +15,8 @@ import { DotsVerticalIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
+import { useDelete } from "@/hooks/use-delete";
+import { useDisplayWarningDialog } from "@/hooks/use-display-warning-dialog";
 
 export const userColumns: ColumnDef<UsersAPI>[] = [
   {
@@ -90,17 +92,21 @@ export const userColumns: ColumnDef<UsersAPI>[] = [
     id: "actions",
     cell: ({ row }) => {
       const id = row.original.id;
-      // const setOpenDeleteDialog = useHandleWarningDialog(
-      //   (state) => state.setOpenDialog
-      // );
-      // const { mutate } = useDeleteUser(id);
-      // const handleDeleteUser = () =>
-      //   setOpenDeleteDialog({
-      //     isOpen: true,
-      //     title: "Delete User",
-      //     description: "Are you sure you want to delete this user?",
-      //     onConfirm: () => mutate(),
-      //   });
+      const setOpenDeleteDialog = useDisplayWarningDialog(
+        (state) => state.setOpenDialog
+      );
+      const { mutate } = useDelete({
+        keys: "users",
+        endpoint: `users/${id}`,
+      });
+      const closeDialog = useDisplayWarningDialog((state) => state.closeDialog);
+      const handleDelete = () =>
+        setOpenDeleteDialog({
+          isOpen: true,
+          title: "Delete User",
+          description: "Are you sure you want to delete this user?",
+          onConfirm: () => (closeDialog(), mutate()),
+        });
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -119,7 +125,7 @@ export const userColumns: ColumnDef<UsersAPI>[] = [
             <DropdownMenuSeparator />
             <DropdownMenuItem
               variant="destructive"
-              // onClick={handleDeleteUser}
+              onClick={handleDelete}
               className="cursor-pointer  "
             >
               <Trash2 />

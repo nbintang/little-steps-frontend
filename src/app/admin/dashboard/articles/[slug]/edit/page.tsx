@@ -1,6 +1,6 @@
 "use client";
 import { DashboardPageLayout } from "@/features/admin/components/dashboard-page-layout";
-import { UpdateArticleForm } from "@/features/admin/components/form/update-article-form";
+import { UpdateArticleForm } from "@/features/admin/components/form/article/update-article-form";
 import { useFetch } from "@/hooks/use-fetch";
 import { ContentAPI } from "@/types/content";
 import React, { use } from "react";
@@ -29,9 +29,9 @@ export default function ArticlePage({
     );
   }
 
-  if (isError || !data) {
-    return <div>{error?.message}</div>;
-  }
+
+  if (isError || !data) return <div>{error?.message}</div>;
+
 
   return (
     <DashboardPageLayout title={`Update ${data?.title}`}>

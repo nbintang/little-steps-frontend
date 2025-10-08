@@ -26,8 +26,6 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { ProfileAPI } from "@/types/profile";
-import { toast } from "sonner";
-import { api } from "@/lib/axios-instance/api";
 import { useLogout } from "@/features/auth/hooks/use-logout";
 
 export function NavUser({ user }: { user: ProfileAPI }) {

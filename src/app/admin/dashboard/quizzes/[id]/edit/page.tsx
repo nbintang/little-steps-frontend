@@ -24,7 +24,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
   });
   const { data: questions, isLoading, isError, isSuccess, isFetching, error } =
     useFetchPaginated<QuestionAPI[]>({
-      key: "questions",
+      key: ["questions", id],
       endpoint: `quizzes/${id}/questions`,
       query: {
         page,

@@ -13,7 +13,7 @@ import {
   Form,
 } from "@/components/ui/form";
 import { Separator } from "@/components/ui/separator";
-import { CreateQuizSchema } from "../../../schemas/quiz-schema";
+import { QuizSchema } from "../../../schemas/quiz-schema";
 import MinimalTiptapQuestionEditor from "../../content-editor/minimal-tiptap-question";
 import { cn } from "@/lib/utils";
 import { Editor } from "@tiptap/react";
@@ -21,7 +21,7 @@ import { AnswerField } from "./answer-field";
 import { Label } from "@/components/ui/label";
 interface QuestionCardProps {
   questionIndex: number;
-  form: UseFormReturn<CreateQuizSchema>;
+  form: UseFormReturn<QuizSchema>;
   removeQuestion: (index: number) => void;
   totalQuestions: number;
   handleCreate: ({ editor }: { editor: Editor }) => void;
@@ -67,8 +67,7 @@ export function QuestionCard({
         )}
       </CardHeader>
 
-      <CardContent className="space-y-6">
-        {/* === Form Field untuk Isi Pertanyaan === */}
+      <CardContent className="space-y-6"> 
         <FormField
           control={form.control}
           name={`questions.${questionIndex}.questionJson` as const}
@@ -101,8 +100,7 @@ export function QuestionCard({
         />
 
         <Separator />
-
-        {/* === Bagian Pilihan Jawaban === */}
+ 
 
         <div className="space-y-4">
           {answerFields.map((answer, answerIndex) => (
@@ -111,10 +109,7 @@ export function QuestionCard({
               questionIndex={questionIndex}
               answerIndex={answerIndex}
               form={form}
-              removeAnswer={removeAnswer}
-              // handleImageUpload={handleImageUpload}
-              // removeImage={removeImage}
-              // selectedImages={selectedImages}
+              removeAnswer={removeAnswer} 
               totalAnswers={answerFields.length}
             />
           ))}
@@ -132,8 +127,7 @@ export function QuestionCard({
               <Plus size={16} />
               Tambah Jawaban
             </Button>
-          </div>
-          {/* Pesan error level answers */}
+          </div> 
           {form.formState.errors.questions?.[questionIndex]?.answers && (
             <p className="text-red-500 text-sm">
               {form.formState.errors.questions[questionIndex]?.answers?.message}

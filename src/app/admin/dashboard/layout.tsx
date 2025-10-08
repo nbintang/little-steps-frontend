@@ -14,6 +14,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { cookies } from "next/headers";
+import { LoaderOverlay } from "@/components/loading-overlay";
 
 export default async function Layout({
   children,
@@ -28,8 +29,10 @@ export default async function Layout({
           "--sidebar-width": "19rem",
         } as React.CSSProperties
       }
+      className="relative"
       defaultOpen={sidebarState}
     >
+      <LoaderOverlay />
       <AppSidebar />
       <SidebarInset>
         <header className="flex h-16 shrink-0 items-center gap-2">

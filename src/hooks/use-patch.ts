@@ -16,6 +16,7 @@ type PostProps = {
   allowToast?: boolean;
   toastMessage?: string;
   config?: AxiosRequestConfig;
+
 };
 
 export const usePatch = <T = any, I = any>({
@@ -25,6 +26,7 @@ export const usePatch = <T = any, I = any>({
   allowToast = true,
   toastMessage,
   config,
+  
 }: PostProps): UseMutationResult<SuccessResponse<T>, AxiosError, I, void> => {
   const router = useRouter();
   const queryClient = useQueryClient();

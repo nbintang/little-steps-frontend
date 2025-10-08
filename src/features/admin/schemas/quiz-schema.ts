@@ -2,7 +2,8 @@ import { z } from "zod";
 import { Content } from "@tiptap/react";
 import { imageSchema } from "@/schemas/image-schema";
 
-export const createQuestionSchema = z.object({
+export const questionSchema = z.object({
+  id: z.string().optional(),
   questionJson: z.custom<Content>().optional(),
   answers: z
     .array(
@@ -15,7 +16,7 @@ export const createQuestionSchema = z.object({
               MAX_DIMENSIONS: { width: 800, height: 800 },
               MIN_DIMENSIONS: { width: 200, height: 200 },
             }),
-            z.string().url().or(z.literal("")).nullable(), // biar URL aman
+            z.url().or(z.literal("")).nullable(), // biar URL aman
           ])
         ),
       })
@@ -27,9 +28,9 @@ export const createQuestionSchema = z.object({
     ),
 });
 
-export type CreateQuestionSchema = z.infer<typeof createQuestionSchema>;
+export type CreateQuestionSchema = z.infer<typeof questionSchema>;
 
-export const createQuizSchema = z.object({
+export const quizSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters long"),
   description: z
     .string()
@@ -37,8 +38,8 @@ export const createQuizSchema = z.object({
   duration: z.number().positive("Duration must be greater than 0"),
   categoryId: z.uuid("Invalid category ID format"),
   questions: z
-    .array(createQuestionSchema)
+    .array(questionSchema)
     .min(1, "Quiz must have at least one question"),
 });
 
-export type CreateQuizSchema = z.infer<typeof createQuizSchema>;
+export type QuizSchema = z.infer<typeof quizSchema>;

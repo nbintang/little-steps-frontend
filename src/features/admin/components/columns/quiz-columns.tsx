@@ -13,6 +13,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { DotsVerticalIcon } from "@radix-ui/react-icons";
 import { format, formatDuration, intervalToDuration } from "date-fns";
+import { useDisplayWarningDialog } from "@/hooks/use-display-warning-dialog";
+import { useDelete } from "@/hooks/use-delete";
 
 export const quizColumns: ColumnDef<QuizzesAPI>[] = [
   {
@@ -63,32 +65,51 @@ export const quizColumns: ColumnDef<QuizzesAPI>[] = [
   {
     id: "actions",
     header: "Actions",
-    cell: ({ row }) => (
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="h-8 w-8 p-0">
-            <span className="sr-only">Open menu</span>
-            <DotsVerticalIcon className="h-4 w-4" />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-40">
-          <DropdownMenuItem className="cursor-pointer" asChild>
-            <Link href={`/admin/dashboard/quizzes/${row.original.id}/edit`}>
-              <Eye />
-              <span>View Quiz Details</span>
-            </Link>
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem
-            variant="destructive"
-            // onClick={handleDeleteUser}
-            className="cursor-pointer  "
-          >
-            <Trash2 />
-            Delete Quiz
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    ),
+    cell: ({ row }) => {
+      const quiz = row.original;
+      const setOpenDeleteDialog = useDisplayWarningDialog(
+        (state) => state.setOpenDialog
+      );
+      const closeDialog = useDisplayWarningDialog((state) => state.closeDialog);
+      const { mutate: deleteQuiz } = useDelete({
+        keys: "quizzes",
+        toastMessage: "Quiz deleted successfully",
+        endpoint: `quizzes/${quiz.id}`,
+      });
+      const handleDelete = () =>
+        setOpenDeleteDialog({
+          isOpen: true,
+          title: "Hapus Quiz",
+          description: "Apakah anda yakin ingin menghapus quiz ini?",
+          onConfirm: () => (closeDialog(), deleteQuiz()),
+        });
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <span className="sr-only">Open menu</span>
+              <DotsVerticalIcon className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-40">
+            <DropdownMenuItem className="cursor-pointer" asChild>
+              <Link href={`/admin/dashboard/quizzes/${row.original.id}/edit`}>
+                <Eye />
+                <span>View Quiz Details</span>
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              variant="destructive"
+              onClick={handleDelete}
+              className="cursor-pointer  "
+            >
+              <Trash2 />
+              Delete Quiz
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      );
+    },
   },
 ];

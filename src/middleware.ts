@@ -16,7 +16,6 @@ export async function middleware(req: NextRequest) {
   const isProtected =
     pathname.startsWith("/admin") || pathname.startsWith("/parent");
 
-  // jika token gada, dan coba akses protected, redirect ke sign in
   if (!accessToken) {
     if (isProtected) {
       return NextResponse.redirect(new URL("/login", req.url));
@@ -44,7 +43,6 @@ export async function middleware(req: NextRequest) {
     }
   }
 
-  // Role guard: jika role tidak sesuai dengan prefix url, redirect ke dashboardnya
   if (role === "ADMINISTRATOR" && !pathname.startsWith("/admin")) {
     return NextResponse.redirect(new URL("/administrator/dashboard", req.url));
   }

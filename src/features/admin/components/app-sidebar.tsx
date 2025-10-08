@@ -31,6 +31,7 @@ import {
   MessageSquare,
   Tornado,
   LayoutDashboard,
+  BookMarked,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -45,7 +46,7 @@ const data = {
       title: "Articles",
       url: "/admin/dashboard/articles",
       icon: FileText,
-      items: [ 
+      items: [
         {
           title: "Create Article",
           url: "/admin/dashboard/articles/new",
@@ -53,21 +54,24 @@ const data = {
       ],
     },
     {
+      title: "Fictions",
+      url: "/admin/dashboard/fictions",
+      icon: BookMarked,
+      items: [
+        {
+          title: "Create Fiction",
+          url: "/admin/dashboard/fictions/new",
+        },
+      ],
+    },
+    {
       title: "Quizzes",
       url: "/admin/dashboard/quizzes",
       icon: ListChecks,
-      items: [ 
+      items: [
         {
           title: "Create Quiz",
-          url: "/admin/dashboard/quizzes/create",
-        },
-        {
-          title: "Questions",
-          url: "/admin/dashboard/questions",
-        },
-        {
-          title: "Answers",
-          url: "/admin/dashboard/answers",
+          url: "/admin/dashboard/quizzes/new",
         },
       ],
     },
@@ -75,12 +79,6 @@ const data = {
       title: "Users",
       url: "/admin/dashboard/users",
       icon: Users,
-      items: [
-        {
-          title: "Manage Users",
-          url: "/admin/dashboard/users",
-        },
-      ],
     },
     {
       title: "Forum",

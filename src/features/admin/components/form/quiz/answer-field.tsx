@@ -11,15 +11,9 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
-import { CreateQuizSchema } from "@/features/admin/schemas/quiz-schema";
+import { QuizSchema } from "@/features/admin/schemas/quiz-schema";
 import {
   FileUpload,
-  FileUploadDropzone,
-  FileUploadItem,
-  FileUploadItemDelete,
-  FileUploadItemMetadata,
-  FileUploadItemPreview,
-  FileUploadItemProgress,
   FileUploadList,
   FileUploadTrigger,
 } from "@/components/ui/file-upload";
@@ -30,7 +24,7 @@ import Image from "next/image";
 interface AnswerFieldProps {
   questionIndex: number;
   answerIndex: number;
-  form: UseFormReturn<CreateQuizSchema>;
+  form: UseFormReturn<QuizSchema>;
   removeAnswer: (index: number) => void;
   totalAnswers: number;
 }
@@ -65,7 +59,6 @@ export function AnswerField({
     }
   }, [imageValue]);
 
-  // fungsi hapus image
   const removeImage = () => {
     form.setValue(
       `questions.${questionIndex}.answers.${answerIndex}.imageAnswer`,
@@ -131,8 +124,7 @@ export function AnswerField({
                 </FormItem>
               )}
             />
-
-            {/* ✅ Image Upload + Delete */}
+ 
             <FormField
               control={form.control}
               name={`questions.${questionIndex}.answers.${answerIndex}.imageAnswer`}

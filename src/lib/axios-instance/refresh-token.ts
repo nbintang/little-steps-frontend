@@ -7,9 +7,7 @@ export const refreshToken = async () => {
     const response = await axios.post(
       `${BACKEND_PROD_URL}/api/auth/refresh-token`,
       null,
-      {
-        withCredentials: true,
-      }
+      { withCredentials: true }
     );
     const accessToken = response.data.data.accessToken;
     saveToken(

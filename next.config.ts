@@ -28,6 +28,11 @@ const nextConfig: NextConfig = {
         hostname: "png.pngtree.com",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "upload.wikimedia.org",
+        pathname: "/**",
+      },
     ],
   },
 };
