@@ -32,6 +32,7 @@ import {
   Tornado,
   LayoutDashboard,
   BookMarked,
+  Tags,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -84,12 +85,11 @@ const data = {
       title: "Forum",
       url: "/admin/dashboard/forum",
       icon: MessageSquare,
-      items: [
-        {
-          title: "Forum Topics",
-          url: "/admin/dashboard/forum",
-        },
-      ],
+    },
+    {
+      title: "Kategori",
+      url: "/admin/dashboard/categories",
+      icon: Tags,
     },
   ],
   navSecondary: [

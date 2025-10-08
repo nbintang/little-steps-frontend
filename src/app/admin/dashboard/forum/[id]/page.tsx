@@ -52,6 +52,7 @@ export default function ForumPost({
   } = useFetchInfinite<Post>({
     keys: ["forum", id, "posts"],
     endpoint: `forum/${id}/posts`,
+    config: { params: { limit: 2 } }
   });
 
   useEffect(() => {
@@ -112,15 +113,6 @@ export default function ForumPost({
           {isFetchingNextPage && <Spinner />}
         </div>
       )}
-
-      <div className="mt-8">
-        <Link
-          href="/forum"
-          className="text-sm text-primary underline underline-offset-4"
-        >
-          Back to forum
-        </Link>
-      </div>
     </main>
   );
 }

@@ -22,7 +22,8 @@ type AdminTablePageProps<T> = {
   type?: string;
   newButton?: {
     label: string;
-    href: string;
+    href?: string;
+    onClick?: () => void;
   };
 };
 
@@ -75,14 +76,20 @@ export function AdminTablePage<T>({
             }}
             className="w-full max-w-md"
           />
-          {newButton && (
-            <Button asChild>
-              <Link href={newButton.href}>
+          {newButton &&
+            (newButton.href ? (
+              <Button asChild>
+                <Link href={newButton.href}>
+                  <PlusCircle />
+                  {newButton.label}
+                </Link>
+              </Button>
+            ) : (
+              <Button onClick={newButton.onClick}>
                 <PlusCircle />
                 {newButton.label}
-              </Link>
-            </Button>
-          )}
+              </Button>
+            ))}
         </div>
         <TableSkeleton />
       </DashboardPageLayout>
@@ -105,14 +112,20 @@ export function AdminTablePage<T>({
           }}
           className="w-full max-w-md"
         />
-        {newButton && (
-          <Button asChild>
-            <Link href={newButton.href}>
+        {newButton &&
+          (newButton.href ? (
+            <Button asChild>
+              <Link href={newButton.href}>
+                <PlusCircle />
+                {newButton.label}
+              </Link>
+            </Button>
+          ) : (
+            <Button onClick={newButton.onClick}>
               <PlusCircle />
               {newButton.label}
-            </Link>
-          </Button>
-        )}
+            </Button>
+          ))}
       </div>
 
       <TableMain<T> table={table} />
