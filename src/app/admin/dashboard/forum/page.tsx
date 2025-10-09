@@ -1,14 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import type { ForumThreadListItemAPI } from "@/types/forum";
 import { ThreadCard } from "@/features/admin/components/forum/thread-card";
-import { cn } from "@/lib/utils";
-import { Kbd, KbdGroup } from "@/components/ui/kbd";
 import {
   InputGroup,
   InputGroupAddon,
@@ -117,7 +112,8 @@ export default function ForumThread() {
   }
 
   // Show error state
-  if (isError || error)  return <ErrorDynamicPage statusCode={500} message={error?.message} />;
+  if (isError || error)
+    return <ErrorDynamicPage statusCode={500} message={error?.message} />;
 
   return (
     <DashboardPageLayout title="Forum">

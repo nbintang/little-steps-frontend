@@ -30,7 +30,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import GoogleIcon from "@/components/icons/google-icon";
 import { saveToken } from "@/helpers/save-token";
 import { AuthFormHeader } from "./auth-form-header";
-import { BACKEND_PROD_URL } from "@/constants/api-url";
+import { BACKEND_URL } from "@/constants/api-url";
 import { AuthFooter } from "./auth-footer";
 
 export function LoginForm({
@@ -94,7 +94,7 @@ export function LoginForm({
       .unwrap();
 
   const handleLoginGoole = () =>
-    (window.location.href = `${BACKEND_PROD_URL}/api/auth/google-login`);
+    (window.location.href = `${BACKEND_URL}/api/auth/google-login`);
 
   return (
     <Form {...form}>

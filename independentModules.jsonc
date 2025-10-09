@@ -33,6 +33,12 @@
       "errorMessage": "🔥 Shared folders are not allowed to import items from the `features` and `app` folders. 🔥"
     },
     {
+      "name": "Middleware",
+      "pattern": ["src/middleware.ts"],
+      "allowImportsFrom": ["{sharedImports}"],
+      "errorMessage": "🔥 Middleware may only import items from shared folders. 🔥"
+    },
+    {
       "name": "Unknown files",
       "pattern": ["src/**", "!src/*"],
       "allowImportsFrom": [],

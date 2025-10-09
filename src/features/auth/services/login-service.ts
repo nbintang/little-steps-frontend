@@ -1,5 +1,5 @@
 import { LoginValues } from "../schemas/login-schema";
-import { BACKEND_PROD_URL } from "@/constants/api-url";
+import { BACKEND_URL } from "@/constants/api-url";
 import { SuccessResponse } from "@/types/response";
 import { api } from "@/lib/axios-instance/api";
 

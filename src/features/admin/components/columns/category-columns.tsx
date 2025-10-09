@@ -36,7 +36,7 @@ export const categoryColumns: ColumnDef<CategoryAPI>[] = [
     cell: ({ row }) => {
       const category = row.original;
       const open = useDisplayCategoryDialog((state) => state.open);
-      const handleOpenDialog = () => open(category);
+      const handleOpenDialog = async () => await open(category);
       const setOpenDeleteDialog = useDisplayWarningDialog(
         (state) => state.setOpenDialog
       );

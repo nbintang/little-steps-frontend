@@ -9,9 +9,7 @@ import { userColumns } from "@/features/admin/components/columns/user-columns";
 import { useFetchPaginated } from "@/hooks/use-fetch-paginated";
 import { UsersAPI } from "@/types/user";
 import { ArrowUpRight, Loader2 } from "lucide-react";
-import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
-import { useDebounce } from "use-debounce";
+import { useSearchParams } from "next/navigation"; 
 import { ErrorDynamicPage } from "@/components/error-dynamic";
 import Link from "next/link";
 
@@ -19,10 +17,6 @@ export default function Page() {
   const searchParams = useSearchParams();
   const page = Number(searchParams.get("page") ?? 1);
   const limit = Number(searchParams.get("limit") ?? 10);
-
-  const [searchKeyword, setSearchKeyword] = useState<string>("");
-  const [isSearching, setIsSearching] = useState<boolean>(false);
-  const [debounceSearch, debounceSearchState] = useDebounce(searchKeyword, 500);
   const { data, isLoading, isError, isSuccess, isFetching, error } =
     useFetchPaginated<UsersAPI[]>({
       key: "users",
@@ -30,14 +24,8 @@ export default function Page() {
       query: {
         page,
         limit,
-        keyword: debounceSearch,
       },
     });
-  useEffect(() => {
-    if (debounceSearchState.isPending()) {
-      setIsSearching(true);
-    }
-  }, [debounceSearchState]);
 
   const { table } = useTable<UsersAPI>({
     columns: userColumns,
@@ -55,20 +43,13 @@ export default function Page() {
       </>
     );
   }
-  if (isLoading || isSearching || isFetching) {
+  if (isLoading || isFetching) {
     return (
       <>
         <StatCard />
         <div className="flex flex-1 flex-col mx-3 md:mx-5 gap-2 py-4  md:gap-4 md:py-6">
           <div className="flex items-start gap-x-3 justify-start rounded-b-md  ">
-            {/* <TableFilters<UsersAPI> table={table} /> */}
             <div className="relative w-full max-w-md">
-              {/* <Input
-                placeholder="Search users..."
-                value={searchKeyword}
-                onChange={(e) => setSearchKeyword(e.target.value)}
-                className="w-full"
-              /> */}
               {isFetching && (
                 <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
                   <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
@@ -92,29 +73,8 @@ export default function Page() {
         <StatCard />
         {isSuccess && (
           <>
-            <div className="flex items-start gap-x-3 justify-start rounded-b-md  ">
-              {/* <TableFilters<UsersAPI> table={table} />
-              <div className="relative w-full max-w-md">
-                <Input
-                  placeholder="Search users..."
-                  value={searchKeyword}
-                  onChange={(e) => setSearchKeyword(e.target.value)}
-                  className="w-full"
-                />
-                {isFetching && (
-                  <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                    <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
-                  </div>
-                )}
-              </div> */}
-            </div>
+            <div className="flex items-start gap-x-3 justify-start rounded-b-md  "></div>
             <TableMain<UsersAPI> table={table} />
-            {/* <TablePagination<UsersAPI>
-              limit={limit}
-              page={page}
-              table={table}
-              total={data.meta?.totalItems ?? 0}
-            /> */}
             <div className="flex items-center justify-start gap-2">
               <Button variant={"outline"} className="flex  gap-2" asChild>
                 <Link href="/admin/dashboard/users">

@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/sidebar";
 import { ProfileAPI } from "@/types/profile";
 import { useLogout } from "@/features/auth/hooks/use-logout";
+import Link from "next/link";
 
 export function NavUser({ user }: { user: ProfileAPI }) {
   const { isMobile } = useSidebar();
@@ -78,9 +79,11 @@ export function NavUser({ user }: { user: ProfileAPI }) {
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <BadgeCheck />
-                Account
+              <DropdownMenuItem asChild>
+                <Link href="/admin/settings/account">
+                  <BadgeCheck />
+                  Account
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <CreditCard />

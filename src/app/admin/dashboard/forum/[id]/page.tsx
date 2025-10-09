@@ -6,12 +6,13 @@ import { useFetch } from "@/hooks/use-fetch";
 import { useFetchInfinite } from "@/hooks/use-fetch-infinite";
 import { ForumThreadListItemAPI, Post } from "@/types/forum";
 import { format } from "date-fns";
-import Link from "next/link";
 import { use, useEffect } from "react";
 import { useInView } from "react-intersection-observer";
 import { ErrorDynamicPage } from "@/components/error-dynamic";
 import { Spinner } from "@/components/ui/spinner";
 import { ForumThreadDetailSkeleton } from "@/features/admin/components/forum/forum-thread-detail-skeleton";
+import { Reply } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 function initials(name: string) {
   return name
@@ -52,7 +53,7 @@ export default function ForumPost({
   } = useFetchInfinite<Post>({
     keys: ["forum", id, "posts"],
     endpoint: `forum/${id}/posts`,
-    config: { params: { limit: 2 } }
+    config: { params: { limit: 2 } },
   });
 
   useEffect(() => {
@@ -61,45 +62,55 @@ export default function ForumPost({
     }
   }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  // 🧭 Loading State
   if (threadLoading || postsLoading) return <ForumThreadDetailSkeleton />;
-
-  // ❌ Error State
   if (threadError || postsError) return <ErrorDynamicPage statusCode={500} />;
 
-  // ✅ Normal Render
   return (
     <main className="container mx-auto max-w-4xl px-4 py-8">
       <header className="mt-6">
-        <h1 className="text-2xl font-semibold text-balance">{thread?.title}</h1>
-        <div className="mt-3 flex items-center gap-3">
-          <Avatar className="h-8 w-8">
-            <AvatarImage
-              src={thread?.author?.profile?.avatarUrl || ""}
-              alt={`Avatar of ${thread?.author?.name}`}
-            />
-            <AvatarFallback aria-hidden>
-              {thread?.author?.name ? initials(thread.author.name) : "?"}
-            </AvatarFallback>
-          </Avatar>
-          <div className="text-sm text-muted-foreground">
-            {thread?.author?.name}
+        <div>
+          <h1 className="text-2xl font-semibold text-balance">
+            {thread?.title}
+          </h1>
+          <p className="text-base mt-2 font-normal text-muted-foreground">
+            {thread?.title}
+          </p>
+        </div>
+        <div className="flex items-end justify-between">
+          <div className="mt-3 flex items-center gap-3">
+            <Avatar className="h-8 w-8">
+              <AvatarImage
+                src={thread?.author?.profile?.avatarUrl || ""}
+                alt={`Avatar of ${thread?.author?.name}`}
+              />
+              <AvatarFallback aria-hidden>
+                {thread?.author?.name ? initials(thread.author.name) : "?"}
+              </AvatarFallback>
+            </Avatar>
+            <div className="text-sm text-muted-foreground">
+              {thread?.author?.name}
+            </div>
+            <span className="text-xs text-muted-foreground">
+              {thread?.createdAt
+                ? format(new Date(thread.createdAt), "dd MMM, yyyy")
+                : ""}
+            </span>
           </div>
-          <span className="text-xs text-muted-foreground">
-            {thread?.createdAt
-              ? format(new Date(thread.createdAt), "dd MMM, yyyy")
-              : ""}
-          </span>
+          <Button variant={"ghost"}>
+            <Reply />
+            <p>Reply</p>
+          </Button>
         </div>
       </header>
 
       <Separator className="my-6" />
 
-      {/* ✅ gunakan posts dari useFetchInfinite */}
       <section aria-label="Posts" className="space-y-4">
         {posts?.pages?.[0]?.data?.length ? (
-          posts.pages.flatMap((page) =>
-            page.data?.map((p) => <PostItem key={p.id} post={p} />)
+          posts.pages.flatMap((page, pageIndex) =>
+            page.data?.map((p, postIndex) => (
+              <PostItem key={`${p.id}-${pageIndex}-${postIndex}`} post={p} />
+            ))
           )
         ) : (
           <p className="text-sm text-muted-foreground text-center py-6">

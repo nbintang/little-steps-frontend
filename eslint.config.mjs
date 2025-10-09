@@ -43,6 +43,11 @@ export default [
         },
         {
           mode: "full",
+          type: "config",
+          pattern: ["src/middleware.ts"],
+        },
+        {
+          mode: "full",
           type: "feature",
           capture: ["featureName"],
           pattern: ["src/features/*/**/*"],
@@ -82,6 +87,10 @@ export default [
             {
               from: ["app"],
               allow: [["app", { fileName: "*.css" }]],
+            },
+            {
+              from: ["config"],
+              allow: ["shared"],
             },
           ],
         },

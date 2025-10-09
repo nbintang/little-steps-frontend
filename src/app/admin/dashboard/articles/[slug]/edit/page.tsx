@@ -1,4 +1,5 @@
 "use client";
+import { ErrorDynamicPage } from "@/components/error-dynamic";
 import { DashboardPageLayout } from "@/features/admin/components/dashboard-page-layout";
 import { UpdateArticleForm } from "@/features/admin/components/form/article/update-article-form";
 import { useFetch } from "@/hooks/use-fetch";
@@ -13,7 +14,7 @@ export default function ArticlePage({
   const { slug } = use(params);
 
   const { data, isLoading, error, isError } = useFetch<ContentAPI>({
-    keys: ["articles", slug],
+    keys: ["contents", slug],
     endpoint: `contents/${slug}`,
   });
   if (isLoading) {
@@ -30,7 +31,7 @@ export default function ArticlePage({
   }
 
 
-  if (isError || !data) return <div>{error?.message}</div>;
+  if (isError || error || !data) return  <ErrorDynamicPage statusCode={500} />;
 
 
   return (

@@ -36,7 +36,7 @@ export const quizSchema = z.object({
     .string()
     .min(10, "Description must be at least 10 characters long"),
   duration: z.number().positive("Duration must be greater than 0"),
-  categoryId: z.uuid("Invalid category ID format"),
+  categoryId: z.uuid("Please select a category"),
   questions: z
     .array(questionSchema)
     .min(1, "Quiz must have at least one question"),

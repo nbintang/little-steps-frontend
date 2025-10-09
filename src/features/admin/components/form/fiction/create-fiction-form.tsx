@@ -1,7 +1,7 @@
 "use client";
-import { useCallback, useRef } from "react";
+import { useCallback, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { ContentSchema, contentSchema } from "../../../schemas/content-schema";
+import { fictionSchema, FictionSchema } from "../../../schemas/content-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
@@ -45,11 +45,18 @@ import { ContentMutateResponseAPI } from "@/types/content";
 import useUploadImage from "@/hooks/use-upload-image";
 import { ContentType } from "../../../utils/content-type";
 import MinimalTiptapFictionEditor from "../../content-editor/minimal-tiptap-fiction";
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+} from "@/components/ui/empty";
 
 export const CreateFictionForm = () => {
   const editorRef = useRef<Editor | null>(null);
-  const form = useForm<ContentSchema>({
-    resolver: zodResolver(contentSchema),
+  const [refreshKey, setRefreshKey] = useState(0);
+  const form = useForm<FictionSchema>({
+    resolver: zodResolver(fictionSchema),
     defaultValues: {
       title: "",
       excerpt: "",
@@ -95,7 +102,7 @@ export const CreateFictionForm = () => {
       },
     });
 
-  const onSubmit = async (data: ContentSchema) => {
+  const onSubmit = async (data: FictionSchema) => {
     const resImage = await uploadCoverImage(data.coverImage[0]);
     const secureUrl = resImage.data?.secureUrl ?? null;
     await createContent({
@@ -219,7 +226,14 @@ export const CreateFictionForm = () => {
                   </FileUploadDropzone>
                 </FileUpload>
               </FormControl>
-              <FormMessage />
+              {form.formState.errors.coverImage &&
+              Array.isArray(form.formState.errors.coverImage)
+                ? form.formState.errors.coverImage.map((error, idx) => (
+                    <p className="text-destructive text-sm" key={idx}>
+                      {error.message}
+                    </p>
+                  ))
+                : null}
             </FormItem>
           )}
         />
@@ -271,6 +285,25 @@ export const CreateFictionForm = () => {
                     label="Categories"
                     placeholder="Select Categories"
                     width={"100%"}
+                    notFound={
+                      <Empty>
+                        <EmptyHeader className="text-muted-foreground">
+                          <EmptyDescription>
+                            {" "}
+                            Kategori tidak ditemukan
+                          </EmptyDescription>
+                        </EmptyHeader>
+                        <EmptyContent>
+                          <Button
+                            variant={"secondary"}
+                            size={"sm"}
+                            onClick={() => setRefreshKey(refreshKey + 1)}
+                          >
+                            Segarkan
+                          </Button>
+                        </EmptyContent>
+                      </Empty>
+                    }
                     loadingSkeleton={
                       <div className="grid place-items-center">
                         <div className="text-muted-foreground  flex items-center gap-2 py-5">

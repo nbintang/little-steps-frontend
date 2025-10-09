@@ -1,1 +1,1 @@
-export const BACKEND_PROD_URL = "https://little-steps-backend.vercel.app";
+export const BACKEND_URL = "https://little-steps-backend.vercel.app";

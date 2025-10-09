@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Loader2, SearchIcon } from "lucide-react";
 import { Table } from "@tanstack/react-table";
 import { cn } from "@/lib/utils";
+import { Spinner } from "@/components/ui/spinner";
 
 export type TableToolbarProps<T> = {
   searchKeyword: string;
@@ -43,7 +44,7 @@ export const TableToolbar = <T,>({
         onClick={onSearch}
       >
         {isSearching ? (
-          <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+          <Spinner />
         ) : (
           <SearchIcon />
         )}

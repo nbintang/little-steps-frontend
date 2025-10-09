@@ -3,7 +3,6 @@
 import * as React from "react";
 
 import { NavMain } from "@/features/admin/components/navigation/nav-main";
-import { NavProjects } from "@/features/admin/components/navigation/nav-projects";
 import { NavSecondary } from "@/features/admin/components/navigation/nav-secondary";
 import { NavUser } from "@/features/admin/components/navigation/nav-user";
 import {
@@ -18,7 +17,6 @@ import {
 } from "@/components/ui/sidebar";
 import { useFetch } from "@/hooks/use-fetch";
 import { ProfileAPI } from "@/types/profile";
-import { Spinner } from "@/components/ui/spinner";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 
@@ -33,6 +31,7 @@ import {
   LayoutDashboard,
   BookMarked,
   Tags,
+  AlertCircle,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -100,12 +99,12 @@ const data = {
     },
     {
       title: "Settings",
-      url: "/admin/settings/profile",
+      url: "/admin/settings",
       icon: Settings,
       items: [
         {
           title: "Profile",
-          url: "/admin/settings/profile",
+          url: "/admin/settings/account",
         },
       ],
     },
@@ -170,7 +169,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </div>
         ) : isError || !profile ? (
           <div className="p-4 text-destructive text-sm">
-            {error?.message || "Failed to load profile"}
+            <AlertCircle />
+            {error?.message || "Failed to fetch profile"}
           </div>
         ) : (
           <NavUser user={profile} />

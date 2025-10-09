@@ -1,7 +1,7 @@
 import GoogleIcon from "@/components/icons/google-icon";
 import { Button } from "@/components/ui/button";
 import { Field, FieldDescription } from "@/components/ui/field";
-import { BACKEND_PROD_URL } from "@/constants/api-url";
+import { BACKEND_URL } from "@/constants/api-url";
 import Link from "next/link";
 import React from "react";
 
@@ -15,7 +15,7 @@ export const AuthFooter = ({
   redirectUrl: string;
 }) => {
   const handleLoginGoole = () =>
-    (window.location.href = `${BACKEND_PROD_URL}/api/auth/google-login`);
+    (window.location.href = `${BACKEND_URL}/api/auth/google-login`);
   return (
     <Field>
       <Button

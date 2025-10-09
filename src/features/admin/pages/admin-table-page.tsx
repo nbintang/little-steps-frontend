@@ -39,11 +39,12 @@ export function AdminTablePage<T>({
   const limit = Number(searchParams.get("limit") ?? 10);
 
   const [searchKeyword, setSearchKeyword] = useState("");
-  const [isSearching, setIsSearching] = useState(false);
-  const [debounceSearch, debounceSearchState] = useDebounce(searchKeyword, 500);
+  const [debounceSearch] = useDebounce(searchKeyword, 500);
+
   const query: Record<string, any> = { page, limit, keyword: debounceSearch };
   if (type) query.type = type;
-  const { data, isLoading, isError, isFetching, error, refetch } =
+
+  const { data, isLoading, isError, isFetching, isRefetching, error, refetch } =
     useFetchPaginated<T[]>({
       key: endpoint,
       endpoint,
@@ -51,54 +52,22 @@ export function AdminTablePage<T>({
     });
 
   useEffect(() => {
-    if (debounceSearchState.isPending()) setIsSearching(true);
-    if (debounceSearch.trim() === "") refetch();
-  }, [debounceSearch, debounceSearchState, refetch]);
+    refetch();
+  }, [debounceSearch, refetch]);
+
+  const handleManualSearch = () => {
+    refetch();
+  };
 
   const { table } = useTable<T>({
     columns,
     data: data?.data ?? [],
   });
 
-  if (isLoading || isSearching || isFetching) {
-    return (
-      <DashboardPageLayout title={title}>
-        <div className="flex items-center flex-wrap gap-4 mb-2 justify-between">
-          <TableToolbar<T>
-            searchKeyword={searchKeyword}
-            setSearchKeyword={setSearchKeyword}
-            table={table}
-            isSearching={isFetching}
-            onSearch={() => {
-              if (!debounceSearchState.isPending()) {
-                refetch();
-              }
-            }}
-            className="w-full max-w-md"
-          />
-          {newButton &&
-            (newButton.href ? (
-              <Button asChild>
-                <Link href={newButton.href}>
-                  <PlusCircle />
-                  {newButton.label}
-                </Link>
-              </Button>
-            ) : (
-              <Button onClick={newButton.onClick}>
-                <PlusCircle />
-                {newButton.label}
-              </Button>
-            ))}
-        </div>
-        <TableSkeleton />
-      </DashboardPageLayout>
-    );
-  }
-
   if (isError || error) {
     return <ErrorDynamicPage statusCode={500} message={error?.message} />;
   }
+
   return (
     <DashboardPageLayout title={title}>
       <div className="flex items-center flex-wrap gap-4 mb-2 justify-between">
@@ -106,10 +75,8 @@ export function AdminTablePage<T>({
           searchKeyword={searchKeyword}
           setSearchKeyword={setSearchKeyword}
           table={table}
-          isSearching={isFetching}
-          onSearch={() => {
-            if (!debounceSearchState.isPending()) refetch();
-          }}
+          isSearching={isLoading || isFetching || isRefetching}
+          onSearch={handleManualSearch}
           className="w-full max-w-md"
         />
         {newButton &&
@@ -128,13 +95,19 @@ export function AdminTablePage<T>({
           ))}
       </div>
 
-      <TableMain<T> table={table} />
-      <TablePagination<T>
-        limit={limit}
-        page={page}
-        table={table}
-        total={data?.meta?.totalItems ?? 0}
-      />
+      {isLoading || isFetching || isRefetching ? (
+        <TableSkeleton />
+      ) : (
+        <>
+          <TableMain<T> table={table} />
+          <TablePagination<T>
+            limit={limit}
+            page={page}
+            table={table}
+            total={data?.meta?.totalItems ?? 0}
+          />
+        </>
+      )}
     </DashboardPageLayout>
   );
 }

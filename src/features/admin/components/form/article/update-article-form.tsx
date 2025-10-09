@@ -1,7 +1,7 @@
 "use client";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { ContentSchema, contentSchema } from "../../../schemas/content-schema";
+import { ArticleSchema, articleSchema } from "../../../schemas/content-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
@@ -37,7 +37,6 @@ import {
 import Link from "next/link";
 import { AsyncSelect } from "@/components/ui/async-select";
 import { CategoryAPI } from "@/types/category";
-import { MinimalTiptapEditor } from "@/components/ui/minimal-tiptap";
 import { cn } from "@/lib/utils";
 import { type Content as EditorContent, Editor } from "@tiptap/react";
 import { categoryService } from "@/services/category-service";
@@ -46,11 +45,20 @@ import { ContentAPI, ContentMutateResponseAPI } from "@/types/content";
 import useUploadImage from "@/hooks/use-upload-image";
 import { urlToFile } from "@/helpers/url-to-file";
 import { usePatch } from "@/hooks/use-patch";
+import MinimalTiptapArticleEditor from "../../content-editor/minimal-tiptap-article";
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+} from "@/components/ui/empty";
 
 export const UpdateArticleForm = ({ article }: { article: ContentAPI }) => {
   const editorRef = useRef<Editor | null>(null);
-  const form = useForm<ContentSchema>({
-    resolver: zodResolver(contentSchema),
+
+  const [refreshKey, setRefreshKey] = useState(0);
+  const form = useForm<ArticleSchema>({
+    resolver: zodResolver(articleSchema),
     defaultValues: {
       title: article.title,
       excerpt: article.excerpt,
@@ -68,10 +76,13 @@ export const UpdateArticleForm = ({ article }: { article: ContentAPI }) => {
       });
     }
   }, [article.coverImage]);
+
   const handleCreate = useCallback(
     ({ editor }: { editor: Editor }) => {
       if (form.getValues("contentJson") && editor.isEmpty) {
-        editor.commands.setContent(form.getValues("contentJson") as EditorContent);
+        editor.commands.setContent(
+          form.getValues("contentJson") as EditorContent
+        );
       }
       editorRef.current = editor;
     },
@@ -79,15 +90,16 @@ export const UpdateArticleForm = ({ article }: { article: ContentAPI }) => {
   );
 
   const { mutateAsync: uploadCoverImage } = useUploadImage();
-  const { mutate: updateContent, isPending } = usePatch<ContentMutateResponseAPI>({
-    keys: ["articles", article.slug],
-    endpoint: `contents/${article.slug}`,
-    redirectUrl: "/admin/dashboard/articles",
-    allowToast: true,
-    toastMessage: "Article updated successfully",
-  });
+  const { mutate: updateContent, isPending } =
+    usePatch<ContentMutateResponseAPI>({
+      keys: ["articles", article.slug],
+      endpoint: `contents/${article.slug}`,
+      redirectUrl: "/admin/dashboard/articles",
+      allowToast: true,
+      toastMessage: "Article updated successfully",
+    });
 
-  const onSubmit = async (data: ContentSchema) => {
+  const onSubmit = async (data: ArticleSchema) => {
     const resImage = await uploadCoverImage(data.coverImage[0]);
     const secureUrl = resImage.data?.secureUrl ?? null;
     await updateContent({
@@ -226,7 +238,14 @@ export const UpdateArticleForm = ({ article }: { article: ContentAPI }) => {
                   </FileUploadDropzone>
                 </FileUpload>
               </FormControl>
-              <FormMessage />
+              {form.formState.errors.coverImage &&
+              Array.isArray(form.formState.errors.coverImage)
+                ? form.formState.errors.coverImage.map((error, idx) => (
+                    <p className="text-destructive text-sm" key={idx}>
+                      {error.message}
+                    </p>
+                  ))
+                : null}
             </FormItem>
           )}
         />
@@ -282,6 +301,25 @@ export const UpdateArticleForm = ({ article }: { article: ContentAPI }) => {
                     getOptionValue={(item) => item.id}
                     label="Categories"
                     placeholder="Select Categories"
+                    notFound={
+                      <Empty>
+                        <EmptyHeader className="text-muted-foreground">
+                          <EmptyDescription>
+                            {" "}
+                            Kategori tidak ditemukan
+                          </EmptyDescription>
+                        </EmptyHeader>
+                        <EmptyContent>
+                          <Button
+                            variant={"secondary"}
+                            size={"sm"}
+                            onClick={() => setRefreshKey(refreshKey + 1)}
+                          >
+                            Segarkan
+                          </Button>
+                        </EmptyContent>
+                      </Empty>
+                    }
                     width={"100%"}
                     loadingSkeleton={
                       <div className="grid place-items-center">
@@ -310,7 +348,7 @@ export const UpdateArticleForm = ({ article }: { article: ContentAPI }) => {
                   Itaque eius quisquam quidem!
                 </FormDescription>
                 <FormControl>
-                  <MinimalTiptapEditor
+                  <MinimalTiptapArticleEditor
                     {...field}
                     throttleDelay={0}
                     className={cn("w-full min-h-[400px]", {

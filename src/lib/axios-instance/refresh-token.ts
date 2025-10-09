@@ -1,11 +1,11 @@
-import { BACKEND_PROD_URL } from "@/constants/api-url";
+import { BACKEND_URL } from "@/constants/api-url";
 import { saveToken } from "@/helpers/save-token";
 import axios from "axios";
 
 export const refreshToken = async () => {
   try {
     const response = await axios.post(
-      `${BACKEND_PROD_URL}/api/auth/refresh-token`,
+      `${BACKEND_URL}/api/auth/refresh-token`,
       null,
       { withCredentials: true }
     );

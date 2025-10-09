@@ -1,9 +1,12 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useDisplayCategoryDialog } from "../../../hooks/use-display-category-dialog";
 import { useShallow } from "zustand/shallow";
 import { FormDialogLayout } from "@/components/dialog-layout";
 import { useForm } from "react-hook-form";
-import { categorySchema, CategorySchema } from "../../../schemas/category-schema";
+import {
+  categorySchema,
+  CategorySchema,
+} from "../../../schemas/category-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { usePost } from "@/hooks/use-post";
 import { CategoryAPI } from "@/types/category";
@@ -20,7 +23,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-export const CategoryDialogForm = () => {
+export const CategoryDialogForm = ( ) => {
   const { isOpen, data, mode, close } = useDisplayCategoryDialog(
     useShallow((state) => ({
       isOpen: state.isOpen,
@@ -36,16 +39,16 @@ export const CategoryDialogForm = () => {
       name: data?.name || "",
     },
   });
+  const id = form.watch("id") || data?.id;
+  const { mutate: updateCategory } = usePatch<CategoryAPI, { name: string }>({
+    keys: ["categories"], 
+  });
 
   const { mutate: createCategory } = usePost<CategoryAPI, { name: string }>({
     keys: ["categories"],
     endpoint: "categories",
   });
 
-  const { mutate: updateCategory } = usePatch<CategoryAPI, { name: string }>({
-    keys: ["categories"],
-    endpoint: `categories/${form.getValues("id") || data?.id || ""}`,
-  });
   useEffect(() => {
     if (data) {
       form.reset({
@@ -53,16 +56,30 @@ export const CategoryDialogForm = () => {
         name: data.name || "",
       });
     }
-  }, [isOpen,data, form]);useEffect(() => {
-  console.log("Form errors:", form.formState.errors);
-}, [form.formState.errors]);
-  const onSubmit = async (formData: CategorySchema) => {
-    const { name } = formData;
-    if (mode === "edit") updateCategory({ name: name || "" });
-    if (mode === "create") createCategory({ name: name || "" });
+  }, [isOpen, data, form]);
+  useEffect(() => {
+    console.log("Form errors:", form.formState.errors);
+  }, [form.formState.errors]);
+ 
+const onSubmit = async (formData: CategorySchema) => {
+  const { name } = formData;
+  try {
+    if (mode === "edit") {
+      const realId = data?.id || form.getValues("id");
+      if (!realId) throw new Error("Missing category id");
+      await updateCategory({ payload: { name: name || "" }, endpoint: `categories/${realId}` });
+    }
+
+    if (mode === "create") {
+      await createCategory({ name: name || "" });  
+    }
+ 
     close();
     form.reset();
-  };
+  } catch (err: any) { 
+    console.error("Failed to save category:", err);
+  }
+};
   return (
     <FormDialogLayout
       isOpen={isOpen}

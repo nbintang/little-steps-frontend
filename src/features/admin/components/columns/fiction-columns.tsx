@@ -89,12 +89,13 @@ export const fictionColumns: ColumnDef<ContentsAPI>[] = [
     id: "actions",
     cell: ({ row }) => {
       const fiction = row.original;
+      console.log("fiction", fiction);
       const setOpenDeleteDialog = useDisplayWarningDialog(
         (state) => state.setOpenDialog
       );
       const closeDialog = useDisplayWarningDialog((state) => state.closeDialog);
       const { mutate: deleteArticle } = useDelete({
-        keys: "fictions",
+        keys: "contents",
         toastMessage: "Article deleted successfully",
         endpoint: `contents/${fiction.slug}`,
       });
@@ -102,7 +103,7 @@ export const fictionColumns: ColumnDef<ContentsAPI>[] = [
         return currentStatus === "PUBLISHED" ? "DRAFT" : "PUBLISHED";
       };
       const { mutate: publish } = usePatch<ContentMutateResponseAPI>({
-        keys: ["fictions"],
+        keys: ["contents"],
         endpoint: `contents/${fiction.slug}`,
         allowToast: true,
         toastMessage: `Fiction ${
@@ -145,13 +146,7 @@ export const fictionColumns: ColumnDef<ContentsAPI>[] = [
                 <Pen />
                 Edit
               </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={handleDelete}
-              className="text-destructive focus:text-destructive"
-            >
-              <Trash2Icon className="text-destructive" /> Delete
-            </DropdownMenuItem>
+            </DropdownMenuItem>{" "}
             <DropdownMenuItem onClick={handleToggleStatus}>
               {fiction.status === "PUBLISHED" ? (
                 <>
@@ -162,6 +157,12 @@ export const fictionColumns: ColumnDef<ContentsAPI>[] = [
                   <BookOpenCheck /> Publish
                 </>
               )}
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={handleDelete}
+              className="text-destructive focus:text-destructive"
+            >
+              <Trash2Icon className="text-destructive" /> Delete
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

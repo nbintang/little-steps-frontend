@@ -1,5 +1,4 @@
 "use client";
-import { articleColumns } from "@/features/admin/components/columns";
 import { AdminTablePage } from "@/features/admin/pages";
 import { ContentAPI } from "@/types/content";
 import { ContentType } from "@/features/admin/utils/content-type";

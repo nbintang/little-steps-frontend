@@ -93,7 +93,7 @@ export const articleColumns: ColumnDef<ContentsAPI>[] = [
       );
       const closeDialog = useDisplayWarningDialog((state) => state.closeDialog);
       const { mutate: deleteArticle } = useDelete({
-        keys: "articles",
+        keys: "contents",
         toastMessage: "Article deleted successfully",
         endpoint: `contents/${article.slug}`,
       });
@@ -101,10 +101,12 @@ export const articleColumns: ColumnDef<ContentsAPI>[] = [
         return currentStatus === "PUBLISHED" ? "DRAFT" : "PUBLISHED";
       };
       const { mutate: publish } = usePatch<ContentMutateResponseAPI>({
-        keys: ["articles"],
+        keys: "contents",
         endpoint: `contents/${article.slug}`,
         allowToast: true,
-        toastMessage: `Article ${article.status === "PUBLISHED" ? "unpublished" : "published"} successfully`,
+        toastMessage: `Article ${
+          article.status === "PUBLISHED" ? "unpublished" : "published"
+        } successfully`,
         config: {
           params: {
             type: "article",
@@ -142,13 +144,7 @@ export const articleColumns: ColumnDef<ContentsAPI>[] = [
                 <Pen />
                 Edit
               </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={handleDelete}
-              className="text-destructive focus:text-destructive"
-            >
-              <Trash2Icon className="text-destructive" /> Delete
-            </DropdownMenuItem>
+            </DropdownMenuItem>{" "}
             <DropdownMenuItem onClick={handleToggleStatus}>
               {article.status === "PUBLISHED" ? (
                 <>
@@ -159,6 +155,12 @@ export const articleColumns: ColumnDef<ContentsAPI>[] = [
                   <BookOpenCheck /> Publish
                 </>
               )}
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={handleDelete}
+              className="text-destructive focus:text-destructive"
+            >
+              <Trash2Icon className="text-destructive" /> Delete
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

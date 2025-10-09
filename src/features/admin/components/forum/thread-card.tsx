@@ -42,7 +42,6 @@ export function ThreadCard({ thread }: { thread: ForumThreadListItemAPI }) {
             <span className="sr-only">Author:</span>
             {thread.author.name}
           </div>
-      
         </div>
       </CardHeader>
       <CardContent className="pt-0">

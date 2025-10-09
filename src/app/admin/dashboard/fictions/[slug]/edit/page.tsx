@@ -1,19 +1,21 @@
 "use client";
+import { ErrorDynamicPage } from "@/components/error-dynamic";
 import { DashboardPageLayout } from "@/features/admin/components/dashboard-page-layout";
-import { UpdateArticleForm } from "@/features/admin/components/form/article/update-article-form";
+import { UpdateFictionForm } from "@/features/admin/components/form/fiction";
 import { useFetch } from "@/hooks/use-fetch";
 import { ContentAPI } from "@/types/content";
 import React, { use } from "react";
 
-export default function ArticlePage({
+export default function FictionPage({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = use(params);
+  console.log(slug);
 
   const { data, isLoading, error, isError } = useFetch<ContentAPI>({
-    keys: ["fictions", slug],
+    keys: ["contents", slug],
     endpoint: `contents/${slug}`,
   });
 
@@ -30,11 +32,11 @@ export default function ArticlePage({
     );
   }
 
-  if (isError || !data) return <div>{error?.message}</div>;
+  if (isError || error || !data) return <ErrorDynamicPage statusCode={500} />;
 
   return (
     <DashboardPageLayout title={`Update ${data?.title}`}>
-      <UpdateArticleForm article={data} />
+      <UpdateFictionForm fiction={data} />
     </DashboardPageLayout>
   );
 }

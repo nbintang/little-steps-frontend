@@ -15,14 +15,14 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
   const page = Number(searchParams.get("page") ?? 1);
   const limit = Number(searchParams.get("limit") ?? 10);
 
-  const [searchKeyword, setSearchKeyword] = useState<string>("");
-  const [isSearching, setIsSearching] = useState<boolean>(false);
+  const [searchKeyword, _] = useState<string>("");
+  const [_s, setIsSearching] = useState<boolean>(false);
   const [debounceSearch, debounceSearchState] = useDebounce(searchKeyword, 500);
   const { data: quiz } = useFetch<QuizzesAPI>({
     keys: ["quizzes", id],
     endpoint: `quizzes/${id}`,
   });
-  const { data: questions, isLoading, isError, isSuccess, isFetching, error } =
+  const { data: questions, isLoading, isError, error } =
     useFetchPaginated<QuestionAPI[]>({
       key: ["questions", id],
       endpoint: `quizzes/${id}/questions`,

@@ -23,7 +23,6 @@ export const useCreateQuiz = (form: UseFormReturn<QuizSchema>) => {
 
   const onSubmit = useCallback(
     async (data: QuizSchema) => {
-      const TOAST_ID = "create-quiz";
       try {
         show();
 
@@ -109,17 +108,15 @@ export const useCreateQuiz = (form: UseFormReturn<QuizSchema>) => {
           isBulk: true,
         });
 
-        toast.success("Quiz berhasil dibuat", { id: TOAST_ID });
+        toast.success("Quiz berhasil dibuat");
         form.reset();
         router.push("/admin/dashboard/quizzes");
       } catch (err) {
         console.error("Submit error:", err);
         const message =
           err instanceof Error ? err.message : "An unexpected error occurred";
-        toast.error(message, { id: TOAST_ID });
       } finally {
         hide();
-        toast.dismiss(TOAST_ID);
       }
     },
     [createQuiz, form, router, uploadImageAnswer, show, hide]

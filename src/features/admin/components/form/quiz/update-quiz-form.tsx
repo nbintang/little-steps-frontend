@@ -27,8 +27,8 @@ import { TimePickerInput } from "@/components/ui/time-picker/time-picker-input";
 import { ButtonGroup } from "@/components/ui/button-group";
 import { QuizzesAPI } from "@/types/quizzes";
 import { QuestionAPI } from "@/types/questions";
-import { useRouter } from "next/navigation";
 import { useUpdateQuiz } from "@/features/admin/hooks/use-update-quiz";
+
 export const UpdateQuizForm = ({
   quiz,
   questions,
@@ -36,8 +36,7 @@ export const UpdateQuizForm = ({
   quiz: QuizzesAPI;
   questions: QuestionAPI[];
 }) => {
-  const editorRef = useRef<Editor | null>(null);
-  const router = useRouter();
+  const editorRefsMap = useRef<Map<string, Editor | null>>(new Map());
   const form = useForm<QuizSchema>({
     resolver: zodResolver(quizSchema),
     defaultValues: {
@@ -75,14 +74,31 @@ export const UpdateQuizForm = ({
       ],
     });
   };
-  const handleCreate = useCallback(
-    ({ editor }: { editor: Editor }) => {
-      form.getValues("questions").map((q) => {
-        if (editor.isEmpty) {
-          editor.commands.setContent(q.questionJson as Content);
+
+  // ✅ FIX: Wrapper untuk remove question yang juga cleanup editor ref
+  const handleRemoveQuestion = (index: number) => {
+    const question = form.getValues(`questions.${index}`);
+    if (question?.id) {
+      editorRefsMap.current.delete(question.id);
+    }
+    removeQuestion(index);
+  };
+
+  // ✅ FIX: createEditorHandler tetap sama, tapi lebih aman
+  const createEditorHandler = useCallback(
+    (questionId: string | undefined, questionIndex: number) => {
+      return ({ editor }: { editor: Editor }) => {
+        const currentQuestion = form.getValues(`questions.${questionIndex}`);
+
+        if (editor.isEmpty && currentQuestion?.questionJson) {
+          editor.commands.setContent(currentQuestion.questionJson as Content);
         }
-      });
-      editorRef.current = editor;
+
+        // Store by ID untuk avoid index shifting issues
+        if (questionId) {
+          editorRefsMap.current.set(questionId, editor);
+        }
+      };
     },
     [form]
   );
@@ -90,13 +106,13 @@ export const UpdateQuizForm = ({
   const duration = form.watch("duration");
   const minutes = Math.floor(duration / 60);
   const seconds = duration % 60;
+
   const updateDuration = (newMinutes: number, newSeconds: number) => {
     const totalSeconds = newMinutes * 60 + newSeconds;
     form.setValue("duration", totalSeconds);
   };
 
   const { onSubmit } = useUpdateQuiz(form, quiz.id);
-
   const isLoading = form.formState.isSubmitting;
 
   return (
@@ -134,6 +150,7 @@ export const UpdateQuizForm = ({
             </FormItem>
           )}
         />
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <FormField
             control={form.control}
@@ -146,7 +163,6 @@ export const UpdateQuizForm = ({
                   inventore totam alias!
                 </FormDescription>
                 <div className="flex items-center gap-2">
-                  {/* 🕒 Minutes Picker */}
                   <ButtonGroup>
                     <Button size={"icon"} variant={"outline"}>
                       <Clock8Icon className="size-4" />
@@ -183,6 +199,7 @@ export const UpdateQuizForm = ({
               </FormItem>
             )}
           />
+
           <FormField
             control={form.control}
             name="categoryId"
@@ -208,7 +225,7 @@ export const UpdateQuizForm = ({
                     width={"100%"}
                     loadingSkeleton={
                       <div className="grid place-items-center">
-                        <div className="text-muted-foreground  flex items-center gap-2 py-5">
+                        <div className="text-muted-foreground flex items-center gap-2 py-5">
                           <Spinner />
                           <p className="text-sm"> Loading...</p>
                         </div>
@@ -218,25 +235,23 @@ export const UpdateQuizForm = ({
                     {...field}
                   />
                 </FormControl>
-
                 <FormMessage />
               </FormItem>
             )}
           />
         </div>
+
         {questionFields.map((question, questionIndex) => (
           <QuestionCard
-            key={question.id}
+            key={question.id} // ✅ PENTING: key harus stable (question.id, bukan index)
             questionIndex={questionIndex}
             form={form}
-            removeQuestion={removeQuestion}
-            handleCreate={handleCreate}
-            // handleImageUpload={handleImageUpload}
-            // removeImage={removeImage}
-            // selectedImages={selectedImages}
+            removeQuestion={handleRemoveQuestion}
+            handleCreate={createEditorHandler(question.id, questionIndex)}
             totalQuestions={questionFields.length}
           />
         ))}
+
         <div className="flex justify-end">
           <Button
             type="button"
@@ -248,6 +263,7 @@ export const UpdateQuizForm = ({
             Tambah Pertanyaan
           </Button>
         </div>
+
         {form.formState.isDirty && (
           <Button
             type="submit"
