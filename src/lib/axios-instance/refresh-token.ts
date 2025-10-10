@@ -12,10 +12,6 @@ export const refreshToken = async () => {
     const accessToken = response.data.data.accessToken;
     saveToken(
       { token: accessToken },
-      {
-        secure: process.env.NODE_ENV === "production",
-        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-      }
     );
     return accessToken;
   } catch (error) {

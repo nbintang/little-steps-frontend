@@ -12,62 +12,41 @@ const AUTH_PATHS = [
 ];
 
 const ADMIN_PREFIX = "/admin";
-const PARENT_PREFIX = "/parent";
 
 export async function middleware(req: NextRequest) {
   const accessToken = req.cookies.get("accessToken")?.value;
   const pathname = req.nextUrl.pathname;
 
-  const isProtected =
-    pathname.startsWith(ADMIN_PREFIX) || pathname.startsWith(PARENT_PREFIX);
+  // 1️⃣ Halaman admin saja yang protected
+  const isAdminPath = pathname.startsWith(ADMIN_PREFIX);
 
-  // 1️⃣ Tidak ada token → redirect ke login jika halaman butuh auth
+  // 2️⃣ Tidak ada token
   if (!accessToken) {
-    if (isProtected) {
+    if (isAdminPath) {
       return NextResponse.redirect(new URL("/login", req.url));
     }
-    return NextResponse.next();
+    return NextResponse.next(); // semua public path bisa diakses
   }
 
-  // 2️⃣ Decode JWT
+  // 3️⃣ Decode JWT
   let userPayload: UserPayload;
   try {
     userPayload = jwtDecode(accessToken);
   } catch {
-    return NextResponse.redirect(new URL("/login", req.url));
+    if (isAdminPath) {
+      return NextResponse.redirect(new URL("/login", req.url));
+    }
+    return NextResponse.next(); // parent tetap bisa ke public
   }
 
   const { role } = userPayload;
 
-  // 3️⃣ Jika user sudah login dan masuk ke /login atau /register → redirect ke dashboard masing-masing
-  const isAuthPath = AUTH_PATHS.some((path) => pathname.startsWith(path));
-  if (pathname === "/" || isAuthPath) {
-    if (role === "ADMINISTRATOR") {
-      return NextResponse.redirect(new URL("/admin/dashboard", req.url));
-    } else if (role === "PARENT") {
-      return NextResponse.redirect(new URL("/parent/dashboard", req.url));
-    }
+  // 4️⃣ Admin hanya boleh akses /admin/**
+  if (role === "ADMINISTRATOR" && !pathname.startsWith(ADMIN_PREFIX)) {
+    return NextResponse.redirect(new URL("/admin/dashboard", req.url));
   }
 
-  // 4️⃣ Akses Role Protection
-  if (role === "ADMINISTRATOR") {
-    // Admin hanya boleh akses /admin/**
-    if (!pathname.startsWith(ADMIN_PREFIX)) {
-      return NextResponse.redirect(new URL("/admin/dashboard", req.url));
-    }
-
-    // Admin boleh ke /admin/dashboard dan /admin/settings
-    // tidak perlu logic tambahan, karena keduanya match /admin prefix
-  }
-
-  if (role === "PARENT") {
-    // Parent hanya boleh akses /parent/**
-    if (!pathname.startsWith(PARENT_PREFIX)) {
-      return NextResponse.redirect(new URL("/parent/dashboard", req.url));
-    }
-  }
-
-  // 5️⃣ Jika semuanya aman, lanjutkan
+  // 5️⃣ Parent bebas ke public path → tidak ada redirect
   return NextResponse.next();
 }
 

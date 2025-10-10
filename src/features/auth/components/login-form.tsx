@@ -60,7 +60,7 @@ export function LoginForm({
               router.push("/admin/dashboard");
               break;
             case "PARENT":
-              router.push("/parent/dashboard");
+              router.push("/");
               break;
             default:
               throw new Error("Unknown role");
@@ -92,9 +92,7 @@ export function LoginForm({
         }
       )
       .unwrap();
-
-  const handleLoginGoole = () =>
-    (window.location.href = `${BACKEND_URL}/api/auth/google-login`);
+ 
 
   return (
     <Form {...form}>
