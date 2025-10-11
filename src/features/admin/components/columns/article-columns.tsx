@@ -1,7 +1,7 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { ContentMutateResponseAPI, ContentsAPI } from "@/types/content";
+import { ContentMutateResponseAPI, ContentAPI } from "@/types/content";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -24,7 +24,7 @@ import { useDisplayWarningDialog } from "@/hooks/use-display-warning-dialog";
 import { useDelete } from "@/hooks/use-delete";
 import { usePatch } from "@/hooks/use-patch";
 
-export const articleColumns: ColumnDef<ContentsAPI>[] = [
+export const articleColumns: ColumnDef<ContentAPI>[] = [
   {
     accessorKey: "title",
     header: "Title",

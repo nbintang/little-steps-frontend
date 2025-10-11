@@ -2,24 +2,27 @@
 
 import type * as React from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { Tornado } from "lucide-react";
 import useProfile from "@/hooks/use-profile";
 import { Navbar } from "./navbar/navbar";
 import { NavbarProfile } from "./navbar/navbar-profile";
 import { NavbarMobile } from "./navbar/navbar-mobile";
-export type Tab = {
+export type NavTab ={
   href: string;
   label: string;
-};
+  hasChildren?: {
+    href: string;
+    label: string;
+    highlight?: boolean;
+  }[];
+}
 
 interface SiteNavbarProps {
-  tabs: Tab[];
+  tabs: NavTab[];
   brand?: React.ReactNode;
 }
 
 export default function SiteHeader({ tabs, brand }: SiteNavbarProps) {
-  const pathname = usePathname();
   const profile = useProfile();
 
   return (

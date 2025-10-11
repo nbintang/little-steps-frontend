@@ -3,7 +3,7 @@ import { ErrorDynamicPage } from "@/components/error-dynamic";
 import { DashboardPageLayout } from "@/features/admin/components/dashboard-page-layout";
 import { UpdateArticleForm } from "@/features/admin/components/form/article/update-article-form";
 import { useFetch } from "@/hooks/use-fetch";
-import { ContentAPI } from "@/types/content";
+import { ContentsAPI } from "@/types/content";
 import React, { use } from "react";
 
 export default function ArticlePage({
@@ -13,7 +13,7 @@ export default function ArticlePage({
 }) {
   const { slug } = use(params);
 
-  const { data, isLoading, error, isError } = useFetch<ContentAPI>({
+  const { data, isLoading, error, isError } = useFetch<ContentsAPI>({
     keys: ["contents", slug],
     endpoint: `contents/${slug}`,
   });

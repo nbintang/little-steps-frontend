@@ -27,14 +27,14 @@ import {
   CollapsibleTrigger,
 } from "../ui/collapsible";
 import { ProfileAPI } from "@/types/profile";
-import { Tab } from "../site-header";
+import { NavTab } from "../site-header";
 import { UseQueryResult } from "@tanstack/react-query";
 
 export const NavbarMobile = ({
   tabs,
   userProfile: { data: user, isLoading, isError },
 }: {
-  tabs: Tab[];
+  tabs: NavTab[];
   userProfile: UseQueryResult<ProfileAPI | undefined, unknown>;
 }) => {
   const userName = user?.user?.name || "Guest";
@@ -158,7 +158,7 @@ export const NavbarMobile = ({
 
             {/* Login button (hanya tampil jika user tidak ada) */}
             {!user && !isLoading ? (
-              <Button className="mt-3 w-full" asChild>
+              <Button variant={"outline"} className="mt-3 w-full" asChild>
                 <Link href="/login" className="gap-2">
                   <LogInIcon className="h-4 w-4" />
                   Login

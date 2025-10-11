@@ -1,52 +1,45 @@
+"use client";
 import { notFound } from "next/navigation";
-import { getArticleBySlug } from "@/lib/data";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { RichTextRenderer } from "@/components/rich-text-renderer";
 import { MotionFade } from "@/components/motion";
-import { Metadata } from "next";
+import { ContentPublicAPI } from "@/types/content";
+import React, { use } from "react";
+import { ContentRenderer } from "@/features/parent/components/content-renderer";
+import { useFetch } from "@/hooks/use-fetch";
+import { format } from "date-fns";
+import { formatName } from "@/helpers/format-name";
 
 type Params = { slug: string };
-
-export async function generateMetadata({
+ 
+export default function ArticleDetailPage({
   params,
 }: {
-  params: Params;
-}): Promise<Metadata> {
-  const article = await getArticleBySlug(params.slug);
-  if (!article) return { title: "Article" };
-  return { title: article.title };
-}
-
-function formatDate(iso: string) {
-  try {
-    return new Date(iso).toLocaleDateString(undefined, {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  } catch {
-    return iso;
-  }
-}
-
-export default async function ArticleDetailPage({
-  params,
-}: {
-  params: Params;
+  params: Promise<Params>;
 }) {
-  const article = await getArticleBySlug(params.slug);
-  if (!article) return notFound();
-
-  const initials = article.author.name
-    .split(" ")
-    .map((n) => n[0])
-    .slice(0, 2)
-    .join("")
-    .toUpperCase();
+  const { slug } = use(params);
+  const {
+    data: article,
+    isError,
+    isLoading,
+    error,
+  } = useFetch<ContentPublicAPI>({
+    keys: ["contents", slug],
+    endpoint: `contents/${slug}`,
+    config: {
+      params: {
+        type: "article",
+        // highest: true,
+      },
+    },
+    protected: false,
+  });
+  if (isLoading) return <div>Loading...</div>;
+  if (isError || error || !article) return notFound();
+ 
 
   return (
-    <div className="container mx-auto px-4 py-10">
+    <React.Fragment>
       <MotionFade className="mx-auto max-w-3xl">
         <header className="grid gap-3 mb-6">
           <div className="flex items-center gap-3">
@@ -54,7 +47,7 @@ export default async function ArticleDetailPage({
               <Badge variant="secondary">{article.category.name}</Badge>
             ) : null}
             <span className="text-sm text-muted-foreground">
-              {formatDate(article.createdAt)}
+              {format(article.createdAt, "dd MMM, yyyy")}
             </span>
           </div>
 
@@ -68,7 +61,7 @@ export default async function ArticleDetailPage({
                 src={article.author.profile.avatarUrl || "/placeholder.svg"}
                 alt={`${article.author.name} avatar`}
               />
-              <AvatarFallback>{initials}</AvatarFallback>
+              <AvatarFallback>{formatName(article.author.name)}</AvatarFallback>
             </Avatar>
             <span className="text-sm">{article.author.name}</span>
           </div>
@@ -87,9 +80,9 @@ export default async function ArticleDetailPage({
 
       <MotionFade className="mx-auto max-w-3xl">
         <article className="grid gap-6">
-          <RichTextRenderer contentJson={article.contentJson} />
+          <ContentRenderer content={article.contentJson} />
         </article>
       </MotionFade>
-    </div>
+    </React.Fragment>
   );
 }

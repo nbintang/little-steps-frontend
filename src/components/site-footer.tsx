@@ -11,6 +11,7 @@ import {
   IconBrandTwitter,
 } from "@tabler/icons-react";
 import { Tornado } from "lucide-react";
+import { Separator } from "./ui/separator";
 
 interface Footer7Props {
   sections?: Array<{
@@ -93,9 +94,9 @@ const SiteFooter = ({
   legalLinks = defaultLegalLinks,
 }: Footer7Props) => {
   return (
-    <section className="mx-auto flex h-16 w-full px-3 md:p-0 max-w-7xl">
-      <div className="container">
-        <div className="flex w-full flex-col justify-between gap-10 lg:flex-row lg:items-start lg:text-left">
+    <section className="flex h-16 w-full px-3 md:p-0  ">
+      <div className="w-full">
+        <div className="flex w-full mx-auto max-w-7xl   flex-col justify-between gap-10 lg:flex-row lg:items-start lg:text-left">
           <div className="flex w-full flex-col justify-between gap-6 lg:items-start">
             {/* Logo */}
             <div className="flex items-center gap-2 lg:justify-start">
@@ -138,7 +139,8 @@ const SiteFooter = ({
             ))}
           </div>
         </div>
-        <div className="text-muted-foreground mt-8 flex flex-col justify-between gap-4 border-t py-8 text-xs font-medium md:flex-row md:items-center md:text-left">
+        <Separator orientation="horizontal" className="my-8 w-full " />
+        <div className="text-muted-foreground mx-auto max-w-7xl pb-8 flex flex-col justify-between gap-4 text-xs font-medium md:flex-row md:items-center md:text-left">
           <p className="order-2 lg:order-1">
             © 2024 Shadcnblocks.com. All rights reserved.
           </p>

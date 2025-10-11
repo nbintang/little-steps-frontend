@@ -48,6 +48,7 @@ export function AdminTablePage<T>({
     useFetchPaginated<T[]>({
       key: endpoint,
       endpoint,
+      protected: true,
       query,
     });
 

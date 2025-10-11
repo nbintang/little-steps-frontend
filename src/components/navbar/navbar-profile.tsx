@@ -18,16 +18,16 @@ import { ProfileAPI } from "@/types/profile";
 import { UseQueryResult } from "@tanstack/react-query";
 
 export const NavbarProfile = ({
-  userProfile: { data: user },
+  userProfile: { data: user, isError },
 }: {
   userProfile: UseQueryResult<ProfileAPI | undefined, unknown>;
 }) => {
   const { handleLogout } = useLogout();
 
   // Jika user tidak ada (guest/tidak login)
-  if (!user) {
+  if (isError || !user) {
     return (
-      <Button asChild variant="default" size="sm">
+      <Button variant="outline" size="sm" asChild>
         <Link href="/login" className="gap-2">
           <LogInIcon className="h-4 w-4" />
           Login

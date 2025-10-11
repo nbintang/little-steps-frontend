@@ -1,11 +1,11 @@
-export interface ContentsAPI {
+export interface ContentAPI {
   id: string;
   slug: string;
   title: string;
-  type: "ARTICLE" ;
+  type: "ARTICLE";
   coverImage: string;
   excerpt: string;
-  status: "DRAFT" | "PUBLISHED" ;
+  status: "DRAFT" | "PUBLISHED";
   author: {
     id: string;
     name: string;
@@ -19,23 +19,73 @@ export interface ContentsAPI {
   createdAt: string;
   updatedAt: string;
 }
-export type ContentAPI = {
-  id: string
-  slug: string
-  title: string
-  type: "ARTICLE" ;
+export type ContentsAPI = {
+  id: string;
+  slug: string;
+  title: string;
+  type: "ARTICLE";
   coverImage: string;
   excerpt: string;
-  status: "DRAFT" | "PUBLISHED" ;
-  contentJson: string
+  status: "DRAFT" | "PUBLISHED";
+  contentJson: string;
   category: {
-    id: string
-    slug: string
-    name: string
-  }| null
-  createdAt: string
-  updatedAt: string
-}
+    id: string;
+    slug: string;
+    name: string;
+  } | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type ContentPublicAPI = {
+  id: string;
+  slug: string;
+  title: string;
+  type: string;
+  coverImage: string;
+  excerpt: string;
+  status: string;
+  rating: number;
+  contentJson: Content;
+  author: {
+    id: string;
+    name: string;
+    email: string;
+    profile: {
+      avatarUrl: string;
+    };
+  };
+  category: {
+    id: string;
+    slug: string;
+    name: string;
+  };
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type ContentsPublicAPI = {
+  id: string;
+  slug: string;
+  title: string;
+  type: string;
+  coverImage: string;
+  excerpt: string;
+  status: string;
+  rating: number;
+  author: {
+    id: string;
+    name: string;
+    email: string;
+  };
+  category: {
+    id: string;
+    slug: string;
+    name: string;
+  };
+  createdAt: string;
+  updatedAt: string;
+};
 
 export type ContentMutateResponseAPI = {
   id: string;
@@ -56,10 +106,10 @@ export type ContentMutateResponseAPI = {
     id: string;
     slug: string;
     name: string;
-  }| null;
+  } | null;
   author: {
     id: string;
     name: string;
     email: string;
   };
-}
+};

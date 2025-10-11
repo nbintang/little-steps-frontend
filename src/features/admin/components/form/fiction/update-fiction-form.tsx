@@ -41,7 +41,7 @@ import { cn } from "@/lib/utils";
 import { type Content as EditorContent, Editor } from "@tiptap/react";
 import { categoryService } from "@/services/category-service";
 import { Spinner } from "@/components/ui/spinner";
-import { ContentAPI, ContentMutateResponseAPI } from "@/types/content";
+import { ContentsAPI, ContentMutateResponseAPI } from "@/types/content";
 import useUploadImage from "@/hooks/use-upload-image";
 import { urlToFile } from "@/helpers/url-to-file";
 import { usePatch } from "@/hooks/use-patch";
@@ -53,7 +53,7 @@ import {
   EmptyHeader,
 } from "@/components/ui/empty";
 
-export const UpdateFictionForm = ({ fiction }: { fiction: ContentAPI }) => {
+export const UpdateFictionForm = ({ fiction }: { fiction: ContentsAPI }) => {
   const editorRef = useRef<Editor | null>(null);
   const form = useForm<FictionSchema>({
     resolver: zodResolver(fictionSchema),

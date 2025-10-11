@@ -12,7 +12,7 @@ import {
 
 export function Error404() {
   return (
-    <Empty >
+    <Empty className="min-h-dvh">
       <EmptyHeader>
         <EmptyMedia variant="icon">
           <AlertTriangle className="w-12 h-12" />

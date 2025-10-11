@@ -7,16 +7,18 @@ import { SuccessResponsePaginated } from "@/types/response";
 export const useFetchInfinite = <T = any>({
   keys,
   endpoint,
+  protected: isProtected = true,
   config,
 }: {
   keys: string | string[];
   endpoint: string;
   config?: AxiosRequestConfig;
+  protected?: boolean;
 }) =>
   useInfiniteQuery<SuccessResponsePaginated<Array<T>>, Error>({
     queryKey: Array.isArray(keys) ? keys : [keys],
     queryFn: async ({ pageParam = 1 }) => {
-      const response = await api.get<SuccessResponsePaginated<Array<T>>>(`/protected/${endpoint}`, {
+      const response = await api.get<SuccessResponsePaginated<Array<T>>>(`${isProtected ? "/protected" : ""}/${endpoint}`, {
         ...config,
         params: { ...(config?.params || {}), page: pageParam },
       });

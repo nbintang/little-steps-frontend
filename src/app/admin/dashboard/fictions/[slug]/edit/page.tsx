@@ -3,7 +3,7 @@ import { ErrorDynamicPage } from "@/components/error-dynamic";
 import { DashboardPageLayout } from "@/features/admin/components/dashboard-page-layout";
 import { UpdateFictionForm } from "@/features/admin/components/form/fiction";
 import { useFetch } from "@/hooks/use-fetch";
-import { ContentAPI } from "@/types/content";
+import { ContentsAPI } from "@/types/content";
 import React, { use } from "react";
 
 export default function FictionPage({
@@ -14,7 +14,7 @@ export default function FictionPage({
   const { slug } = use(params);
   console.log(slug);
 
-  const { data, isLoading, error, isError } = useFetch<ContentAPI>({
+  const { data, isLoading, error, isError } = useFetch<ContentsAPI>({
     keys: ["contents", slug],
     endpoint: `contents/${slug}`,
   });

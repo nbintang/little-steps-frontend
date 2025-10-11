@@ -7,17 +7,19 @@ export const useFetch = <T = any>({
   keys,
   endpoint,
   config,
+  protected: isProtected = true,
 }: {
   keys: string | string[];
   endpoint: string;
   config?: AxiosRequestConfig;
+  protected?: boolean;
 }) => {
   const queryKey = Array.isArray(keys) ? keys : [keys];
   return useQuery({
     queryKey,
     queryFn: async (): Promise<T | undefined> => {
       const res = await api.get<SuccessResponse<T>>(
-        `/protected/${endpoint}`,
+        `${isProtected ? "/protected" : ""}/${endpoint}`,
         config
       );
       return res.data.data;
