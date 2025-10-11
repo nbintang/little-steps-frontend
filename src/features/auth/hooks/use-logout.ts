@@ -6,12 +6,11 @@ import { removeToken } from "@/helpers/remove-token";
 
 export const useLogout = () => {
   const router = useRouter();
-  const handleLogout = () =>
-    toast
+  const handleLogout = async () =>
+    await toast
       .promise(logoutService, {
         loading: "Logging out...",
         success: (res) => {
-          removeToken();  
           router.push("/login");
           return res
         },

@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/sheet";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
-import { BadgeCheck, Bell, LogInIcon, Menu, Tornado, Skeleton } from "lucide-react";
+import { BadgeCheck, Bell, LogInIcon, Menu, Tornado, LogOut } from "lucide-react";
 import {
   Collapsible,
   CollapsibleContent,
@@ -160,12 +160,17 @@ export const NavbarMobile = ({
             <Separator />
 
             {/* Login button (hanya tampil jika user tidak ada) */}
-            {!user && !isLoading && (
+            {!user && !isLoading ? (
               <Button className="mt-3 w-full" asChild>
                 <Link href="/login" className="gap-2">
                   <LogInIcon className="h-4 w-4" />
                   Login
                 </Link>
+              </Button>
+            ):(
+                  <Button className="mt-3 w-full" >
+              <LogOut className="h-4 w-4" />
+                  Logout
               </Button>
             )}
           </div>
