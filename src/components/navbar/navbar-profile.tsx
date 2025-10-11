@@ -15,8 +15,13 @@ import Link from "next/link";
 import { BadgeCheck, Bell, LogOut, LogInIcon } from "lucide-react";
 import { useLogout } from "@/features/auth/hooks/use-logout";
 import { ProfileAPI } from "@/types/profile";
+import { UseQueryResult } from "@tanstack/react-query";
 
-export const NavbarProfile = ({ user }: { user: ProfileAPI | null }) => {
+export const NavbarProfile = ({
+  userProfile: { data: user },
+}: {
+  userProfile: UseQueryResult<ProfileAPI | undefined, unknown>;
+}) => {
   const { handleLogout } = useLogout();
 
   // Jika user tidak ada (guest/tidak login)
@@ -78,7 +83,10 @@ export const NavbarProfile = ({ user }: { user: ProfileAPI | null }) => {
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <Link href="/admin/settings/notifications" className="cursor-pointer">
+              <Link
+                href="/admin/settings/notifications"
+                className="cursor-pointer"
+              >
                 <Bell className="h-4 w-4 mr-2" />
                 Notifications
               </Link>

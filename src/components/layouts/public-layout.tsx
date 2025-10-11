@@ -5,10 +5,8 @@ import { usePathname } from "next/navigation";
 import SiteFooter from "../site-footer";
 import SiteHeader from "../site-header";
 
-export const PublicLayout = ({ children }: { children: React.ReactNode }) => {
-  const pathname = usePathname();
 
-  const excludeRoutes = [
+  const EXCLUDE_ROUTES = [
     "/login",
     "/register",
     "/complete-register",
@@ -16,14 +14,16 @@ export const PublicLayout = ({ children }: { children: React.ReactNode }) => {
     "/admin",
   ];
 
-  const tabs = [
+  const TABS = [
     { href: "/", label: "Home" },
-    { href: "/features", label: "Features" },
-    { href: "/pricing", label: "Pricing" },
-    { href: "/about", label: "About" },
+    { href: "/articles", label: "Articles" },
+    { href: "/kid-stuff", label: "Kid Stuff" },
+    { href: "/forums", label: "Forums" },
   ];
+export const PublicLayout = ({ children }: { children: React.ReactNode }) => {
+  const pathname = usePathname();
 
-  const isExcludedRoute = excludeRoutes.some((route) =>
+  const isExcludedRoute = EXCLUDE_ROUTES.some((route) =>
     pathname.startsWith(route)
   );
 
@@ -33,7 +33,7 @@ export const PublicLayout = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <>
-      <SiteHeader tabs={tabs} />
+      <SiteHeader tabs={TABS} />
       {children}
       <SiteFooter />
     </>

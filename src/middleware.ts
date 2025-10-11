@@ -16,16 +16,12 @@ const ADMIN_PREFIX = "/admin";
 export async function middleware(req: NextRequest) {
   const accessToken = req.cookies.get("accessToken")?.value;
   const pathname = req.nextUrl.pathname;
-
-  // 1️⃣ Halaman admin saja yang protected
   const isAdminPath = pathname.startsWith(ADMIN_PREFIX);
-
-  // 2️⃣ Tidak ada token
   if (!accessToken) {
     if (isAdminPath) {
       return NextResponse.redirect(new URL("/login", req.url));
     }
-    return NextResponse.next(); // semua public path bisa diakses
+    return NextResponse.next();
   }
 
   // 3️⃣ Decode JWT
