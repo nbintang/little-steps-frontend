@@ -5,14 +5,16 @@ import { useQuery } from "@tanstack/react-query";
 type FetchPaginatedProps = {
   key: string | string[];
   endpoint: string;
-  query: any;
+  query?: any;
   protected?: boolean;
+  enabled?: boolean;
 };
 export const useFetchPaginated = <T = any>({
   key,
   protected: isProtected = true,
   endpoint,
   query,
+  enabled
 }: FetchPaginatedProps) => {
   return useQuery({
     queryKey: Array.isArray(key) ? key : [key],
@@ -23,5 +25,6 @@ export const useFetchPaginated = <T = any>({
       );
       return res.data;
     },
+    enabled,
   });
 };

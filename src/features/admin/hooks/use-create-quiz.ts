@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 import { UseFormReturn } from "react-hook-form";
 import { QuizSchema } from "../schemas/quiz-schema";
 import { createQuestionsService } from "../services/create-questions-service";
-import useLoadingStore from "@/hooks/useLoadingStore";
+import useLoadingStore from "@/hooks/use-loading-store";
 export const useCreateQuiz = (form: UseFormReturn<QuizSchema>) => {
   const router = useRouter();
   const { mutateAsync: uploadImageAnswer } = useUploadImage();

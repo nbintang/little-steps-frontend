@@ -13,15 +13,8 @@ import { Spinner } from "@/components/ui/spinner";
 import { ForumThreadDetailSkeleton } from "@/features/admin/components/forum/forum-thread-detail-skeleton";
 import { Reply } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
-function initials(name: string) {
-  return name
-    .split(" ")
-    .map((n) => n[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase();
-}
+import { formatInitials } from "@/helpers/format-name";
+  
 
 export default function ForumPost({
   params,
@@ -84,7 +77,7 @@ export default function ForumPost({
                 alt={`Avatar of ${thread?.author?.name}`}
               />
               <AvatarFallback aria-hidden>
-                {thread?.author?.name ? initials(thread.author.name) : "?"}
+                {thread?.author?.name ? formatInitials(thread.author.name) : "?"}
               </AvatarFallback>
             </Avatar>
             <div className="text-sm text-muted-foreground">

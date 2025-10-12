@@ -8,7 +8,7 @@ import { Navbar } from "./navbar/navbar";
 import { NavbarProfile } from "./navbar/navbar-profile";
 import { NavbarMobile } from "./navbar/navbar-mobile";
 export type NavTab ={
-  href: string;
+  href?: string;
   label: string;
   hasChildren?: {
     href: string;

@@ -10,6 +10,6 @@ export default function Page() {
         <CardContent>
           <SettingAccount />
         </CardContent>
-      </Card>
+      </Card> 
   )
 }

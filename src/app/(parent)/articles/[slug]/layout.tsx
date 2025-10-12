@@ -7,10 +7,17 @@ export async function generateMetadata({
 }: {
   params: Params;
 }): Promise<Metadata> {
-  const article = await getArticleBySlug(params.slug);
+  const { slug } = await params;
+  const article = await getArticleBySlug(slug);
   if (!article) return { title: "Article" };
   return { title: article.title };
 }
 export default function Layout({ children }: { children: React.ReactNode }) {
-  return <div className="container mx-auto px-4 py-10">{children}</div>;
+  return (
+    <main className="my-10" >
+      {children}
+    </main>
+
+    
+  );
 }

@@ -17,12 +17,11 @@ const TABS: NavTab[] = [
   { href: "/", label: "Home" },
   { href: "/articles", label: "Articles" },
   {
-    href: "/kid-stuff",
     label: "Kid Stuff",
     hasChildren: [
-      { href: "/kid-stuff/1", label: "Kid Stuff 1", highlight: true },
-      { href: "/kid-stuff/2", label: "Kid Stuff 2" },
-      { href: "/kid-stuff/3", label: "Kid Stuff 3" },
+      { href: "/stories", label: "Kid Stories", highlight: true },
+      { href: "/quizzes", label: "Kid Quizzes Stuff 2" },
+      { href: "/", label: "Kid Stuff 3" },
     ],
   },
   { href: "/forum", label: "Forum" },

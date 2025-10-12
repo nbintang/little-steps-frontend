@@ -1,5 +1,5 @@
 
-export const formatName = (str: string) =>
+export const formatInitials = (str: string) =>
   str
     .split(" ")
     .map((n) => n[0])

@@ -10,7 +10,7 @@ import { QuizSchema } from "../schemas/quiz-schema";
 import { updateQuestionsService } from "../services/update-questions-service";
 import { usePatch } from "@/hooks/use-patch";
 import { useQueryClient } from "@tanstack/react-query";
-import useLoadingStore from "@/hooks/useLoadingStore";
+import useLoadingStore from "@/hooks/use-loading-store";
 export const useUpdateQuiz = (
   form: UseFormReturn<QuizSchema>,
   quizId: string

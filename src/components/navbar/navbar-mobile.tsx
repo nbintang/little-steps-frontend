@@ -143,7 +143,7 @@ export const NavbarMobile = ({
               {tabs.map((tab) => (
                 <SheetClose asChild key={tab.href}>
                   <Link
-                    href={tab.href}
+  href={tab.href !== undefined ? tab.href : ''}
                     className={cn(
                       "px-2 py-2.5 text-sm font-medium rounded-md transition-colors hover:bg-accent"
                     )}

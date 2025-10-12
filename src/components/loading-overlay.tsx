@@ -2,7 +2,7 @@
 
 import React from "react"; 
 import { Spinner } from "@/components/ui/spinner";
-import useLoadingStore from "@/hooks/useLoadingStore";
+import useLoadingStore from "@/hooks/use-loading-store";
 
 export const LoaderOverlay: React.FC = () => {
   const loading = useLoadingStore((s) => s.loading);

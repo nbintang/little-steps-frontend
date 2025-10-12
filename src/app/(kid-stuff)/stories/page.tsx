@@ -152,7 +152,7 @@ export default function FictionsPage() {
           fictions.map((item, idx) => (
             <ContentCard
               key={`fiction-${item.slug}-${idx}`}
-              hrefPrefix="/fictions"
+              hrefPrefix="/stories"
               variant="fiction"
               item={item as ContentsPublicAPI}
             />

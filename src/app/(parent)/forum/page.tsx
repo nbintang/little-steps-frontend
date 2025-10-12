@@ -10,17 +10,19 @@ import {
   InputGroupInput,
 } from "@/components/ui/input-group";
 import { Spinner } from "@/components/ui/spinner";
-import { SearchIcon } from "lucide-react";
+import { Pen, SearchIcon } from "lucide-react";
 import { useDebounce } from "use-debounce";
 import { useFetchInfinite } from "@/hooks/use-fetch-infinite";
 import { useInView } from "react-intersection-observer";
 import { ErrorDynamicPage } from "@/components/error-dynamic";
 import ForumThreadCardSkeleton from "@/features/admin/components/forum/forum-thread-skeleton";
 import { DashboardPageLayout } from "@/features/admin/components/dashboard-page-layout";
+import { ButtonGroup } from "@/components/ui/button-group";
+import { Button } from "@/components/ui/button";
 
 export default function ForumThread() {
-  const [search, setSearch] = useState<string>("");
-  const [debouncedSearch, debouncedState] = useDebounce(search, 300);
+  const [searchKeyword, setSearchKeyword] = useState<string>("");
+  const [debouncedSearch, debouncedState] = useDebounce(searchKeyword, 300);
   const [isSearching, setIsSearching] = useState(false);
   const [prevDebouncedSearch, setPrevDebouncedSearch] = useState<string>("");
   const { ref, inView } = useInView({
@@ -45,7 +47,6 @@ export default function ForumThread() {
         keyword: debouncedSearch,
       },
     },
-    protected: false,
   });
 
   useEffect(() => {
@@ -86,29 +87,36 @@ export default function ForumThread() {
   // Show loading skeleton
   if (showSkeleton) {
     return (
-      <DashboardPageLayout title="Forum">
-        <div className="w-full max-w-md">
-          <InputGroup>
-            <InputGroupInput
-              placeholder="Search threads..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              disabled
-            />
-            <InputGroupAddon align="inline-end">
-              <Spinner />
-            </InputGroupAddon>
-          </InputGroup>
-        </div>
-
+      <div className="container mx-auto px-4 py-10">
+        <header className="flex items-end justify-between flex-wrap ">
+          <div>
+            <h1 className="text-3xl font-semibold text-pretty">Forum</h1>
+            <p className="text-muted-foreground mt-2">
+              Insights and deep dives across design, performance, and
+              architecture.
+            </p>
+          </div>
+          <div className="w-full max-w-md">
+            <InputGroup>
+              <InputGroupInput
+                placeholder="Search threads..."
+                value={searchKeyword}
+                onChange={(e) => setSearchKeyword(e.target.value)}
+                disabled
+              />
+              <InputGroupAddon align="inline-end">
+                <Spinner />
+              </InputGroupAddon>
+            </InputGroup>
+          </div>
+        </header>
         <Separator />
-
         <div className="grid gap-4 md:grid-cols-2">
           {[...Array(6)].map((_, i) => (
             <ForumThreadCardSkeleton key={i} />
           ))}
-        </div>
-      </DashboardPageLayout>
+        </div>{" "}
+      </div>
     );
   }
 
@@ -117,33 +125,52 @@ export default function ForumThread() {
     return <ErrorDynamicPage statusCode={500} message={error?.message} />;
 
   return (
-    <DashboardPageLayout title="Forum">
-      <div className="w-full max-w-md">
-        <InputGroup>
-          <InputGroupInput
-            placeholder="Search threads..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            disabled={isLoading}
-          />
-          {isSearching ? (
-            <InputGroupAddon align="inline-end">
-              <Spinner />
-            </InputGroupAddon>
-          ) : (
-            <InputGroupAddon align="inline-end">
-              <SearchIcon className="size-4" />
-            </InputGroupAddon>
-          )}
-        </InputGroup>
-      </div>
-      <Separator />
-
+    <div className="container mx-auto px-4 py-10">
+      <header className="flex items-end justify-between flex-wrap ">
+        <div>
+          <h1 className="text-3xl font-semibold text-pretty">Forum</h1>
+          <p className="text-muted-foreground mt-2">
+            Insights and deep dives across design, performance, and
+            architecture.
+          </p>
+        </div>
+        <div className="w-full max-w-md">
+          <ButtonGroup className="w-full max-w-md">
+            <ButtonGroup className="w-full max-w-md">
+              <InputGroup>
+                <InputGroupInput
+                  placeholder="Search threads..."
+                  value={searchKeyword}
+                  onChange={(e) => setSearchKeyword(e.target.value)}
+                  disabled={isLoading}
+                />
+                {isSearching ? (
+                  <InputGroupAddon align="inline-end">
+                    <Spinner />
+                  </InputGroupAddon>
+                ) : (
+                  <InputGroupAddon align="inline-end">
+                    <SearchIcon className="size-4" />
+                  </InputGroupAddon>
+                )}
+              </InputGroup>
+            </ButtonGroup>
+            <ButtonGroup>
+              <Button>
+                <Pen className="size-4" />
+                <span className="ml-2">New Thread</span>
+              </Button>
+            </ButtonGroup>
+          </ButtonGroup>
+        </div>
+      </header>
+      <Separator className="my-8" />
       {threads.length > 0 ? (
         <>
           <div className="grid gap-4 md:grid-cols-2">
             {threads.map((thread) => (
               <ThreadCard
+                redirectUrl={`/forum/${thread?.id}`}
                 key={thread?.id}
                 thread={thread as ForumThreadListItemAPI}
               />
@@ -160,12 +187,12 @@ export default function ForumThread() {
       ) : (
         <div className="flex flex-col items-center justify-center py-12 text-center">
           <p className="text-sm text-muted-foreground">
-            {search
-              ? `No threads found for "${search}". Try a different search.`
+            {searchKeyword
+              ? `No threads found for "${searchKeyword}". Try a different search.`
               : "No threads available yet."}
           </p>
         </div>
-      )}
-    </DashboardPageLayout>
+      )}{" "}
+    </div>
   );
 }

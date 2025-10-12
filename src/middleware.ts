@@ -37,7 +37,10 @@ export async function middleware(req: NextRequest) {
 
   const { role } = userPayload;
 
-  // 4️⃣ Admin hanya boleh akses /admin/**
+  if (pathname.startsWith(ADMIN_PREFIX) && role !== "ADMINISTRATOR") {
+    return NextResponse.redirect(new URL("/", req.url));
+  }
+
   if (role === "ADMINISTRATOR" && !pathname.startsWith(ADMIN_PREFIX)) {
     return NextResponse.redirect(new URL("/admin/dashboard", req.url));
   }

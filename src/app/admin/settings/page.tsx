@@ -28,7 +28,7 @@ import {
   TextIcon,
 } from "lucide-react";
 
-export default function Component() {
+export default function Component() { 
   return (
     <>
       <Card>

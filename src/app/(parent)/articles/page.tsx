@@ -49,24 +49,47 @@ import {
   EmptyHeader,
   EmptyTitle,
 } from "@/components/ui/empty";
-
+import { ButtonGroup } from "@/components/ui/button-group";
+import { useIsMobile } from "@/hooks/use-mobile";
+import {
+  NavigationMenu,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+} from "@/components/ui/navigation-menu";
+import { NavbarListItem } from "@/components/navbar/navbar-list-item";
+import { CategoryAPI, CategoryPublicAPI } from "../../../types/category";
+import { useQueryParams } from "@/hooks/use-query-params";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { cn } from "@/lib/utils";
+type ArticleQueryParams = {
+  page?: string;
+  limit?: string;
+  category?: string;
+  keyword?: string;
+  sort?: "newest" | "highest";
+} & Record<string, string>;
 export default function ArticlesPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
-
+  const isMobile = useIsMobile();
   const inputRef = useRef<HTMLInputElement | null>(null);
-  const page = Number(searchParams.get("page") ?? 1);
-  const limit = Number(searchParams.get("limit") ?? 10);
-
-  const initialKeyword = searchParams.get("keyword") ?? "";
-  const initialSort = (searchParams.get("sort") as string) ?? "highest";
-
+  const params = useQueryParams<ArticleQueryParams>();
+  const sortParam = params.sort;
+  const initialSort =
+    sortParam === "highest" || sortParam === "newest" ? sortParam : "newest";
+  const {
+    page = 1,
+    limit = 10,
+    keyword: initialKeyword = "",
+    category: categoryQuery = "",
+  } = params;
   const [searchKeyword, setSearchKeyword] = useState<string>(initialKeyword);
   const [sortBy, setSortBy] = useState<string>(initialSort);
   const [debounceSearch] = useDebounce(searchKeyword, 500);
   const searchParamsString = searchParams?.toString() ?? "";
- 
   const {
     data: topArticles,
     isLoading: isTopLoading,
@@ -78,7 +101,7 @@ export default function ArticlesPage() {
     query: { type: "article", sort: "highest", limit: 3 },
     protected: false,
   });
- 
+
   const {
     data: paginatedArticles,
     isLoading: isPaginatedLoading,
@@ -92,6 +115,7 @@ export default function ArticlesPage() {
       limit.toString(),
       debounceSearch,
       sortBy,
+      categoryQuery,
     ],
     endpoint: "contents",
     query: {
@@ -100,7 +124,19 @@ export default function ArticlesPage() {
       limit,
       keyword: debounceSearch || undefined,
       sort: sortBy,
+      category: categoryQuery || undefined,
     },
+    protected: false,
+  });
+
+  const {
+    data: categories,
+    isLoading: isCategoriesLoading,
+    error: categoriesError,
+    isError: isCategoriesError,
+  } = useFetchPaginated<CategoryPublicAPI[]>({
+    key: ["categories"],
+    endpoint: "categories",
     protected: false,
   });
 
@@ -223,8 +259,37 @@ export default function ArticlesPage() {
       <ContentsHighlightCarousel contents={topArticles?.data ?? []} />
 
       <Separator />
+
       {/* Articles Grid */}
-      <div className="container mx-auto px-4 py-10">
+      <div className="container mx-auto px-4 py-8">
+        <ScrollArea>
+          <NavigationMenu className="mb-3">
+            <NavigationMenuList>
+              <NavigationMenuItem>
+                <NavbarListItem
+                  href={`/articles?page=1&limit=${limit}&sort=${sortBy}`}
+                  className={cn(categoryQuery === "" && "bg-pretty text-white")}
+                >
+                  All
+                </NavbarListItem>
+              </NavigationMenuItem>
+              {categories?.data?.map((category) => (
+                <NavigationMenuItem key={category.id}>
+                  <NavbarListItem
+                    href={`/articles?category=${category.slug}&page=1&limit=${limit}&sort=${sortBy}`}
+                    className={cn(
+                      category.slug === categoryQuery && "bg-pretty text-white"
+                    )}
+                  >
+                    {category.name}
+                  </NavbarListItem>
+                </NavigationMenuItem>
+              ))}
+            </NavigationMenuList>
+          </NavigationMenu>
+          <ScrollBar orientation="horizontal" />
+        </ScrollArea>
+        <Separator className="my-4" />
         <header className="mb-8 flex items-end justify-between flex-wrap ">
           <div>
             <h1 className="text-3xl font-semibold text-pretty">
@@ -236,8 +301,11 @@ export default function ArticlesPage() {
             </p>
           </div>
 
-          <div className="lg:max-w-md w-full flex gap-3 items-center">
-            <div className="flex-1">
+          <ButtonGroup
+            orientation={isMobile ? "vertical" : "horizontal"}
+            className="w-full  max-w-md"
+          >
+            <ButtonGroup className="w-full max-w-md">
               <InputGroup>
                 <InputGroupInput
                   placeholder="Search threads..."
@@ -255,9 +323,8 @@ export default function ArticlesPage() {
                   </InputGroupButton>
                 )}
               </InputGroup>
-            </div>
-
-            <div>
+            </ButtonGroup>
+            <ButtonGroup>
               <Select value={sortBy} onValueChange={(val) => setSortBy(val)}>
                 <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder="Sort" />
@@ -270,8 +337,8 @@ export default function ArticlesPage() {
                   </SelectGroup>
                 </SelectContent>
               </Select>
-            </div>
-          </div>
+            </ButtonGroup>
+          </ButtonGroup>
         </header>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -322,8 +389,8 @@ export default function ArticlesPage() {
           <Separator />
         </div>
         <PaginationWithLinks
-          page={page}
-          pageSize={limit}
+          page={Number(page)}
+          pageSize={Number(limit)}
           totalCount={paginatedArticles?.meta?.totalItems ?? 0}
         />
       </div>
