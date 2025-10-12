@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/navigation-menu";
 import { NavTab } from "../site-header";
 import { NavbarListItem } from "./navbar-list-item";
+import { usePathname } from "next/navigation";
 
 export const Navbar = ({
   tabs,
@@ -21,31 +22,31 @@ export const Navbar = ({
 }: {
   tabs: NavTab[];
 } & React.ComponentProps<"nav">) => {
+  const pathname = usePathname();
   return (
     <nav className="hidden md:block" {...props}>
       <NavigationMenu>
         <NavigationMenuList>
-          {tabs.map((tab) => (
-            <NavigationMenuItem key={tab.href}>
-              {tab.hasChildren ? (
-                <>
+          {tabs.map((tab, index) => (
+            <NavigationMenuItem key={`${tab.label}-${index}`}>
+              {tab.children ? (
+                <React.Fragment>
                   <NavigationMenuTrigger
                     className={cn(
-                      "px-3 py-2 text-sm font-medium rounded-md transition-colors"
+                      " text-sm font-medium rounded-md transition-colors"
                     )}
                   >
                     {tab.label}
                   </NavigationMenuTrigger>
                   <NavigationMenuContent>
                     <ul className="grid gap-2 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
-                      {/* (Opsional) Bagian highlight / preview di kiri */}
-                      {tab.hasChildren.some((child) => child.highlight) && (
-                        <li className="row-span-3">
+                      {tab.children.some((child) => child.highlight) && (
+                        <li  className="row-span-3">
                           <NavigationMenuLink asChild>
                             <Link
                               className="from-muted/50 to-muted flex h-full w-full flex-col justify-end rounded-md bg-linear-to-b p-6 no-underline outline-hidden select-none focus:shadow-md"
                               href={
-                                tab.hasChildren.find((child) => child.highlight)
+                                tab.children.find((child) => child.highlight)
                                   ?.href ?? "/"
                               }
                             >
@@ -61,28 +62,46 @@ export const Navbar = ({
                       )}
 
                       {/* Loop isi submenu */}
-                      {tab.hasChildren.map((child) => (
-                        <NavbarListItem
-                          key={child.href}
-                          href={child.href}
-                          title={child.label}
+                      {tab.children.map((child) => (
+                        <NavigationMenuLink
+                          className={cn(
+                            pathname === child.href ? "bg-accent" : ""
+                          )} 
+                          key={`${tab.label}-${child.label}`}
+                          asChild
                         >
-                          {child.highlight
-                            ? `Featured: ${child.label}`
-                            : `Learn more about ${child.label}`}
-                        </NavbarListItem>
+                          <Link
+                            href={child.href !== undefined ? child.href : ""}
+                            className={cn("flex flex-col")}
+                          >
+                            <div className="text-sm leading-none font-medium">
+                              {child.label}
+                            </div>
+                            <p className="text-muted-foreground line-clamp-2 text-sm leading-snug">
+                              {child.highlight
+                                ? `Featured: ${child.label}`
+                                : `Learn more about ${child.label}`}
+                            </p>
+                          </Link>
+                        </NavigationMenuLink>
                       ))}
                     </ul>
                   </NavigationMenuContent>
-                </>
+                </React.Fragment>
               ) : (
-                <NavbarListItem
-                  href={tab.href !== undefined ? tab.href : ""}
-                  title={tab.label}
-                  className={cn(
-                    "px-3 py-2 text-sm font-medium rounded-md transition-colors"
-                  )}
-                />
+                <NavigationMenuLink
+                  className={cn(pathname === tab.href ? "bg-accent" : "")}
+                  asChild
+                >
+                  <Link
+                    href={tab.href !== undefined ? tab.href : ""}
+                    className="flex flex-col "
+                  >
+                    <div className="text-sm leading-none font-medium">
+                      {tab.label}
+                    </div>
+                  </Link>
+                </NavigationMenuLink>
               )}
             </NavigationMenuItem>
           ))}

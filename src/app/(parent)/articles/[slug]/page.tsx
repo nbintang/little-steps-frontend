@@ -14,6 +14,7 @@ import { useFetchPaginated } from "@/hooks/use-fetch-paginated";
 import { Button } from "@/components/ui/button";
 import { ArrowUpRight } from "lucide-react";
 import { ContentCard } from "@/features/parent/components/content-card";
+import { CONTENT_TYPE } from "@/features/admin/utils/content-type";
 
 type Params = { slug: string };
 
@@ -32,12 +33,6 @@ export default function ArticleDetailPage({
   } = useFetch<ContentPublicAPI>({
     keys: ["contents", slug],
     endpoint: `contents/${slug}`,
-    config: {
-      params: {
-        type: "article",
-        // highest: true,
-      },
-    },
     protected: false,
   });
 
@@ -49,7 +44,7 @@ export default function ArticleDetailPage({
     key: ["contents"],
     endpoint: `contents`,
     query: {
-      type: "article",
+      type: CONTENT_TYPE.Article,
       sort: "newest",
       limit: 3,
       // highest: true,
@@ -65,7 +60,7 @@ export default function ArticleDetailPage({
     key: ["contents"],
     endpoint: `contents`,
     query: {
-      type: "article",
+      type: CONTENT_TYPE.Article,
       limit: 5,
       category: article?.category.name,
       // highest: true,

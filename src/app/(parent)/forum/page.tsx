@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Separator } from "@/components/ui/separator";
 import type { ForumThreadListItemAPI } from "@/types/forum";
 import { ThreadCard } from "@/features/admin/components/forum/thread-card";
@@ -125,18 +125,12 @@ export default function ForumThread() {
     return <ErrorDynamicPage statusCode={500} message={error?.message} />;
 
   return (
-    <div className="container mx-auto px-4 py-10">
-      <header className="flex items-end justify-between flex-wrap ">
-        <div>
-          <h1 className="text-3xl font-semibold text-pretty">Forum</h1>
-          <p className="text-muted-foreground mt-2">
-            Insights and deep dives across design, performance, and
-            architecture.
-          </p>
-        </div>
+    <React.Fragment>
+      <header className="flex items-end justify-between flex-wrap col-span-1 order-first md:order-last  lg:col-span-1 lg:sticky lg:top-52 lg:self-start">
+     
         <div className="w-full max-w-md">
-          <ButtonGroup className="w-full max-w-md">
-            <ButtonGroup className="w-full max-w-md">
+          <ButtonGroup orientation="vertical" className="w-full max-w-md">
+            <ButtonGroup className="w-full">
               <InputGroup>
                 <InputGroupInput
                   placeholder="Search threads..."
@@ -164,35 +158,42 @@ export default function ForumThread() {
           </ButtonGroup>
         </div>
       </header>
-      <Separator className="my-8" />
-      {threads.length > 0 ? (
-        <>
-          <div className="grid gap-4 md:grid-cols-2">
-            {threads.map((thread) => (
-              <ThreadCard
-                redirectUrl={`/forum/${thread?.id}`}
-                key={thread?.id}
-                thread={thread as ForumThreadListItemAPI}
-              />
-            ))}
-          </div>
+      {/* <Separator className="my-8" /> */}
+      {/* {threads.length > 0 ? ( */}
+      <>
+        <div className="space-y-4 col-span-2 order-last md:order-first ">
+             <div>
+          <h1 className="text-3xl font-semibold text-pretty">Forum</h1>
+          <p className="text-muted-foreground mt-2">
+            Insights and deep dives across design, performance, and
+            architecture.
+          </p>
+        </div>
+          {threads.map((thread) => (
+            <ThreadCard
+              redirectUrl={`/forum/${thread?.id}`}
+              key={thread?.id}
+              thread={thread as ForumThreadListItemAPI}
+            />
+          ))}
+        </div>
 
-          {/* Infinite scroll trigger */}
-          {hasNextPage && (
+        {/* Infinite scroll trigger */}
+        {/* {hasNextPage && (
             <div ref={ref} className="flex justify-center py-4">
               {isFetchingNextPage && <Spinner />}
             </div>
-          )}
-        </>
-      ) : (
-        <div className="flex flex-col items-center justify-center py-12 text-center">
-          <p className="text-sm text-muted-foreground">
-            {searchKeyword
-              ? `No threads found for "${searchKeyword}". Try a different search.`
-              : "No threads available yet."}
-          </p>
-        </div>
-      )}{" "}
-    </div>
+          )} */}
+      </>
+
+      {/* <div className="flex flex-col items-center justify-center py-12 text-center">
+           <p className="text-sm text-muted-foreground">
+             {searchKeyword
+               ? `No threads found for "${searchKeyword}". Try a different search.`
+               : "No threads available yet."}
+           </p>
+         </div>
+       ) */}
+    </React.Fragment>
   );
 }

@@ -18,7 +18,7 @@ const TABS: NavTab[] = [
   { href: "/articles", label: "Articles" },
   {
     label: "Kid Stuff",
-    hasChildren: [
+    children: [
       { href: "/stories", label: "Kid Stories", highlight: true },
       { href: "/quizzes", label: "Kid Quizzes Stuff 2" },
       { href: "/", label: "Kid Stuff 3" },

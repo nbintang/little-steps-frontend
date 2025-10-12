@@ -44,7 +44,7 @@ import { usePost } from "@/hooks/use-post";
 import { ContentMutateResponseAPI } from "@/types/content";
 import useUploadImage from "@/hooks/use-upload-image";
 import MinimalTiptapArticleEditor from "../../content-editor/minimal-tiptap-article";
-import { ContentType } from "../../../utils/content-type";
+import { CONTENT_TYPE } from "../../../utils/content-type";
 import {
   Empty,
   EmptyContent,
@@ -99,7 +99,7 @@ export const CreateArticleForm = () => {
       allowToast: true,
       toastMessage: "Article created successfully",
       config: {
-        params: { type: ContentType.Article },
+        params: { type: CONTENT_TYPE.Article },
       },
     });
 

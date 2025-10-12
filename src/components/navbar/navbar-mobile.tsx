@@ -29,6 +29,14 @@ import {
 import { ProfileAPI } from "@/types/profile";
 import { NavTab } from "../site-header";
 import { UseQueryResult } from "@tanstack/react-query";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "../ui/accordion";
+import { NavbarListItem } from "./navbar-list-item";
+import { usePathname } from "next/navigation";
 
 export const NavbarMobile = ({
   tabs,
@@ -39,7 +47,7 @@ export const NavbarMobile = ({
 }) => {
   const userName = user?.user?.name || "Guest";
   const fallback = user?.user?.name?.charAt(0).toUpperCase() || "G";
-
+  const pathname = usePathname();
   return (
     <div className="md:hidden">
       <Sheet>
@@ -140,18 +148,58 @@ export const NavbarMobile = ({
 
             {/* Mobile nav links */}
             <nav className="mt-2 gap-2 flex flex-col">
-              {tabs.map((tab) => (
-                <SheetClose asChild key={tab.href}>
-                  <Link
-  href={tab.href !== undefined ? tab.href : ''}
-                    className={cn(
-                      "px-2 py-2.5 text-sm font-medium rounded-md transition-colors hover:bg-accent"
-                    )}
+              {tabs.map((tab) =>
+                tab.children ? (
+                  <Accordion
+                    type="single"
+                    collapsible
+                    className="w-full"
+                    key={tab.label}
                   >
-                    {tab.label}
-                  </Link>
-                </SheetClose>
-              ))}
+                    <AccordionItem value={tab.href ?? tab.label}>
+                      <AccordionTrigger className="px-2 py-2.5 text-sm font-medium rounded-md transition-colors hover:bg-accent">
+                        {tab.label}
+                      </AccordionTrigger>
+                      <AccordionContent>
+                        <ul className="grid gap-2  space-y-0.5 mt-1">
+                          {tab.children.map((child) => (
+                            <SheetClose asChild key={child.href}>
+                              <Link
+                                key={`${child.href}-${child.label}`}
+                                href={
+                                  child.href !== undefined ? child.href : ""
+                                }
+                                className={cn(
+                                  "flex flex-col px-2 py-2.5 rounded-md transition-colors hover:bg-accent items-start gap-0.5 ",
+                                  pathname === child.href && "bg-accent"
+                                )}
+                              >
+                                <div className="text-xs leading-none font-medium">
+                                  {child.label}
+                                </div>
+                                <p className="text-muted-foreground line-clamp-2 text-xs leading-snug">
+                                  {child.highlight
+                                    ? `Featured: ${child.label}`
+                                    : `Learn more about ${child.label}`}
+                                </p>
+                              </Link>
+                            </SheetClose>
+                          ))}
+                        </ul>
+                      </AccordionContent>
+                    </AccordionItem>
+                  </Accordion>
+                ) : (
+                  <SheetClose asChild key={tab.href}>
+                    <Link
+                      href={tab.href ?? ""}
+                      className="px-2 py-2.5 text-sm font-medium rounded-md transition-colors hover:bg-accent"
+                    >
+                      {tab.label}
+                    </Link>
+                  </SheetClose>
+                )
+              )}
             </nav>
 
             <Separator />

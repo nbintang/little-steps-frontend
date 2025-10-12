@@ -5,18 +5,19 @@ export function NavbarListItem({
   title,
   children,
   href,
-  ...props
-}: React.ComponentPropsWithoutRef<"li"> & { href: string }) {
+}: {
+  href: string;
+  title: string;
+  children: React.ReactNode;
+}) {
   return (
-    <li {...props}>
-      <NavigationMenuLink asChild>
-        <Link href={href}  className="flex flex-col whitespace-nowrap">
-          <div className="text-sm leading-none font-medium">{title}</div>
-          <p className="text-muted-foreground line-clamp-2 text-sm leading-snug">
-            {children}
-          </p>
-        </Link>
-      </NavigationMenuLink>
-    </li>
-  )
+    <NavigationMenuLink asChild>
+      <Link href={href} className="flex flex-col ">
+        <div className="text-sm leading-none font-medium">{title}</div>
+        <p className="text-muted-foreground line-clamp-2 text-sm leading-snug">
+          {children}
+        </p>
+      </Link>
+    </NavigationMenuLink>
+  );
 }

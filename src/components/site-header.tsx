@@ -10,7 +10,7 @@ import { NavbarMobile } from "./navbar/navbar-mobile";
 export type NavTab ={
   href?: string;
   label: string;
-  hasChildren?: {
+  children?: {
     href: string;
     label: string;
     highlight?: boolean;

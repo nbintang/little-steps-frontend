@@ -60,9 +60,10 @@ import {
 } from "@/components/ui/navigation-menu";
 import { NavbarListItem } from "@/components/navbar/navbar-list-item";
 import { CategoryAPI, CategoryPublicAPI } from "../../../types/category";
-import { useQueryParams } from "@/hooks/use-query-params";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
+import { CONTENT_TYPE } from "@/features/admin/utils/content-type";
 type ArticleQueryParams = {
   page?: string;
   limit?: string;
@@ -76,20 +77,15 @@ export default function ArticlesPage() {
   const pathname = usePathname();
   const isMobile = useIsMobile();
   const inputRef = useRef<HTMLInputElement | null>(null);
-  const params = useQueryParams<ArticleQueryParams>();
-  const sortParam = params.sort;
-  const initialSort =
-    sortParam === "highest" || sortParam === "newest" ? sortParam : "newest";
-  const {
-    page = 1,
-    limit = 10,
-    keyword: initialKeyword = "",
-    category: categoryQuery = "",
-  } = params;
-  const [searchKeyword, setSearchKeyword] = useState<string>(initialKeyword);
+  const page = Number(searchParams.get("page") ?? 1);
+  const limit = Number(searchParams.get("limit") ?? 10);
+
+  const initialKeyword = searchParams.get("keyword") ?? "";
+  const initialSort = (searchParams.get("sort") as string) ?? "highest";
+  const initialCategory = searchParams.get("category") ?? "";
   const [sortBy, setSortBy] = useState<string>(initialSort);
+  const [searchKeyword, setSearchKeyword] = useState<string>(initialKeyword);
   const [debounceSearch] = useDebounce(searchKeyword, 500);
-  const searchParamsString = searchParams?.toString() ?? "";
   const {
     data: topArticles,
     isLoading: isTopLoading,
@@ -98,7 +94,7 @@ export default function ArticlesPage() {
   } = useFetchPaginated<ContentsPublicAPI[]>({
     key: ["contents-top", "article", "highest"],
     endpoint: "contents",
-    query: { type: "article", sort: "highest", limit: 3 },
+    query: { type: CONTENT_TYPE.Article, sort: "highest", limit: 3 },
     protected: false,
   });
 
@@ -115,16 +111,16 @@ export default function ArticlesPage() {
       limit.toString(),
       debounceSearch,
       sortBy,
-      categoryQuery,
+      initialCategory,
     ],
     endpoint: "contents",
     query: {
-      type: "article",
+      type: CONTENT_TYPE.Article,
       page,
       limit,
       keyword: debounceSearch || undefined,
       sort: sortBy,
-      category: categoryQuery || undefined,
+      category: initialCategory || undefined,
     },
     protected: false,
   });
@@ -180,7 +176,7 @@ export default function ArticlesPage() {
         }
       }, 0);
     }
-  }, [debounceSearch, sortBy, limit, pathname, router, searchParamsString]);
+  }, [debounceSearch, sortBy, limit, pathname, router]);
 
   if (isTopLoading)
     return (
@@ -256,7 +252,10 @@ export default function ArticlesPage() {
   return (
     <React.Fragment>
       {/* Carousel */}
-      <ContentsHighlightCarousel contents={topArticles?.data ?? []} />
+      <ContentsHighlightCarousel
+        variant={CONTENT_TYPE.Article}
+        contents={topArticles?.data ?? []}
+      />
 
       <Separator />
 
@@ -264,31 +263,45 @@ export default function ArticlesPage() {
       <div className="container mx-auto px-4 py-8">
         <ScrollArea>
           <NavigationMenu className="mb-3">
-            <NavigationMenuList>
+            <NavigationMenuList className="flex gap-x-2 whitespace-nowrap">
               <NavigationMenuItem>
-                <NavbarListItem
-                  href={`/articles?page=1&limit=${limit}&sort=${sortBy}`}
-                  className={cn(categoryQuery === "" && "bg-pretty text-white")}
-                >
-                  All
-                </NavbarListItem>
-              </NavigationMenuItem>
-              {categories?.data?.map((category) => (
-                <NavigationMenuItem key={category.id}>
-                  <NavbarListItem
-                    href={`/articles?category=${category.slug}&page=1&limit=${limit}&sort=${sortBy}`}
+                <NavigationMenuLink asChild>
+                  <Link
+                    href={`/articles?page=1&limit=${limit}&sort=${sortBy}`}
                     className={cn(
-                      category.slug === categoryQuery && "bg-pretty text-white"
+                      "inline-flex px-3 py-1 rounded-md whitespace-nowrap",
+                      initialCategory === ""
+                        ? "text-black bg-muted"
+                        : "text-muted-foreground"
                     )}
                   >
-                    {category.name}
-                  </NavbarListItem>
+                    All
+                  </Link>
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+
+              {categories?.data?.map((category) => (
+                <NavigationMenuItem key={category.id}>
+                  <NavigationMenuLink asChild>
+                    <Link
+                      href={`/articles?category=${category.slug}&page=1&limit=${limit}&sort=${sortBy}`}
+                      className={cn(
+                        "inline-flex px-3 py-1 rounded-md whitespace-nowrap",
+                        initialCategory === category.slug
+                          ? "text-black bg-muted"
+                          : "text-muted-foreground"
+                      )}
+                    >
+                      {category.name}
+                    </Link>
+                  </NavigationMenuLink>
                 </NavigationMenuItem>
               ))}
             </NavigationMenuList>
           </NavigationMenu>
           <ScrollBar orientation="horizontal" />
         </ScrollArea>
+
         <Separator className="my-4" />
         <header className="mb-8 flex items-end justify-between flex-wrap ">
           <div>
@@ -384,16 +397,18 @@ export default function ArticlesPage() {
       </div>
 
       {/* Pagination */}
-      <div className="mx-auto mb-16">
-        <div className="max-w-md mx-auto py-4">
-          <Separator />
+      {(paginatedArticles?.meta?.totalItems ?? 0) > limit && (
+        <div className="mx-auto mb-16">
+          <div className="max-w-md mx-auto py-4">
+            <Separator />
+          </div>
+          <PaginationWithLinks
+            page={Number(page)}
+            pageSize={Number(limit)}
+            totalCount={paginatedArticles?.meta?.totalItems ?? 0}
+          />
         </div>
-        <PaginationWithLinks
-          page={Number(page)}
-          pageSize={Number(limit)}
-          totalCount={paginatedArticles?.meta?.totalItems ?? 0}
-        />
-      </div>
+      )}
     </React.Fragment>
   );
 }
