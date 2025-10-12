@@ -9,14 +9,14 @@ import { Card, CardContent } from "@/components/ui/card";
 import useCarousel from "@/hooks/use-carousel";
 import { ContentsPublicAPI } from "@/types/content";
 import Link from "next/link";
-import { CONTENT_TYPE } from "@/features/admin/utils/content-type";
+import { ContentType } from "@/lib/enums/content-type";
 
 export function ContentsHighlightCarousel({
   contents,
   variant,
 }: {
   contents: ContentsPublicAPI[];
-  variant: CONTENT_TYPE;
+  variant: ContentType;
 }) {
   const { plugin, api, setApi, current } = useCarousel();
 

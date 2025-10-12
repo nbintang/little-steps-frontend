@@ -1,7 +1,11 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import type { Post } from "@/types/forum";
-import { format } from "date-fns";  
+import type { PostAPI } from "@/types/forum";
+import { format } from "date-fns";
+import { useDelete } from "@/hooks/use-delete";
+import { Button } from "@/components/ui/button";
+import { Trash2 } from "lucide-react";
+import { useAuth } from "@/hooks/use-auth";
 
 function initials(name: string) {
   return name
@@ -12,7 +16,23 @@ function initials(name: string) {
     .toUpperCase();
 }
 
-export function PostItem({ post }: { post: Post }) {
+export function PostItem({
+  post,
+  threadId,
+}: {
+  post: PostAPI;
+  threadId?: string;
+}) {
+  const user = useAuth();
+  const { mutate: deletePost, isPending: deletePending } = useDelete({
+    keys: ["forum", threadId ?? "", "posts"],
+    endpoint: `forum/${threadId}/posts/${post.id}`,
+  });
+  const isAuthor = post.author.id === user?.sub;
+  console.log(isAuthor);
+  console.log(post.author.id, user?.sub);
+
+  const handleDelete = () => deletePost();
   return (
     <Card>
       <CardContent className="pt-6">
@@ -40,6 +60,16 @@ export function PostItem({ post }: { post: Post }) {
               {post.content}
             </div>
           </div>
+          {isAuthor && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleDelete}
+              disabled={deletePending}
+            >
+              {deletePending ? <Trash2 className="animate-spin" /> : <Trash2 />}
+            </Button>
+          )}
         </div>
       </CardContent>
     </Card>

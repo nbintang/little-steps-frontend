@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Separator } from "@/components/ui/separator";
 import type { ForumThreadListItemAPI } from "@/types/forum";
-import { ThreadCard } from "@/features/admin/components/forum/thread-card";
+import { ThreadCard } from "@/components/forum/thread-card";
 import {
   InputGroup,
   InputGroupAddon,
@@ -15,7 +15,7 @@ import { useDebounce } from "use-debounce";
 import { useFetchInfinite } from "@/hooks/use-fetch-infinite";
 import { useInView } from "react-intersection-observer";
 import { ErrorDynamicPage } from "@/components/error-dynamic";
-import ForumThreadCardSkeleton from "@/features/admin/components/forum/forum-thread-skeleton";
+import ForumThreadCardSkeleton from "@/components/forum/forum-thread-skeleton";
 import { DashboardPageLayout } from "@/features/admin/components/dashboard-page-layout";
 
 export default function ForumThread() {
@@ -45,6 +45,7 @@ export default function ForumThread() {
         keyword: debouncedSearch,
       },
     },
+    protected: false
   });
 
   useEffect(() => {

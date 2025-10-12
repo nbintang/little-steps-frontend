@@ -1,19 +1,19 @@
 "use client";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
-import { PostItem } from "@/features/admin/components/forum/post-item";
+import { PostItem } from "@/components/forum/post-item";
 import { useFetch } from "@/hooks/use-fetch";
 import { useFetchInfinite } from "@/hooks/use-fetch-infinite";
-import { ForumThreadListItemAPI, Post } from "@/types/forum";
+import { ForumThreadListItemAPI, PostAPI } from "@/types/forum";
 import { format } from "date-fns";
 import { use, useEffect } from "react";
 import { useInView } from "react-intersection-observer";
 import { ErrorDynamicPage } from "@/components/error-dynamic";
 import { Spinner } from "@/components/ui/spinner";
-import { ForumThreadDetailSkeleton } from "@/features/admin/components/forum/forum-thread-detail-skeleton";
+import { ForumThreadDetailSkeleton } from "@/components/forum/forum-thread-detail-skeleton";
 import { Reply } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { formatInitials } from "@/helpers/format-name";
+import { formatInitials } from "@/helpers/string-formatter";
   
 
 export default function ForumPost({
@@ -43,7 +43,7 @@ export default function ForumPost({
     isFetchingNextPage,
     isLoading: postsLoading,
     isError: postsError,
-  } = useFetchInfinite<Post>({
+  } = useFetchInfinite<PostAPI>({
     keys: ["forum", id, "posts"],
     endpoint: `forum/${id}/posts`,
     config: { params: { limit: 2 } },

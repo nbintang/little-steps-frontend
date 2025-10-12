@@ -25,7 +25,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { ErrorDynamicPage } from "@/components/error-dynamic";
 import { Button } from "@/components/ui/button";
-import { CONTENT_TYPE } from "@/features/admin/utils/content-type";
+import { ContentType } from "@/lib/enums/content-type";
 import { useFetchPaginated } from "@/hooks/use-fetch-paginated";
 import { CategoryPublicAPI } from "@/types/category";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -52,6 +52,8 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { ButtonGroup } from "@/components/ui/button-group";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { formatCapitalize } from "@/helpers/string-formatter";
+import { ContentSort } from "@/lib/enums/content-sort";
 export default function FictionsPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -61,8 +63,8 @@ export default function FictionsPage() {
   const [isSearching, setIsSearching] = useState(false);
   const [debounceSearch, setDebouncedSearch] = useState<string>("");
   const inputRef = useRef<HTMLInputElement | null>(null);
-  const initialKeyword = searchParams.get("keyword") ?? "";
-  const initialSort = (searchParams.get("sort") as string) ?? "highest";
+  const initialSort =
+    (searchParams.get("sort") as ContentSort) ?? ContentSort.NEWEST;
   const initialCategory = searchParams.get("category") ?? "";
   const [sortBy, setSortBy] = useState<string>(initialSort);
   const { ref: sentinelRef, inView } = useInView({
@@ -76,9 +78,13 @@ export default function FictionsPage() {
     error: topError,
     isError: isTopError,
   } = useFetchPaginated<ContentsPublicAPI[]>({
-    key: ["contents-top", "fiction", "highest"],
+    key: ["contents-top", "fiction", ContentSort.HIGHEST_RATED],
     endpoint: "contents",
-    query: { type: CONTENT_TYPE.Fiction, sort: "highest", limit: 3 },
+    query: {
+      type: ContentType.FICTION,
+      sort: ContentSort.HIGHEST_RATED,
+      limit: 3,
+    },
     protected: false,
   });
 
@@ -96,7 +102,7 @@ export default function FictionsPage() {
     endpoint: "contents",
     config: {
       params: {
-        type: CONTENT_TYPE.Fiction,
+        type: ContentType.FICTION,
         category: initialCategory || undefined,
         keyword: debouncedSearch || undefined,
         sort: sortBy || undefined,
@@ -228,15 +234,17 @@ export default function FictionsPage() {
                   <Spinner />
                 </InputGroupAddon>
               </InputGroup>
-              <Select value={sortBy} onValueChange={(val) => setSortBy(val)}>
+              <Select
+                disabled
+                value={sortBy}
+                onValueChange={(val) => setSortBy(val)}
+              >
                 <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder="Sort" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
                     <SelectLabel>Sort by</SelectLabel>
-                    <SelectItem value="highest">Highest</SelectItem>
-                    <SelectItem value="newest">Newest</SelectItem>
                   </SelectGroup>
                 </SelectContent>
               </Select>
@@ -262,7 +270,7 @@ export default function FictionsPage() {
   return (
     <React.Fragment>
       <ContentsHighlightCarousel
-        variant={CONTENT_TYPE.Fiction}
+        variant={ContentType.FICTION}
         contents={topFictions?.data ?? []}
       />
 
@@ -315,7 +323,7 @@ export default function FictionsPage() {
         <header className="mb-8 flex items-end justify-between flex-wrap ">
           <div>
             <h1 className="text-3xl font-semibold text-pretty">
-              {sortBy === "newest" ? "Latest" : "Top"} Stories
+              {formatCapitalize(sortBy)} Stories
             </h1>
             <p className="text-muted-foreground mt-2">
               Insights and deep dives across design, performance, and
@@ -332,6 +340,7 @@ export default function FictionsPage() {
                 <InputGroupInput
                   placeholder="Search Stories..."
                   value={searchKeyword}
+                  
                   onChange={(e) => setSearchKeyword(e.target.value)}
                   disabled={isSearching}
                 />
@@ -354,8 +363,12 @@ export default function FictionsPage() {
                 <SelectContent>
                   <SelectGroup>
                     <SelectLabel>Sort by</SelectLabel>
-                    <SelectItem value="highest">Highest</SelectItem>
-                    <SelectItem value="newest">Newest</SelectItem>
+                    {Array.from(Object.values(ContentSort)).map((sort) => (
+                      // your code here
+                      <SelectItem key={sort} value={sort}>
+                        {formatCapitalize(sort)}
+                      </SelectItem>
+                    ))}
                   </SelectGroup>
                 </SelectContent>
               </Select>

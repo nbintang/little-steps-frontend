@@ -8,13 +8,17 @@ import React, { use } from "react";
 import { ContentRenderer } from "@/features/parent/components/content-renderer";
 import { useFetch } from "@/hooks/use-fetch";
 import { format } from "date-fns";
-import { formatInitials } from "@/helpers/format-name";
+import { formatInitials } from "@/helpers/string-formatter";
 import Image from "next/image";
 import { useFetchPaginated } from "@/hooks/use-fetch-paginated";
 import { Button } from "@/components/ui/button";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Star } from "lucide-react";
 import { ContentCard } from "@/features/parent/components/content-card";
-import { CONTENT_TYPE } from "@/features/admin/utils/content-type";
+import { ContentType } from "@/lib/enums/content-type";
+import { cn } from "@/lib/utils";
+import { StarFilledIcon } from "@radix-ui/react-icons";
+import { IconStarHalfFilled } from "@tabler/icons-react";
+import { StarRatings } from "@/components/star-ratings";
 
 type Params = { slug: string };
 
@@ -44,7 +48,7 @@ export default function ArticleDetailPage({
     key: ["contents"],
     endpoint: `contents`,
     query: {
-      type: CONTENT_TYPE.Article,
+      type: ContentType.ARTICLE,
       sort: "newest",
       limit: 3,
       // highest: true,
@@ -60,7 +64,7 @@ export default function ArticleDetailPage({
     key: ["contents"],
     endpoint: `contents`,
     query: {
-      type: CONTENT_TYPE.Article,
+      type: ContentType.ARTICLE,
       limit: 5,
       category: article?.category.name,
       // highest: true,
@@ -120,6 +124,15 @@ export default function ArticleDetailPage({
               <ContentRenderer content={article.contentJson} />
             </article>
           </MotionFade>
+          <div className="mt-8">
+            <div className="flex items-center gap-x-1">
+              <StarRatings rating={article.rating} />
+              <span>({article.rating.toFixed(1)})</span>
+            </div>
+            <Button variant={"secondary"} className="mt-2">
+              Rate this article
+            </Button>
+          </div>
         </div>
         <aside className="lg:col-span-1 lg:sticky lg:top-14 lg:self-start">
           <h1 className="text-2xl my-6  font-semibold relative">

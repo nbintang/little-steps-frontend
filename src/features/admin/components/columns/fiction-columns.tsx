@@ -23,7 +23,7 @@ import Link from "next/link";
 import { useDisplayWarningDialog } from "@/hooks/use-display-warning-dialog";
 import { useDelete } from "@/hooks/use-delete";
 import { usePatch } from "@/hooks/use-patch";
-import { CONTENT_TYPE } from "../../utils/content-type";
+import { ContentType } from "../../../../lib/enums/content-type";
 
 export const fictionColumns: ColumnDef<ContentAPI>[] = [
   {
@@ -111,7 +111,7 @@ export const fictionColumns: ColumnDef<ContentAPI>[] = [
         } successfully`,
         config: {
           params: {
-            type: CONTENT_TYPE.Fiction,
+            type: ContentType.FICTION,
           },
         },
       });

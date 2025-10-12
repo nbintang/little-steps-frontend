@@ -43,7 +43,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { usePost } from "@/hooks/use-post";
 import { ContentMutateResponseAPI } from "@/types/content";
 import useUploadImage from "@/hooks/use-upload-image";
-import { CONTENT_TYPE } from "../../../utils/content-type";
+import { ContentType } from "../../../../../lib/enums/content-type";
 import MinimalTiptapFictionEditor from "../../content-editor/minimal-tiptap-fiction";
 import {
   Empty,
@@ -98,7 +98,7 @@ export const CreateFictionForm = () => {
       allowToast: true,
       toastMessage: "Fiction created successfully",
       config: {
-        params: { type: CONTENT_TYPE.Fiction },
+        params: { type: ContentType.FICTION },
       },
     });
 

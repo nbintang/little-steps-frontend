@@ -12,11 +12,12 @@ import { ContentAPI, ContentPublicAPI, ContentsAPI } from "@/types/content";
 import { ContentRenderer } from "@/features/parent/components/content-renderer";
 import { useFetch } from "@/hooks/use-fetch";
 import { useFetchPaginated } from "@/hooks/use-fetch-paginated";
-import { CONTENT_TYPE } from "@/features/admin/utils/content-type";
+import { ContentType } from "@/lib/enums/content-type";
 import Image from "next/image";
-import { formatInitials } from "@/helpers/format-name";
+import { formatInitials } from "@/helpers/string-formatter";
 import { Button } from "@/components/ui/button";
 import { ContentCard } from "@/features/parent/components/content-card";
+import { StarRatings } from "@/components/star-ratings";
 
 export default function FictionDetailPage({
   params,
@@ -24,55 +25,55 @@ export default function FictionDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = use(params);
-   const {
-     data: article,
-     isError,
-     isLoading,
-     isSuccess,
-     error,
-   } = useFetch<ContentPublicAPI>({
-     keys: ["contents", slug],
-     endpoint: `contents/${slug}`,
-     protected: false,
-   });
- 
-   const {
-     data: articlesLatest,
-     isLoading: isArticlesLatestLoading,
-     isError: isArticlesLatestError,
-   } = useFetchPaginated<ContentPublicAPI[]>({
-     key: ["contents"],
-     endpoint: `contents`,
-     query: {
-       type: CONTENT_TYPE.Fiction,
-       sort: "newest",
-       limit: 3,
-       // highest: true,
-     },
-     protected: false,
-     enabled: isSuccess,
-   });
-   const {
-     data: articlesBasedOnCategory,
-     isLoading: isArticlesBasedOnCategoryLoading,
-     isError: isArticlesBasedOnCategoryError,
-   } = useFetchPaginated<ContentPublicAPI[]>({
-     key: ["contents"],
-     endpoint: `contents`,
-     query: {
-       type: CONTENT_TYPE.Fiction,
-       limit: 5,
-       category: article?.category.name,
-       // highest: true,
-     },
-     protected: false,
-     enabled: isSuccess,
-   });
- 
-   if (isLoading) return <div>Loading...</div>;
-   if (isError || error || !article) return notFound();
- 
- return (
+  const {
+    data: article,
+    isError,
+    isLoading,
+    isSuccess,
+    error,
+  } = useFetch<ContentPublicAPI>({
+    keys: ["contents", slug],
+    endpoint: `contents/${slug}`,
+    protected: false,
+  });
+
+  const {
+    data: articlesLatest,
+    isLoading: isArticlesLatestLoading,
+    isError: isArticlesLatestError,
+  } = useFetchPaginated<ContentPublicAPI[]>({
+    key: ["contents"],
+    endpoint: `contents`,
+    query: {
+      type: ContentType.FICTION,
+      sort: "newest",
+      limit: 3,
+      // highest: true,
+    },
+    protected: false,
+    enabled: isSuccess,
+  });
+  const {
+    data: articlesBasedOnCategory,
+    isLoading: isArticlesBasedOnCategoryLoading,
+    isError: isArticlesBasedOnCategoryError,
+  } = useFetchPaginated<ContentPublicAPI[]>({
+    key: ["contents"],
+    endpoint: `contents`,
+    query: {
+      type: ContentType.FICTION,
+      limit: 5,
+      category: article?.category.name,
+      // highest: true,
+    },
+    protected: false,
+    enabled: isSuccess,
+  });
+
+  if (isLoading) return <div>Loading...</div>;
+  if (isError || error || !article) return notFound();
+
+  return (
     <React.Fragment>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 container mx-auto px-4 lg:px-0 ">
         <div className="col-span-1 lg:col-span-2 w-full max-w-5xl mx-auto">
@@ -120,6 +121,15 @@ export default function FictionDetailPage({
               <ContentRenderer content={article.contentJson} />
             </article>
           </MotionFade>
+          <div className="mt-8">
+            <div className="flex items-center gap-x-1">
+              <StarRatings rating={article.rating} />
+              <span>({article.rating.toFixed(1)})</span>
+            </div>
+            <Button variant={"secondary"} className="mt-2">
+              Rate this article
+            </Button>
+          </div>
         </div>
         <aside className="lg:col-span-1 lg:sticky lg:top-14 lg:self-start">
           <h1 className="text-2xl my-6  font-semibold relative">

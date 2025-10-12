@@ -11,3 +11,4 @@ export type CategoryPublicAPI = {
   name: string;
   slug: string;
 };
+

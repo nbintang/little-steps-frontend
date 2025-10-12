@@ -63,7 +63,9 @@ import { CategoryAPI, CategoryPublicAPI } from "../../../types/category";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { CONTENT_TYPE } from "@/features/admin/utils/content-type";
+import { ContentType } from "@/lib/enums/content-type";
+import { ContentSort } from "@/lib/enums/content-sort";
+import { formatCapitalize, formatInitials } from "@/helpers/string-formatter";
 type ArticleQueryParams = {
   page?: string;
   limit?: string;
@@ -81,7 +83,8 @@ export default function ArticlesPage() {
   const limit = Number(searchParams.get("limit") ?? 10);
 
   const initialKeyword = searchParams.get("keyword") ?? "";
-  const initialSort = (searchParams.get("sort") as string) ?? "highest";
+  const initialSort =
+    (searchParams.get("sort") as ContentSort) ?? ContentSort.NEWEST;
   const initialCategory = searchParams.get("category") ?? "";
   const [sortBy, setSortBy] = useState<string>(initialSort);
   const [searchKeyword, setSearchKeyword] = useState<string>(initialKeyword);
@@ -94,7 +97,11 @@ export default function ArticlesPage() {
   } = useFetchPaginated<ContentsPublicAPI[]>({
     key: ["contents-top", "article", "highest"],
     endpoint: "contents",
-    query: { type: CONTENT_TYPE.Article, sort: "highest", limit: 3 },
+    query: {
+      type: ContentType.ARTICLE,
+      sort: ContentSort.HIGHEST_RATED,
+      limit: 3,
+    },
     protected: false,
   });
 
@@ -115,7 +122,7 @@ export default function ArticlesPage() {
     ],
     endpoint: "contents",
     query: {
-      type: CONTENT_TYPE.Article,
+      type: ContentType.ARTICLE,
       page,
       limit,
       keyword: debounceSearch || undefined,
@@ -212,8 +219,12 @@ export default function ArticlesPage() {
                 <SelectContent>
                   <SelectGroup>
                     <SelectLabel>Sort by</SelectLabel>
-                    <SelectItem value="highest">Highest</SelectItem>
-                    <SelectItem value="newest">Newest</SelectItem>
+                    {Array.from(Object.values(ContentSort)).map((sort) => (
+                      // your code here
+                      <SelectItem key={sort} value={sort}>
+                        {formatCapitalize(sort)}
+                      </SelectItem>
+                    ))}
                   </SelectGroup>
                 </SelectContent>
               </Select>
@@ -253,7 +264,7 @@ export default function ArticlesPage() {
     <React.Fragment>
       {/* Carousel */}
       <ContentsHighlightCarousel
-        variant={CONTENT_TYPE.Article}
+        variant={ContentType.ARTICLE}
         contents={topArticles?.data ?? []}
       />
 
@@ -306,7 +317,7 @@ export default function ArticlesPage() {
         <header className="mb-8 flex items-end justify-between flex-wrap ">
           <div>
             <h1 className="text-3xl font-semibold text-pretty">
-              {sortBy === "newest" ? "Latest" : "Top"} Articles
+              {formatCapitalize(sortBy)} Articles
             </h1>
             <p className="text-muted-foreground mt-2">
               Insights and deep dives across design, performance, and
@@ -345,8 +356,12 @@ export default function ArticlesPage() {
                 <SelectContent>
                   <SelectGroup>
                     <SelectLabel>Sort by</SelectLabel>
-                    <SelectItem value="highest">Highest</SelectItem>
-                    <SelectItem value="newest">Newest</SelectItem>
+                    {Array.from(Object.values(ContentSort)).map((sort) => (
+                      // your code here
+                      <SelectItem key={sort} value={sort}>
+                        {formatCapitalize(sort)}
+                      </SelectItem>
+                    ))}
                   </SelectGroup>
                 </SelectContent>
               </Select>

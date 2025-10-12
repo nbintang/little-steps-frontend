@@ -1,7 +1,7 @@
 "use client";
 import { articleColumns } from "@/features/admin/components/columns";
 import { AdminTablePage } from "@/features/admin/pages";
-import { CONTENT_TYPE } from "@/features/admin/utils/content-type";
+import { ContentType } from "@/lib/enums/content-type";
 import { ContentsAPI } from "@/types/content";
 
 export default function ArticlePage() {
@@ -10,7 +10,7 @@ export default function ArticlePage() {
       title="Article"
       endpoint="contents"
       columns={articleColumns}
-      type={CONTENT_TYPE.Article}
+      type={ContentType.ARTICLE}
       newButton={{
         label: "Buat Artikel Baru",
         href: "/admin/dashboard/articles/new",

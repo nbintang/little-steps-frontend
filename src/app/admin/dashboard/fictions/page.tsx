@@ -1,7 +1,7 @@
 "use client";
 import { AdminTablePage } from "@/features/admin/pages";
 import { ContentsAPI } from "@/types/content";
-import { CONTENT_TYPE } from "@/features/admin/utils/content-type";
+import { ContentType } from "@/lib/enums/content-type";
 import { fictionColumns } from "@/features/admin/components/columns/fiction-columns";
 
 export default function FictionPage() {
@@ -9,7 +9,7 @@ export default function FictionPage() {
     <AdminTablePage<ContentsAPI>
       title="Cerita Fiksi"
       endpoint="contents"
-      type={CONTENT_TYPE.Fiction}
+      type={ContentType.FICTION}
       columns={fictionColumns}
       newButton={{
         label: "Buat Cerita Fiksi Baru",

@@ -16,6 +16,7 @@ type PostProps = {
   allowToast?: boolean;
   toastMessage?: string;
   config?: AxiosRequestConfig;
+  protected?: boolean;
 };
 
 export const usePost = <T = any, I = any>({
@@ -24,6 +25,7 @@ export const usePost = <T = any, I = any>({
   redirectUrl,
   allowToast = true,
   toastMessage,
+  protected: isProtected = true,
   config,
 }: PostProps): UseMutationResult<SuccessResponse<T>, AxiosError, I, void> => {
   const router = useRouter();
@@ -33,7 +35,7 @@ export const usePost = <T = any, I = any>({
     mutationKey,
     mutationFn: async (data: I): Promise<SuccessResponse<T>> => {
       const res = await api.post<SuccessResponse<T>>(
-        `/protected/${endpoint}`,
+        `${isProtected ? "/protected" : ""}/${endpoint}`,
         data,
         config
       );

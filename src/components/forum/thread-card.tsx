@@ -4,7 +4,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import type { ForumThreadListItemAPI } from "@/types/forum";
 import { format } from "date-fns";
-import { formatInitials } from "@/helpers/format-name";
+import { formatInitials } from "@/helpers/string-formatter";
+import { MessageCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export function ThreadCard({
   thread,
@@ -43,10 +45,16 @@ export function ThreadCard({
           </div>
         </div>
       </CardHeader>
-      <CardContent className="pt-0">
+      <CardContent className="pt-0 flex items-center justify-between">
         <p className="text-sm text-muted-foreground">
           Open to view the conversation and replies.
         </p>
+        <Button size={"sm"} variant={"ghost"} asChild>
+          <Link href={redirectUrl || `/admin/dashboard/forum/${thread.id}`}>
+            {thread.postCount}
+            <MessageCircle className="mr-2 h-4 w-4" />
+          </Link>
+        </Button>
       </CardContent>
     </Card>
   );

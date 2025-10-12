@@ -1,3 +1,5 @@
+import { CategoryPublicAPI } from "./category";
+
 export interface Author {
   id: string;
   name: string;
@@ -9,22 +11,28 @@ export interface Author {
 export interface ForumThreadListItemAPI {
   id: string;
   title: string;
-  description: string | null;
+  description: string;
+  postCount: number;
   createdAt: Date | string;
+  category: CategoryPublicAPI;
   author: Author;
 }
 
-export interface Post {
+export interface PostAPI {
   id: string;
   content: string;
   createdAt: Date | string; // ISO string
   author: Author;
+  isEdited: boolean;
 }
 
 export interface ForumThreadDetailAPI {
   id: string;
   title: string;
+  description: string;
   createdAt: Date | string; // ISO string
   author: Author;
-  posts: Post[];
+  posts: PostAPI[];
+  category: CategoryPublicAPI;
+  isEdited: boolean;
 }
