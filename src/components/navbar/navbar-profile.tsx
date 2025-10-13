@@ -12,7 +12,16 @@ import {
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { BadgeCheck, Bell, LogOut, LogInIcon } from "lucide-react";
+import {
+  BadgeCheck,
+  Bell,
+  LogOut,
+  LogInIcon,
+  Baby,
+  Settings,
+  Settings2,
+  UserCog,
+} from "lucide-react";
 import { useLogout } from "@/features/auth/hooks/use-logout";
 import { ProfileAPI } from "@/types/profile";
 import { UseQueryResult } from "@tanstack/react-query";
@@ -77,9 +86,12 @@ export const NavbarProfile = ({
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
             <DropdownMenuItem asChild>
-              <Link href="/admin/settings/account" className="cursor-pointer">
-                <BadgeCheck className="h-4 w-4 mr-2" />
-                Account
+              <Link
+                href="/admin/settings/notifications"
+                className="cursor-pointer"
+              >
+                <Settings />
+            Account    Settings
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
@@ -87,8 +99,17 @@ export const NavbarProfile = ({
                 href="/admin/settings/notifications"
                 className="cursor-pointer"
               >
-                <Bell className="h-4 w-4 mr-2" />
-                Notifications
+                <UserCog />
+                Child Settings
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link
+                href="/admin/settings/notifications"
+                className="cursor-pointer"
+              >
+                <Baby />
+                Child Mode
               </Link>
             </DropdownMenuItem>
           </DropdownMenuGroup>

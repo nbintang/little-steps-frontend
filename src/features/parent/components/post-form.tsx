@@ -24,38 +24,48 @@ import { ButtonGroup } from "@/components/ui/button-group";
 import { useOpenForm } from "../hooks/use-open-form";
 import { Spinner } from "@/components/ui/spinner";
 import { useDelete } from "@/hooks/use-delete";
+import { useShallow } from "zustand/shallow";
+import { usePatch } from "@/hooks/use-patch";
 
 const postSchema = z.object({
   content: z.string(),
 });
 
 export default function PostForm({ threadId }: { threadId: string }) {
-  const { openForm, type, setOpenForm } = useOpenForm();
-
-  //   const { data } = useFetch<PostAPI>({
-  //     endpoint: `forum/${threadId}/posts/${}`,
-  //     keys: ["forum", threadId, "posts"],
-  //     protected: false,
-  //   });
+  const { setOpenForm, post, type } = useOpenForm(
+    useShallow((state) => ({
+      setOpenForm: state.setOpenForm,
+      post: state.post,
+      type: state.type,
+    }))
+  );
   const form = useForm<z.infer<typeof postSchema>>({
     resolver: zodResolver(postSchema),
     defaultValues: {
-      content: "",
+      content: post?.content || "",
     },
   });
 
-  const { mutate, isPending } = usePost({
+  const { mutate: createPostReply, isPending } = usePost({
     keys: ["forum", threadId, "posts"],
-    endpoint: `forum/${threadId}/posts`
+    endpoint: `forum/${threadId}/posts`,
+  });
+
+  const { mutate: updatePostReply, isPending: updatePending } = usePatch({
+    keys: ["forum", threadId, "posts"],
+    endpoint: `forum/${threadId}/posts/${post?.id}`,
   });
 
   function onSubmit(values: z.infer<typeof postSchema>) {
-    console.log(values);
-    mutate(values);
+    if (type === "edit-post") {
+      updatePostReply(values);
+    } else {
+      createPostReply(values);
+    }
     setOpenForm(false, "post");
   }
 
-  const isLoading = isPending || form.formState.isSubmitting;
+  const isLoading = isPending || updatePending || form.formState.isSubmitting;
 
   return (
     <Form {...form}>
@@ -98,7 +108,7 @@ export default function PostForm({ threadId }: { threadId: string }) {
           </ButtonGroup>
           <ButtonGroup>
             <Button
-              onClick={() => setOpenForm(false, "thread")}
+              onClick={() => setOpenForm(false, "post")}
               type="button"
               variant={"secondary"}
               disabled={isLoading}

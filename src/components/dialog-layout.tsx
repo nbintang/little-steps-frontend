@@ -15,7 +15,7 @@ interface FormDialogLayoutProps {
   children: React.ReactNode
 }
 
-export const FormDialogLayout = ({
+export const DialogLayout = ({
   isOpen,
   onOpenChange,
   title,

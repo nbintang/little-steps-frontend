@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useDisplayCategoryDialog } from "../../../hooks/use-display-category-dialog";
 import { useShallow } from "zustand/shallow";
-import { FormDialogLayout } from "@/components/dialog-layout";
+import { DialogLayout } from "@/components/dialog-layout";
 import { useForm } from "react-hook-form";
 import {
   categorySchema,
@@ -81,7 +81,7 @@ const onSubmit = async (formData: CategorySchema) => {
   }
 };
   return (
-    <FormDialogLayout
+    <DialogLayout
       isOpen={isOpen}
       onOpenChange={close}
       title={mode === "edit" ? "Edit Category" : "Create Category"}
@@ -116,6 +116,6 @@ const onSubmit = async (formData: CategorySchema) => {
           </Button>
         </form>
       </Form>
-    </FormDialogLayout>
+    </DialogLayout>
   );
 };

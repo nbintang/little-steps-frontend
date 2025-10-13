@@ -23,6 +23,7 @@ import { UpdateForumForm } from "@/features/parent/components/update-thread-form
 import { useOpenForm } from "@/features/parent/hooks/use-open-form";
 import PostForm from "@/features/parent/components/post-form";
 import { useAuth } from "@/hooks/use-auth";
+import { useShallow } from "zustand/shallow";
 
 export default function ForumPost({
   params,
@@ -31,7 +32,13 @@ export default function ForumPost({
 }) {
   const user = useAuth();
   const { id } = use(params);
-  const { openForm, type, setOpenForm } = useOpenForm();
+  const { openForm, type, setOpenForm } = useOpenForm(
+    useShallow((state) => ({
+      openForm: state.openForm,
+      type: state.type,
+      setOpenForm: state.setOpenForm,
+    }))
+  );
   const {
     data: thread,
     isLoading: threadLoading,
@@ -71,7 +78,7 @@ export default function ForumPost({
   if (threadError || postsError) return <ErrorDynamicPage statusCode={500} />;
 
   return (
-    <main className="container mx-auto min-h-screen max-w-4xl px-4 my-8">
+    <>
       <Badge variant="secondary" className="my-3">
         {thread?.category.name}
       </Badge>
@@ -128,19 +135,22 @@ export default function ForumPost({
           )}
         </div>
       </header>
-
       <Separator className="my-6" />
       {openForm && type === "thread" && (
         <UpdateForumForm data={thread as ForumThreadDetailAPI} />
       )}
-      {openForm && type === "post" && (
+      {((openForm && type === "post") || type === "edit-post") && (
         <PostForm threadId={thread?.id as string} />
       )}
       <section aria-label="Posts" className="space-y-4">
         {posts?.pages?.[0]?.data?.length ? (
           posts.pages.flatMap((page, pageIndex) =>
             page.data?.map((p, postIndex) => (
-              <PostItem threadId={thread?.id} key={`${p.id}-${pageIndex}-${postIndex}`} post={p} />
+              <PostItem
+                threadId={thread?.id}
+                key={`${p.id}-${pageIndex}-${postIndex}`}
+                post={p}
+              />
             ))
           )
         ) : (
@@ -149,12 +159,11 @@ export default function ForumPost({
           </p>
         )}
       </section>
-
       {hasNextPage && (
         <div ref={ref} className="flex justify-center py-4">
           {isFetchingNextPage && <Spinner />}
         </div>
       )}
-    </main>
+    </>
   );
 }

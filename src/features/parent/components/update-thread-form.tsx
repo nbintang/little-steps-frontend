@@ -35,6 +35,7 @@ import { ForumThreadDetailAPI } from "@/types/forum";
 import { ButtonGroup } from "@/components/ui/button-group";
 import { useOpenForm } from "../hooks/use-open-form";
 import { usePatch } from "@/hooks/use-patch";
+import { useShallow } from "zustand/shallow";
 
 export const UpdateForumForm = ({ data }: { data: ForumThreadDetailAPI }) => {
   const form = useForm<z.infer<typeof forumSchema>>({
@@ -45,16 +46,23 @@ export const UpdateForumForm = ({ data }: { data: ForumThreadDetailAPI }) => {
       categoryId: data.category.id,
     },
   });
-  const { openForm, type, setOpenForm } = useOpenForm();
+  const { openForm, type, setOpenForm } = useOpenForm(
+    useShallow((state) => ({
+      openForm: state.openForm,
+      type: state.type,
+      setOpenForm: state.setOpenForm,
+    }))
+  );
   const router = useRouter();
   const [refreshKey, setRefreshKey] = useState(0);
   const { mutate, isPending } = usePatch({
-    keys: ["forum", data.id],
+    keys: ["forum"],
     endpoint: `forum/${data.id}`,
   });
   function onSubmit(values: z.infer<typeof forumSchema>) {
     mutate(values);
     setOpenForm(false, "thread");
+    router.push("/forum");
     form.reset();
   }
 
@@ -176,7 +184,11 @@ export const UpdateForumForm = ({ data }: { data: ForumThreadDetailAPI }) => {
           </ButtonGroup>
           <ButtonGroup>
             <Button
-              onClick={() => setOpenForm(false, "thread")}
+              onClick={() =>
+                openForm
+                  ? setOpenForm(false, "thread")
+                  : router.push(`/forum/${data.id}`)
+              }
               type="button"
               variant={"secondary"}
               disabled={isLoading}

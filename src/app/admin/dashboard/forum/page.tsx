@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Separator } from "@/components/ui/separator";
 import type { ForumThreadListItemAPI } from "@/types/forum";
-import { ThreadCard } from "@/components/forum/thread-card";
+import { ForumThreadCard } from "@/components/forum/forum-thread-card";
 import {
   InputGroup,
   InputGroupAddon,
@@ -143,7 +143,7 @@ export default function ForumThread() {
         <>
           <div className="grid gap-4 md:grid-cols-2">
             {threads.map((thread) => (
-              <ThreadCard
+              <ForumThreadCard
                 key={thread?.id}
                 thread={thread as ForumThreadListItemAPI}
               />

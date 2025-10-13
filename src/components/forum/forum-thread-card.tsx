@@ -5,16 +5,27 @@ import { Badge } from "@/components/ui/badge";
 import type { ForumThreadListItemAPI } from "@/types/forum";
 import { format } from "date-fns";
 import { formatInitials } from "@/helpers/string-formatter";
-import { MessageCircle } from "lucide-react";
+import { MessageCircle, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/use-auth";
+import { useOpenForm } from "@/features/parent/hooks/use-open-form";
+import { useRouter } from "next/navigation";
 
-export function ThreadCard({
+export function ForumThreadCard({
   thread,
   redirectUrl,
 }: {
   thread: ForumThreadListItemAPI;
   redirectUrl?: string;
 }) {
+  const user = useAuth();
+  const setOpenForm = useOpenForm(state=>state.setOpenForm);
+  const isAuthor = user?.sub === thread.author.id;
+const router= useRouter()
+  const handleEdit = () => {
+    setOpenForm(true, "thread");
+    router.push(`${redirectUrl}` || `/admin/dashboard/forum/${thread.id}`);
+  }
   return (
     <Card>
       <CardHeader className="space-y-2">
@@ -49,12 +60,21 @@ export function ThreadCard({
         <p className="text-sm text-muted-foreground">
           Open to view the conversation and replies.
         </p>
-        <Button size={"sm"} variant={"ghost"} asChild>
-          <Link href={redirectUrl || `/admin/dashboard/forum/${thread.id}`}>
-            {thread.postCount}
-            <MessageCircle className="mr-2 h-4 w-4" />
-          </Link>
-        </Button>
+        <div className="flex items-center gap-1">
+          <Button size={"sm"} variant={"ghost"} asChild>
+            <Link href={redirectUrl || `/admin/dashboard/forum/${thread.id}`}>
+              {thread.postCount}
+              <MessageCircle className="mr-2 h-4 w-4" />
+            </Link>
+          </Button>
+
+          {isAuthor && (
+            <Button size={"sm"} variant={"ghost"} onClick={handleEdit} >
+               {thread.postCount}
+                <Pencil className="mr-2 h-4 w-4" />
+            </Button>
+          )}
+        </div>
       </CardContent>
     </Card>
   );
