@@ -25,6 +25,7 @@ import {
 import { useLogout } from "@/features/auth/hooks/use-logout";
 import { ProfileAPI } from "@/types/profile";
 import { UseQueryResult } from "@tanstack/react-query";
+import { useOpenChildAccessDialog } from "@/features/parent/hooks/use-open-child-access-dialog";
 
 export const NavbarProfile = ({
   userProfile: { data: user, isError },
@@ -32,7 +33,9 @@ export const NavbarProfile = ({
   userProfile: UseQueryResult<ProfileAPI | undefined, unknown>;
 }) => {
   const { handleLogout } = useLogout();
-
+  const setOpenDialog = useOpenChildAccessDialog(
+    (state) => state.setOpenDialog
+  );
   // Jika user tidak ada (guest/tidak login)
   if (isError || !user) {
     return (
@@ -50,6 +53,7 @@ export const NavbarProfile = ({
   const userEmail = user?.user?.email || "No email";
   const avatarUrl = user?.avatarUrl || undefined;
   const fallback = userName.charAt(0).toUpperCase();
+  const handleOpenChildAccessDialog = () => setOpenDialog(true);
 
   return (
     <div className="flex items-center gap-3">
@@ -91,7 +95,7 @@ export const NavbarProfile = ({
                 className="cursor-pointer"
               >
                 <Settings />
-            Account    Settings
+                Account Settings
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
@@ -103,14 +107,9 @@ export const NavbarProfile = ({
                 Child Settings
               </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Link
-                href="/admin/settings/notifications"
-                className="cursor-pointer"
-              >
-                <Baby />
-                Child Mode
-              </Link>
+            <DropdownMenuItem onClick={handleOpenChildAccessDialog}>
+              <Baby />
+              Child Mode
             </DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />

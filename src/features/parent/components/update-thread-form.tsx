@@ -61,8 +61,7 @@ export const UpdateForumForm = ({ data }: { data: ForumThreadDetailAPI }) => {
   });
   function onSubmit(values: z.infer<typeof forumSchema>) {
     mutate(values);
-    setOpenForm(false, "thread");
-    router.push("/forum");
+    setOpenForm(false, "thread"); 
     form.reset();
   }
 
@@ -71,7 +70,7 @@ export const UpdateForumForm = ({ data }: { data: ForumThreadDetailAPI }) => {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-8   mx-auto "
+        className="space-y-8   mx-auto my-5"
       >
         <FormField
           control={form.control}

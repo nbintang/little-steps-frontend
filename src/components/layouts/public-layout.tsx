@@ -16,15 +16,8 @@ const EXCLUDE_ROUTES = [
 const TABS: NavTab[] = [
   { href: "/", label: "Home" },
   { href: "/articles", label: "Articles" },
-  // {
-  //   label: "Kid Stuff",
-  //   children: [
-  //     { href: "/stories", label: "Kid Stories", highlight: true },
-  //     { href: "/quizzes", label: "Kid Quizzes Stuff 2" },
-  //     { href: "/", label: "Kid Stuff 3" },
-  //   ],
-  // },
-  { href: "/forum", label: "Forum" },
+  {href: '/about', label: 'About Us'},
+  { href: "/forum", label: "Parent Discussion" },
 ];
 export const PublicLayout = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();

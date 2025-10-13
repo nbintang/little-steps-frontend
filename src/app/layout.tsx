@@ -6,6 +6,7 @@ import LoaderProvider from "@/providers/loader-provider";
 import { Toaster } from "@/components/ui/sonner";
 import WarningDialog from "@/components/warning-dialog";
 import { PublicLayout } from "@/components/layouts/public-layout";
+import { ChildAccessDialog } from "@/features/parent/components/child-access-dialog";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -36,6 +37,7 @@ export default function RootLayout({
           <LoaderProvider>
             <PublicLayout>{children}</PublicLayout>
             <WarningDialog />
+            <ChildAccessDialog/>
           </LoaderProvider>
           <Toaster position="top-right" />
         </ReactQueryProvider>

@@ -14,3 +14,8 @@ export interface UserPayload extends JwtPayload {
   iat: number;
   exp: number;
 }
+
+export interface ChildJwtPayload {
+  childId: string;
+  parentId: string;
+}

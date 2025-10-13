@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
 import { useOpenForm } from "@/features/parent/hooks/use-open-form";
 import { useRouter } from "next/navigation";
+import { useProgress } from "@bprogress/next";
 
 export function ForumThreadCard({
   thread,
@@ -19,13 +20,15 @@ export function ForumThreadCard({
   redirectUrl?: string;
 }) {
   const user = useAuth();
-  const setOpenForm = useOpenForm(state=>state.setOpenForm);
+  const setOpenForm = useOpenForm((state) => state.setOpenForm);
   const isAuthor = user?.sub === thread.author.id;
-const router= useRouter()
+  const router = useRouter();
+  const progress = useProgress()
   const handleEdit = () => {
+    progress.start();
     setOpenForm(true, "thread");
     router.push(`${redirectUrl}` || `/admin/dashboard/forum/${thread.id}`);
-  }
+  };
   return (
     <Card>
       <CardHeader className="space-y-2">
@@ -69,9 +72,9 @@ const router= useRouter()
           </Button>
 
           {isAuthor && (
-            <Button size={"sm"} variant={"ghost"} onClick={handleEdit} >
-               {thread.postCount}
-                <Pencil className="mr-2 h-4 w-4" />
+            <Button size={"sm"} variant={"ghost"} onClick={handleEdit}>
+              {thread.postCount}
+              <Pencil className="mr-2 h-4 w-4" />
             </Button>
           )}
         </div>

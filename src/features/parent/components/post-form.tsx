@@ -70,7 +70,7 @@ export default function PostForm({ threadId }: { threadId: string }) {
   return (
     <Form {...form}>
       <form
-        className="mx-auto w-full max-w-4xl"
+        className="mx-auto w-full max-w-4xl "
         onSubmit={form.handleSubmit(onSubmit)}
       >
         <FormField
