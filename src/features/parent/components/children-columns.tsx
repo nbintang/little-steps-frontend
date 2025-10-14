@@ -1,5 +1,5 @@
 "use client";
-
+// 2. CHILDREN TABLE COLUMNS
 import { ColumnDef } from "@tanstack/react-table";
 import { ChildrenAPI } from "@/types/children";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -15,9 +15,9 @@ import {
 import { MoreHorizontal, Pen, Trash2, CalendarClock } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { useScheduleStore } from "../hooks/use-schedule";
-import { useFetch } from "@/hooks/use-fetch";
-import { ScheduleAPI } from "@/types/schedule";
+import { useScheduleDialogStore } from "../hooks/use-schedule";
+import { useChildDialog } from "../hooks/use-open-child-form-dialog";
+import { useDelete } from "@/hooks/use-delete";
 
 export const childrenColumns: ColumnDef<ChildrenAPI>[] = [
   {
@@ -67,7 +67,6 @@ export const childrenColumns: ColumnDef<ChildrenAPI>[] = [
     cell: ({ row }) => {
       const birthDate = row.original.birthDate;
       if (!birthDate) return "-";
-
       const age = differenceInYears(new Date(), new Date(birthDate));
       return `${age} Tahun`;
     },
@@ -77,19 +76,21 @@ export const childrenColumns: ColumnDef<ChildrenAPI>[] = [
     header: "Actions",
     cell: ({ row }) => {
       const child = row.original;
-      const openDialog = useScheduleStore((state) => state.openDialog);
-      const { data: schedules } = useFetch<ScheduleAPI[]>({
-        endpoint: `parent/children/${child.id}/schedules`,
-        keys: ["child-schedules", child.id],
-      })
-      const handleDelete = () => {
-        console.log("Delete:", child.id);
-      };
+      const openDialog = useScheduleDialogStore((state) => state.openDialog);
+      const { mutate: deleteChild } = useDelete({
+        endpoint: `parent/children/${child.id}`,
+        keys: ["children"],
+      });
+      const { openDialog: openChildDialog } = useChildDialog();
       const handleManageSchedule = () => {
-        // TODO: Fetch schedules from API based on child.id
-        // For now, passing empty array - replace with actual API call
-        openDialog(child, schedules || []);
+        openDialog({
+          id: child.id,
+          name: child.name,
+          avatarUrl: child.avatarUrl,
+        });
       };
+
+      const handleDelete = () => deleteChild();
 
       return (
         <DropdownMenu>
@@ -99,11 +100,19 @@ export const childrenColumns: ColumnDef<ChildrenAPI>[] = [
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem asChild>
-              <Link href={`/admin/dashboard/children/${child.id}/edit`}>
-                <Pen className="mr-2 size-4" />
-                Edit
-              </Link>
+            <DropdownMenuItem
+              onClick={() =>
+                openChildDialog({
+                  id: child.id,
+                  name: child.name,
+                  avatarUrl: child.avatarUrl,
+                  gender: child.gender,
+                  birthDate: new Date(child.birthDate),
+                })
+              }
+            >
+              <Pen className="mr-2 size-4" />
+              Edit
             </DropdownMenuItem>
 
             <DropdownMenuItem onClick={handleManageSchedule}>

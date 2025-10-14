@@ -14,9 +14,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { forumSchema } from "../schemas/forum-schema";
-import { CategoryAPI } from "../../../types/category";
+import { Textarea } from "@/components/ui/textarea"; 
 import { AsyncSelect } from "@/components/ui/async-select";
 import { categoryService } from "@/services/category-service";
 import {
@@ -31,6 +29,8 @@ import { api } from "@/lib/axios-instance/api";
 import { SuccessResponsePaginated } from "@/types/response";
 import { usePost } from "@/hooks/use-post";
 import { useRouter } from "next/navigation";
+import { forumSchema } from "../../schemas/forum-schema";
+import { CategoryAPI } from "@/types/category";
 
 export const CreateForumForm = () => {
   const form = useForm<z.infer<typeof forumSchema>>({

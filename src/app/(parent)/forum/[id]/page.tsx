@@ -21,7 +21,7 @@ import { formatInitials } from "@/helpers/string-formatter";
 import { Badge } from "@/components/ui/badge";
 import { UpdateForumForm } from "@/features/parent/components/update-thread-form";
 import { useOpenForm } from "@/features/parent/hooks/use-open-form";
-import PostForm from "@/features/parent/components/post-form";
+import PostForm from "@/features/parent/components/form/post-form";
 import { useAuth } from "@/hooks/use-auth";
 import { useShallow } from "zustand/shallow";
 

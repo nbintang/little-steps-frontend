@@ -1,3 +1,5 @@
+import { ChildGender } from "@/lib/enums/child-gender";
+
 export type ChildrenMutateResponseAPI = {
   name: string;
   birthDate: string;
@@ -9,7 +11,7 @@ export type ChildrenAPI = {
   id: string;
   name: string;
   birthDate: string;
-  gender: string;
+  gender: ChildGender;
   avatarUrl: string;
   createdAt: string;
   updatedAt: string;

@@ -1,77 +1,49 @@
-// store/schedule-store.ts
-import { create } from 'zustand'
-import { ScheduleAPI } from '@/types/schedule'
-import { ChildrenAPI } from '@/types/children'
+import { create } from "zustand";
 
-interface ScheduleState {
-  isOpen: boolean
-  child: ChildrenAPI | null
-  schedules: ScheduleAPI[]
-  isCreating: boolean
-  editingId: string | null
-  
+interface ScheduleDialogState {
+  isOpen: boolean;
+  child: {
+    id: string | null;
+    name: string;
+    avatarUrl?: string;
+  };
+  editingScheduleId: string | null;
+
   // Actions
-  openDialog: (child: ChildrenAPI, schedules: ScheduleAPI[]) => void
-  closeDialog: () => void
-  setIsCreating: (value: boolean) => void
-  setEditingId: (id: string | null) => void
-  setSchedules: (schedules: ScheduleAPI[]) => void
-  addSchedule: (schedule: ScheduleAPI) => void
-  updateSchedule: (scheduleId: string, schedule: ScheduleAPI) => void
-  deleteSchedule: (scheduleId: string) => void
-  reset: () => void
+  openDialog: (child: { id: string; name: string; avatarUrl?: string }) => void;
+  closeDialog: () => void;
+  setEditingScheduleId: (id: string | null) => void;
 }
 
-export const useScheduleStore = create<ScheduleState>((set) => ({
+export const useScheduleDialogStore = create<ScheduleDialogState>((set) => ({
   isOpen: false,
-  child: null,
-  schedules: [],
-  isCreating: false,
-  editingId: null,
+  editingScheduleId: null,
+  child: {
+    id: null,
+    name: "",
+    avatarUrl: undefined,
+  },
+  openDialog: (child) =>
+    set({
+      isOpen: true,
+      child: {
+        id: child.id,
+        name: child.name,
+        avatarUrl: child.avatarUrl,
+      },
+      editingScheduleId: null,
+    }),
 
-  openDialog: (child, schedules) =>
-    set({ isOpen: true, child, schedules, isCreating: false, editingId: null }),
-  
   closeDialog: () =>
     set({
       isOpen: false,
-      child: null,
-      schedules: [],
-      isCreating: false,
-      editingId: null,
+      child: {
+        id: null,
+        name: "",
+        avatarUrl: undefined,
+      },
+      editingScheduleId: null,
     }),
-  
-  setIsCreating: (value) => set({ isCreating: value }),
-  setEditingId: (id) => set({ editingId: id }),
-  setSchedules: (schedules) => set({ schedules }),
-  
-  addSchedule: (schedule) =>
-    set((state) => ({
-      schedules: [...state.schedules, schedule],
-      isCreating: false,
-      editingId: null,
-    })),
-  
-  updateSchedule: (scheduleId, schedule) =>
-    set((state) => ({
-      schedules: state.schedules.map((s) =>
-        s.id === scheduleId ? { ...schedule, id: scheduleId } : s
-      ),
-      isCreating: false,
-      editingId: null,
-    })),
-  
-  deleteSchedule: (scheduleId) =>
-    set((state) => ({
-      schedules: state.schedules.filter((s) => s.id !== scheduleId),
-    })),
-  
-  reset: () =>
-    set({
-      isOpen: false,
-      child: null,
-      schedules: [],
-      isCreating: false,
-      editingId: null,
-    }),
-}))
+
+  setEditingScheduleId: (id) => set({ editingScheduleId: id }),
+}));

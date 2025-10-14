@@ -10,9 +10,21 @@ export const imageUploadService = async (
   existedUrl?: string | null
 ) => {
   try {
-    const formData = new FormData();
+    // kalau bukan file/base64, anggap user pakai URL lama → langsung return existedUrl
+    if (!file || (typeof file === "string" && !file.startsWith("data:image/"))) {
+      return {
+        message: "No new file uploaded",
+        data: {
+          secureUrl: existedUrl ?? (typeof file === "string" ? file : ""),
+          publicId: "",
+          createdAt: null,
+        },
+      };
+    }
 
+    const formData = new FormData();
     let convertedFile: File;
+
     if (typeof file === "string" && file.startsWith("data:image/")) {
       convertedFile = base64ToFile(file, "image.png");
     } else if (file instanceof File) {
@@ -22,6 +34,7 @@ export const imageUploadService = async (
     }
 
     formData.append("image", convertedFile);
+
     const res = await api.post<SuccessResponse<UploadImageApiResponse>>(
       "/media/image/upload",
       formData,

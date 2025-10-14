@@ -14,6 +14,7 @@ import { useSearchParams } from "next/navigation";
 import { useFetchPaginated } from "@/hooks/use-fetch-paginated";
 import { useTable } from "@/features/admin/hooks/use-table";
 import { ErrorDynamicPage } from "@/components/error-dynamic";
+import { useOpenChildAccessDialog } from "../hooks/use-open-child-access-dialog";
 
 type AdminTablePageProps<T> = {
   title: string;
@@ -46,7 +47,7 @@ export function ChildrenTablePage<T>({
 
   const { data, isLoading, isError, isFetching, isRefetching, error, refetch } =
     useFetchPaginated<T[]>({
-      key: endpoint,
+      key: ["children", searchKeyword],
       endpoint,
       protected: true,
       query,
@@ -78,7 +79,7 @@ export function ChildrenTablePage<T>({
           table={table}
           isSearching={isLoading || isFetching || isRefetching}
           onSearch={handleManualSearch}
-          className="w-full max-w-md"
+          className="w-full max-w-xs"
         />
         {newButton &&
           (newButton.href ? (

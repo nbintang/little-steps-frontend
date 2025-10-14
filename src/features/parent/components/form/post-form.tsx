@@ -21,7 +21,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useFetch } from "@/hooks/use-fetch";
 import { usePost } from "@/hooks/use-post";
 import { ButtonGroup } from "@/components/ui/button-group";
-import { useOpenForm } from "../hooks/use-open-form";
+import { useOpenForm } from "../../hooks/use-open-form";
 import { Spinner } from "@/components/ui/spinner";
 import { useDelete } from "@/hooks/use-delete";
 import { useShallow } from "zustand/shallow";

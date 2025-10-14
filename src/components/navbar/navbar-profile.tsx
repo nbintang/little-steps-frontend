@@ -32,6 +32,7 @@ export const NavbarProfile = ({
   const { handleLogout } = useLogout();
   const setOpenDialog = useOpenChildAccessDialog((state) => state.setOpenDialog);
 
+  const handleOpenChildAccessDialog = () => setOpenDialog(true);
   // guest
   if (isError || !user) {
     return (
@@ -49,7 +50,6 @@ export const NavbarProfile = ({
   const avatarUrl = user?.avatarUrl || undefined;
   const fallback = userName.charAt(0).toUpperCase();
 
-  const handleOpenChildAccessDialog = () => setOpenDialog(true);
  
   const menuItems = [
     {

@@ -17,28 +17,37 @@ type PostProps = {
   toastMessage?: string;
 };
 
+type MutateFn<T> = {
+  (id: string, options?: Parameters<typeof useMutation>["0"]["onSuccess"]): void;
+  (options?: Parameters<typeof useMutation>["0"]["onSuccess"]): void;
+};
+
 export const useDelete = <T = any>({
   keys,
   endpoint,
   redirectUrl,
   allowToast = true,
   toastMessage,
-}: PostProps): UseMutationResult<SuccessResponse<T>, AxiosError, void> => {
+}: PostProps): UseMutationResult<
+  SuccessResponse<T>,
+  AxiosError,
+  string | undefined
+> & { mutate: MutateFn<string> } => {
   const router = useRouter();
   const queryClient = useQueryClient();
   const mutationKey = Array.isArray(keys) ? keys : [keys];
-  return useMutation({
+
+  const mutation = useMutation({
     mutationKey,
-    mutationFn: async (): Promise<SuccessResponse<T>> => {
-      const res = await api.delete<SuccessResponse<T>>(
-        `/protected/${endpoint}`
-      );
+    mutationFn: async (id?: string) => {
+      const url = id ? `/protected/${endpoint}/${id}` : `/protected/${endpoint}`;
+      const res = await api.delete<SuccessResponse<T>>(url);
       return res.data;
     },
     onMutate: () => {
       if (allowToast) {
         toast.loading("Loading...", {
-          id: keys[0],
+          id: Array.isArray(keys) ? keys[0] : keys,
         });
       }
     },
@@ -52,7 +61,21 @@ export const useDelete = <T = any>({
         toast.error(error.message || "An unexpected error occurred");
     },
     onSettled: () => {
-      if (allowToast) toast.dismiss(keys[0]);
+      if (allowToast) toast.dismiss(Array.isArray(keys) ? keys[0] : keys);
     },
   });
+
+  // Overload wrapper biar bisa kosong atau string
+  const mutateWrapper: MutateFn<string> = ((idOrOptions?: any) => {
+    if (typeof idOrOptions === "string" || idOrOptions === undefined) {
+      mutation.mutate(idOrOptions);
+    } else {
+      mutation.mutate(undefined, idOrOptions);
+    }
+  }) as MutateFn<string>;
+
+  return {
+    ...mutation,
+    mutate: mutateWrapper,
+  };
 };

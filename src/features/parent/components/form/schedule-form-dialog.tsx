@@ -1,12 +1,26 @@
-import { z } from "zod"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { Button } from "@/components/ui/button"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { ScheduleAPI } from "@/types/schedule"
-import { DayOfWeek } from "@/lib/enums/day-of-week"
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { ScheduleAPI } from "@/types/schedule";
+import { DayOfWeek } from "@/lib/enums/day-of-week";
+import { Spinner } from "@/components/ui/spinner";
 
 const scheduleSchema = z
   .object({
@@ -18,20 +32,26 @@ const scheduleSchema = z
   .refine(
     (val) => {
       // simple lexical compare assuming HH:mm format
-      return val.startTime < val.endTime
+      return val.startTime < val.endTime;
     },
-    { message: "End time must be after start time", path: ["endTime"] },
-  )
+    { message: "End time must be after start time", path: ["endTime"] }
+  );
 
-type FormValues = z.infer<typeof scheduleSchema>
+type FormValues = z.infer<typeof scheduleSchema>;
 
 type Props = {
-  defaultValues?: Partial<FormValues>
-  onSubmit: (values: ScheduleAPI) => void
-  onCancel: () => void
-}
+  defaultValues?: Partial<FormValues>;
+  isLoading?: boolean;
+  onSubmit: (values: ScheduleAPI) => void;
+  onCancel: () => void;
+};
 
-export function ScheduleFormDialog({ defaultValues, onSubmit, onCancel }: Props) {
+export function ScheduleFormDialog({
+  isLoading,
+  defaultValues,
+  onSubmit,
+  onCancel,
+}: Props) {
   const form = useForm<FormValues>({
     resolver: zodResolver(scheduleSchema),
     defaultValues: {
@@ -41,7 +61,7 @@ export function ScheduleFormDialog({ defaultValues, onSubmit, onCancel }: Props)
       timezone: "Asia/Jakarta",
       ...defaultValues,
     },
-  })
+  });
 
   return (
     <Form {...form}>
@@ -109,7 +129,7 @@ export function ScheduleFormDialog({ defaultValues, onSubmit, onCancel }: Props)
             <FormItem>
               <FormLabel>Timezone</FormLabel>
               <FormControl>
-                <Input placeholder="Asia/Jakarta" {...field} />
+                <Input placeholder="Asia/Jakarta" disabled {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -117,12 +137,19 @@ export function ScheduleFormDialog({ defaultValues, onSubmit, onCancel }: Props)
         />
 
         <div className="col-span-1 md:col-span-4 flex items-center justify-end gap-2">
-          <Button type="button" variant="outline" onClick={onCancel}>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onCancel}
+            disabled={isLoading}
+          >
             Cancel
           </Button>
-          <Button type="submit">Save Schedule</Button>
+          <Button type="submit" disabled={isLoading}>
+            {isLoading ? <Spinner /> : "Save"}
+          </Button>
         </div>
       </form>
     </Form>
-  )
+  );
 }
