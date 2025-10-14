@@ -13,13 +13,10 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import {
-  BadgeCheck,
-  Bell,
   LogOut,
   LogInIcon,
   Baby,
   Settings,
-  Settings2,
   UserCog,
 } from "lucide-react";
 import { useLogout } from "@/features/auth/hooks/use-logout";
@@ -33,10 +30,9 @@ export const NavbarProfile = ({
   userProfile: UseQueryResult<ProfileAPI | undefined, unknown>;
 }) => {
   const { handleLogout } = useLogout();
-  const setOpenDialog = useOpenChildAccessDialog(
-    (state) => state.setOpenDialog
-  );
-  // Jika user tidak ada (guest/tidak login)
+  const setOpenDialog = useOpenChildAccessDialog((state) => state.setOpenDialog);
+
+  // guest
   if (isError || !user) {
     return (
       <Button variant="outline" size="sm" asChild>
@@ -47,13 +43,31 @@ export const NavbarProfile = ({
       </Button>
     );
   }
-
-  // User logged in
+ 
   const userName = user?.user?.name || "User";
   const userEmail = user?.user?.email || "No email";
   const avatarUrl = user?.avatarUrl || undefined;
   const fallback = userName.charAt(0).toUpperCase();
+
   const handleOpenChildAccessDialog = () => setOpenDialog(true);
+ 
+  const menuItems = [
+    {
+      label: "Account Settings",
+      icon: <Settings className="h-4 w-4" />,
+      href: "/settings/account",
+    },
+    {
+      label: "Child Settings",
+      icon: <UserCog className="h-4 w-4" />,
+      href: "/settings/children",
+    },
+    {
+      label: "Child Mode",
+      icon: <Baby className="h-4 w-4" />,
+      onClick: handleOpenChildAccessDialog,
+    },
+  ];
 
   return (
     <div className="flex items-center gap-3">
@@ -66,11 +80,8 @@ export const NavbarProfile = ({
             </AvatarFallback>
           </Avatar>
         </DropdownMenuTrigger>
-        <DropdownMenuContent
-          className="w-56 rounded-lg"
-          align="end"
-          sideOffset={4}
-        >
+
+        <DropdownMenuContent className="w-56 rounded-lg" align="end" sideOffset={4}>
           <DropdownMenuLabel className="p-0 font-normal">
             <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
               <Avatar className="h-8 w-8 rounded-lg">
@@ -87,32 +98,33 @@ export const NavbarProfile = ({
               </div>
             </div>
           </DropdownMenuLabel>
+
           <DropdownMenuSeparator />
+
           <DropdownMenuGroup>
-            <DropdownMenuItem asChild>
-              <Link
-                href="/admin/settings/notifications"
-                className="cursor-pointer"
-              >
-                <Settings />
-                Account Settings
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Link
-                href="/admin/settings/notifications"
-                className="cursor-pointer"
-              >
-                <UserCog />
-                Child Settings
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={handleOpenChildAccessDialog}>
-              <Baby />
-              Child Mode
-            </DropdownMenuItem>
+            {menuItems.map((item, index) =>
+              item.href ? (
+                <DropdownMenuItem asChild key={index}>
+                  <Link href={item.href} className="cursor-pointer">
+                    {item.icon}
+                    {item.label}
+                  </Link>
+                </DropdownMenuItem>
+              ) : (
+                <DropdownMenuItem
+                  key={index}
+                  onClick={item.onClick}
+                  className="cursor-pointer"
+                >
+                  {item.icon}
+                  {item.label}
+                </DropdownMenuItem>
+              )
+            )}
           </DropdownMenuGroup>
+
           <DropdownMenuSeparator />
+
           <DropdownMenuItem onClick={handleLogout} className="cursor-pointer">
             <LogOut className="h-4 w-4 mr-2" />
             Log out

@@ -11,6 +11,7 @@ const EXCLUDE_ROUTES = [
   "/complete-register",
   "/verify",
   "/admin",
+  "/children/playground"
 ];
 
 const TABS: NavTab[] = [

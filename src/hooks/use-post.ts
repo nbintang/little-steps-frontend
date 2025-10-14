@@ -44,7 +44,7 @@ export const usePost = <T = any, I = any>({
     onMutate: () => {
       if (allowToast) {
         toast.loading("Loading...", {
-          id: keys[0],
+          id: mutationKey[0],
         });
       }
     },
@@ -58,8 +58,7 @@ export const usePost = <T = any, I = any>({
         toast.error(error.message || "An unexpected error occurred");
     },
     onSettled: () => {
-      if (allowToast) toast.dismiss(keys[0]);
+      if (allowToast) toast.dismiss(mutationKey[0]);
     },
-    
   });
 };
