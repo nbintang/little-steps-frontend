@@ -118,7 +118,7 @@ export const articleColumns: ColumnDef<ContentAPI>[] = [
           isOpen: true,
           title: "Hapus Artikel",
           description: "Apakah anda yakin ingin menghapus artikel ini?",
-          onConfirm: () => (closeDialog(), deleteArticle()),
+          onConfirm: () => (closeDialog(), deleteArticle(undefined)),
         });
       const handleToggleStatus = () =>
         setOpenDeleteDialog({

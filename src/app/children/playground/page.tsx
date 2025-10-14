@@ -1,15 +1,10 @@
-"use client";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import useChildProfile from "@/hooks/use-child-profile";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
-export default function Page() {
-  const child = useChildProfile();
-  return (
-    <div>
-      <Avatar>
-        <AvatarImage src={child.data?.avatarUrl} alt={child.data?.name} />
-        <AvatarFallback>{child.data?.name.charAt(0)}</AvatarFallback>
-      </Avatar>
-    </div>
-  );
-}
+ 
+ export default async function Playground () {
+  const cookieStore = await cookies();
+  const status = cookieStore.get("childStatus");
+  if(!status) return null;
+  redirect("/children/playground/stories")
+ }

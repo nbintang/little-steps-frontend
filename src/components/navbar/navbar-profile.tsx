@@ -1,5 +1,4 @@
-"use client";
-
+ 
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -12,26 +11,25 @@ import {
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import {
-  LogOut,
-  LogInIcon,
-  Baby,
-  Settings,
-  UserCog,
-} from "lucide-react";
+import { LogOut, LogInIcon, Baby, Settings, UserCog } from "lucide-react";
 import { useLogout } from "@/features/auth/hooks/use-logout";
 import { ProfileAPI } from "@/types/profile";
 import { UseQueryResult } from "@tanstack/react-query";
 import { useOpenChildAccessDialog } from "@/features/parent/hooks/use-open-child-access-dialog";
+import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 export const NavbarProfile = ({
   userProfile: { data: user, isError },
+  handleLogout,
 }: {
   userProfile: UseQueryResult<ProfileAPI | undefined, unknown>;
+  handleLogout: () => void;
 }) => {
-  const { handleLogout } = useLogout();
-  const setOpenDialog = useOpenChildAccessDialog((state) => state.setOpenDialog);
-
+  const setOpenDialog = useOpenChildAccessDialog(
+    (state) => state.setOpenDialog
+  );
+  const pathname = usePathname();
   const handleOpenChildAccessDialog = () => setOpenDialog(true);
   // guest
   if (isError || !user) {
@@ -44,13 +42,12 @@ export const NavbarProfile = ({
       </Button>
     );
   }
- 
+
   const userName = user?.user?.name || "User";
   const userEmail = user?.user?.email || "No email";
   const avatarUrl = user?.avatarUrl || undefined;
   const fallback = userName.charAt(0).toUpperCase();
 
- 
   const menuItems = [
     {
       label: "Account Settings",
@@ -81,7 +78,11 @@ export const NavbarProfile = ({
           </Avatar>
         </DropdownMenuTrigger>
 
-        <DropdownMenuContent className="w-56 rounded-lg" align="end" sideOffset={4}>
+        <DropdownMenuContent
+          className="w-56 rounded-lg"
+          align="end"
+          sideOffset={4}
+        >
           <DropdownMenuLabel className="p-0 font-normal">
             <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
               <Avatar className="h-8 w-8 rounded-lg">
@@ -105,7 +106,13 @@ export const NavbarProfile = ({
             {menuItems.map((item, index) =>
               item.href ? (
                 <DropdownMenuItem asChild key={index}>
-                  <Link href={item.href} className="cursor-pointer">
+                  <Link
+                    href={item.href}
+                    className={cn(
+                      "cursor-pointer",
+                      pathname === item.href && "bg-accent"
+                    )}
+                  >
                     {item.icon}
                     {item.label}
                   </Link>

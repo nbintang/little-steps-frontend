@@ -7,7 +7,7 @@ import Image from "next/image";
 import { format } from "date-fns";
 
 export type ContentCardProps = {
-  hrefPrefix: "/articles" | "/stories";
+  hrefPrefix: "/articles" | "/children/playground/stories";
   variant: "article" | "fiction";
   item: {
     slug: string;

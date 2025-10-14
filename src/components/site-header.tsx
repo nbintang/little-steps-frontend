@@ -7,7 +7,8 @@ import useProfile from "@/hooks/use-profile";
 import { Navbar } from "./navbar/navbar";
 import { NavbarProfile } from "./navbar/navbar-profile";
 import { NavbarMobile } from "./navbar/navbar-mobile";
-export type NavTab ={
+import { useLogout } from "@/features/auth/hooks/use-logout";
+export type NavTab = {
   href?: string;
   label: string;
   children?: {
@@ -15,7 +16,7 @@ export type NavTab ={
     label: string;
     highlight?: boolean;
   }[];
-}
+};
 
 interface SiteNavbarProps {
   tabs: NavTab[];
@@ -25,6 +26,7 @@ interface SiteNavbarProps {
 export default function SiteHeader({ tabs, brand }: SiteNavbarProps) {
   const profile = useProfile();
 
+  const { handleLogout } = useLogout();
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background">
       <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-4">
@@ -41,7 +43,7 @@ export default function SiteHeader({ tabs, brand }: SiteNavbarProps) {
 
         {/* Right: Avatar (visible on all sizes) */}
         <div className="flex gap-3 items-center">
-          <NavbarProfile userProfile={profile} />
+          <NavbarProfile handleLogout={handleLogout} userProfile={profile} />
           <div className="flex items-center gap-2">
             {/* Mobile: Sheet trigger */}
             <NavbarMobile userProfile={profile} tabs={tabs} />

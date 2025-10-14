@@ -13,6 +13,7 @@ export type ChildrenAPI = {
   birthDate: string;
   gender: ChildGender;
   avatarUrl: string;
+  isActive: boolean;
   createdAt: string;
   updatedAt: string;
   parent: {

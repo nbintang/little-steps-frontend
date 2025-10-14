@@ -2,7 +2,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { MotionFade } from "@/components/motion";
 import { ContentCard } from "@/features/parent/components/content-card";
-import { ContentCardSkeleton } from "@/features/parent/components/content-card-skeleton";
+import { ContentCardSkeleton } from "@/features/parent/components/skeletons/content-card-skeleton";
 import { ContentsPublicAPI } from "@/types/content";
 import { useFetchInfinite } from "@/hooks/use-fetch-infinite";
 import { useDebounce } from "use-debounce";
@@ -284,7 +284,7 @@ export default function FictionsPage() {
               <NavigationMenuItem>
                 <NavigationMenuLink asChild>
                   <Link
-                    href={`/stories?sort=${sortBy}`}
+                    href={`/children/playground/stories?sort=${sortBy}`}
                     className={cn(
                       "inline-flex px-3 py-1 rounded-md whitespace-nowrap",
                       initialCategory === ""
@@ -301,7 +301,7 @@ export default function FictionsPage() {
                 <NavigationMenuItem key={category.id}>
                   <NavigationMenuLink asChild>
                     <Link
-                      href={`/stories?category=${category.slug}&sort=${sortBy}`}
+                      href={`/children/playground/stories?category=${category.slug}&sort=${sortBy}`}
                       className={cn(
                         "inline-flex px-3 py-1 rounded-md whitespace-nowrap",
                         initialCategory === category.slug
@@ -388,7 +388,7 @@ export default function FictionsPage() {
             fictions.map((item, idx) => (
               <ContentCard
                 key={`fiction-${item.slug}-${idx}`}
-                hrefPrefix="/stories"
+                hrefPrefix="/children/playground/stories"
                 variant="fiction"
                 item={item as ContentsPublicAPI}
               />

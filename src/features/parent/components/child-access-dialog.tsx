@@ -1,11 +1,11 @@
 "use client";
-import React, { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useTransition } from "react";
 import { useOpenChildAccessDialog } from "../hooks/use-open-child-access-dialog";
 import { useShallow } from "zustand/shallow";
 import { DialogLayout } from "@/components/dialog-layout";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useFetchInfinite } from "@/hooks/use-fetch-infinite";
-import { ChildrenAPI, ChildrenMutateResponseAPI } from "@/types/children";
+import { ChildrenAPI } from "@/types/children";
 import {
   Item,
   ItemActions,
@@ -15,16 +15,9 @@ import {
   ItemTitle,
 } from "@/components/ui/item";
 import { Button } from "@/components/ui/button";
-import {
-  CalendarIcon,
-  CameraIcon,
-  ExternalLink,
-  Plus,
-  Search,
-} from "lucide-react";
+import { Plus, Search } from "lucide-react";
 import { useInView } from "react-intersection-observer";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -40,39 +33,15 @@ import {
 } from "@/components/ui/input-group";
 import { formatCapitalize } from "@/helpers/string-formatter";
 import { IconLogin2 } from "@tabler/icons-react";
-import * as z from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
-import { format } from "date-fns";
-import { Calendar } from "@/components/ui/calendar";
-import { FileWithPath, useDropzone } from "react-dropzone";
-import { FileWithPreview, ImageCropper } from "@/components/ui/image-cropper";
-import { usePost } from "@/hooks/use-post";
-import useUploadImage from "@/hooks/use-upload-image";
 import { Spinner } from "@/components/ui/spinner";
 import { useRouter } from "next/navigation";
 import { useProgress } from "@bprogress/next";
-import { api } from "@/lib/axios-instance/api";
 import { toast } from "sonner";
 import useChildProfile from "@/hooks/use-child-profile";
 import { isAxiosError } from "axios";
 import { ChildGender } from "@/lib/enums/child-gender";
 import { useChildDialog } from "../hooks/use-open-child-form-dialog";
+import { accessChildService } from "../services/access-child-service";
 
 export const ChildAccessDialog = () => {
   const { openDialog, setOpenDialog } = useOpenChildAccessDialog(
@@ -81,6 +50,7 @@ export const ChildAccessDialog = () => {
       setOpenDialog: state.setOpenDialog,
     }))
   );
+  const [isPending, setIsPending] = useState<boolean>(false);
   const { openDialog: openChildDialog, closeDialog: closeChildDialog } =
     useChildDialog();
   const progress = useProgress();
@@ -96,25 +66,27 @@ export const ChildAccessDialog = () => {
   const router = useRouter();
 
   const accessChild = async (childId: string) => {
-    try {
-      const res = await api.post(
-        `/protected/parent/children/${childId}/auth/access`,
-        null
-      );
-      if (res.status === 200) {
-        progress.start();
-        toast.success("Child access granted");
-        router.push("/children/playground");
-        closeChildDialog();
-      }
-    } catch (error) {
-      if (isAxiosError(error)) {
-        toast.error(error?.response?.data.message ?? "Failed to access child");
-      }
-    }
+    setIsPending(true);
+    return await toast
+      .promise(() => accessChildService(childId), {
+        loading: "Accessing child...",
+        success: (res) => {
+          if (res.data?.accessInfo.isAllowed) {
+            router.push("/children/playground");
+            closeChildDialog();
+          }
+          return "Child accessed successfully";
+        },
+        error: (err) =>
+          isAxiosError(err)
+            ? err.response?.data.message
+            : "Failed to access child",
+        finally: () => {
+          setIsPending(false);
+        }
+      })
+      .unwrap();
   };
-
-
   const {
     data,
     fetchNextPage,
@@ -204,63 +176,59 @@ export const ChildAccessDialog = () => {
               </Button>
             </ItemActions>
           </Item>
-      {/* Loading */}
-    {(!data && !isFetchingNextPage) && (
-      <div className="py-10 text-center text-sm text-muted-foreground">
-        <Spinner className="mx-auto mb-2" />
-        Loading children...
-      </div>
-    )}
+          {/* Loading */}
+          {!data && !isFetchingNextPage && (
+            <div className="py-10 text-center text-sm text-muted-foreground">
+              <Spinner className="mx-auto mb-2" />
+              Loading children...
+            </div>
+          )}
 
-    {/* Error */}
-    {error && (
-      <div className="py-10 text-center text-sm text-red-500">
-        Failed to load data
-      </div>
-    )}
+          {/* Error */}
+          {error && (
+            <div className="py-10 text-center text-sm text-red-500">
+              Failed to load data
+            </div>
+          )}
 
-    {/* Empty state */}
-    {data && data.pages.every((page) => page?.data?.length === 0) && (
-      <div className="py-10 text-center text-sm text-muted-foreground">
-        No children found
-      </div>
-    )}
+          {/* Empty state */}
+          {data && data.pages.every((page) => page?.data?.length === 0) && (
+            <div className="py-10 text-center text-sm text-muted-foreground">
+              No children found
+            </div>
+          )}
 
-    {/* Children list */}
-    {data?.pages.map((page) =>
-      page.data?.map((child) => (
-        <Item key={child.id} variant="outline">
-          <ItemMedia>
-            <Avatar className="h-10 w-10">
-              <AvatarImage src={child.avatarUrl || ""} />
-              <AvatarFallback>{child.name?.slice(0, 2)}</AvatarFallback>
-            </Avatar>
-          </ItemMedia>
-          <ItemContent>
-            <ItemTitle>{child.name}</ItemTitle>
-            <ItemDescription>
-              Gender: {formatCapitalize(child.gender) || "N/A"}
-            </ItemDescription>
-          </ItemContent>
-          <ItemActions>
-            <Button
-              size="icon-sm"
-              variant="outline"
-              onClick={() => accessChild(child.id)}
-              className="rounded-full"
-              aria-label="Invite"
-              disabled={isLoading || child.id === childProfile?.id}
-            >
-              {isLoading || child.id === childProfile?.id ? (
-                <Spinner />
-              ) : (
-                <IconLogin2 />
-              )}
-            </Button>
-          </ItemActions>
-        </Item>
-      ))
-    )}
+          {/* Children list */}
+          {data?.pages.map((page) =>
+            page.data?.map((child) => (
+              <Item key={child.id} variant="outline">
+                <ItemMedia>
+                  <Avatar className="h-10 w-10">
+                    <AvatarImage src={child.avatarUrl || ""} />
+                    <AvatarFallback>{child.name?.slice(0, 2)}</AvatarFallback>
+                  </Avatar>
+                </ItemMedia>
+                <ItemContent>
+                  <ItemTitle>{child.name}</ItemTitle>
+                  <ItemDescription>
+                    Gender: {formatCapitalize(child.gender) || "N/A"}
+                  </ItemDescription>
+                </ItemContent>
+                <ItemActions>
+                  <Button
+                    size="icon-sm"
+                    variant="outline"
+                    onClick={() => accessChild(child.id)}
+                    className="rounded-full"
+                    aria-label="Invite"
+                    disabled={isLoading || !child.isActive || isPending}
+                  >
+                    {isLoading || isPending ? <Spinner /> : <IconLogin2 />}
+                  </Button>
+                </ItemActions>
+              </Item>
+            ))
+          )}
           <div ref={ref} className="h-4" />
           {isFetchingNextPage && <p className="text-center py-2">Loading...</p>}
         </div>

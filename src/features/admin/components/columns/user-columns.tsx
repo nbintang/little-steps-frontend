@@ -105,7 +105,7 @@ export const userColumns: ColumnDef<UsersAPI>[] = [
           isOpen: true,
           title: "Delete User",
           description: "Are you sure you want to delete this user?",
-          onConfirm: () => (closeDialog(), mutate()),
+          onConfirm: () => (closeDialog(), mutate(undefined)),
         });
       return (
         <DropdownMenu>

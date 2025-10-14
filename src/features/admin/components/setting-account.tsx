@@ -55,7 +55,7 @@ const schema = z.object({
   location: z.string().min(2, "Location is required"),
   phone: z.string().regex(/^\+?[0-9\-() ]{7,}$/, "Enter a valid phone number"),
   createdAt: z.string(),
-  user: z.object({ 
+  user: z.object({
     name: z.string(),
     email: z.email(),
   }),
@@ -71,7 +71,7 @@ const dummyData: Profile = {
   location: "New York, USA",
   phone: "+1 (123) 456-7890",
   createdAt: new Date().toISOString(),
-  user: { 
+  user: {
     name: "John Doe",
     email: "aL2oE@example.com",
   },
@@ -360,8 +360,6 @@ export default function SettingAccount() {
           <FieldGroup className="rounded-lg border p-4 md:p-6">
             <FieldLegend variant="label">User metadata</FieldLegend>
             <FieldSet>
-        
-
               <Field>
                 <FieldLabel>User name</FieldLabel>
                 <FieldContent>
@@ -391,12 +389,18 @@ export default function SettingAccount() {
             </FieldSet>
           </FieldGroup>
 
-          <div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-end">
-            <Button type="button" variant="ghost" onClick={() => form.reset()}>
-              Cancel
-            </Button>
-            <Button type="submit">Save changes</Button>
-          </div>
+          {form.formState.isDirty && (
+            <div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-end">
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => form.reset()}
+              >
+                Cancel
+              </Button>
+              <Button type="submit">Save changes</Button>
+            </div>
+          )}
         </form>
       </Form>
     </div>

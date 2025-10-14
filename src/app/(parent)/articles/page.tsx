@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/input-group";
 import { Spinner } from "@/components/ui/spinner";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ContentCardSkeleton } from "@/features/parent/components/content-card-skeleton";
+import { ContentCardSkeleton } from "@/features/parent/components/skeletons/content-card-skeleton";
 import { ContentsHighlightSkeleton } from "@/features/parent/components/contents-highlight-skeleton";
 import { ErrorDynamicPage } from "@/components/error-dynamic";
 import { SearchIcon } from "lucide-react";

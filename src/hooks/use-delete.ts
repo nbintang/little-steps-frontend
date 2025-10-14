@@ -17,31 +17,22 @@ type PostProps = {
   toastMessage?: string;
 };
 
-type MutateFn<T> = {
-  (id: string, options?: Parameters<typeof useMutation>["0"]["onSuccess"]): void;
-  (options?: Parameters<typeof useMutation>["0"]["onSuccess"]): void;
-};
-
 export const useDelete = <T = any>({
   keys,
   endpoint,
   redirectUrl,
   allowToast = true,
   toastMessage,
-}: PostProps): UseMutationResult<
-  SuccessResponse<T>,
-  AxiosError,
-  string | undefined
-> & { mutate: MutateFn<string> } => {
+}: PostProps): UseMutationResult<SuccessResponse<T>, AxiosError, void> => {
   const router = useRouter();
   const queryClient = useQueryClient();
   const mutationKey = Array.isArray(keys) ? keys : [keys];
-
-  const mutation = useMutation({
+  return useMutation<SuccessResponse<T>, AxiosError, void>({
     mutationKey,
-    mutationFn: async (id?: string) => {
-      const url = id ? `/protected/${endpoint}/${id}` : `/protected/${endpoint}`;
-      const res = await api.delete<SuccessResponse<T>>(url);
+    mutationFn: async () => {
+      const res = await api.delete<SuccessResponse<T>>(
+        `/protected/${endpoint}`
+      );
       return res.data;
     },
     onMutate: () => {
@@ -64,18 +55,4 @@ export const useDelete = <T = any>({
       if (allowToast) toast.dismiss(Array.isArray(keys) ? keys[0] : keys);
     },
   });
-
-  // Overload wrapper biar bisa kosong atau string
-  const mutateWrapper: MutateFn<string> = ((idOrOptions?: any) => {
-    if (typeof idOrOptions === "string" || idOrOptions === undefined) {
-      mutation.mutate(idOrOptions);
-    } else {
-      mutation.mutate(undefined, idOrOptions);
-    }
-  }) as MutateFn<string>;
-
-  return {
-    ...mutation,
-    mutate: mutateWrapper,
-  };
 };

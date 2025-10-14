@@ -17,7 +17,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Card, CardContent } from "@/components/ui/card";
 import { Pencil, Trash2, Clock, Plus, MoreVertical } from "lucide-react";
 import {
   DropdownMenu,
@@ -29,7 +28,6 @@ import { ScheduleFormDialog } from "./form/schedule-form-dialog";
 import { DayOfWeek } from "@/lib/enums/day-of-week";
 import { useScheduleDialogStore } from "../hooks/use-schedule";
 import { useShallow } from "zustand/shallow";
-import { format } from "date-fns";
 import { usePost } from "@/hooks/use-post";
 import { ScheduleAPI } from "@/types/schedule";
 import { usePatch } from "@/hooks/use-patch";
@@ -38,7 +36,6 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { useFetch } from "@/hooks/use-fetch";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Item, ItemContent, ItemMedia, ItemTitle } from "@/components/ui/item";
-
 export function ManageSchedulesDialog() {
   const { isOpen, child, closeDialog } = useScheduleDialogStore(
     useShallow((state) => ({
@@ -48,18 +45,23 @@ export function ManageSchedulesDialog() {
       openDialog: state.openDialog,
     }))
   );
+
   const [isCreating, setIsCreating] = React.useState(false);
   const { editingScheduleId, setEditingScheduleId } = useScheduleDialogStore();
-
+  const [scheduleId, setScheduleId] = React.useState<string | null>(null);
   // Fetch schedules
   const {
     data: schedules = [],
     refetch,
     isLoading,
   } = useFetch<ScheduleAPI[]>({
-    endpoint: `parent/children/${child.id ?? ""}/schedules`,
+    endpoint: `parent/children/${child.id}/schedules`,
     keys: ["schedules", child?.id ?? ""],
   });
+
+  React.useEffect(() => {
+    if (editingScheduleId) setScheduleId(editingScheduleId);
+  }, [editingScheduleId]);
 
   // Find editing schedule
   const editingSchedule =
@@ -77,7 +79,7 @@ export function ManageSchedulesDialog() {
   });
 
   const deleteSchedule = useDelete<ScheduleAPI>({
-    endpoint: `parent/children/${child.id}/schedules/${editingScheduleId}`,
+    endpoint: `parent/children/${child.id}/schedules/${scheduleId || ""}`,
     keys: ["schedules", child?.id ?? ""],
   });
 
@@ -86,10 +88,9 @@ export function ManageSchedulesDialog() {
     updateSchedule.isPending ||
     deleteSchedule.isPending;
 
-  const handleAddSchedule = (schedule: ScheduleAPI) => {
-    addSchedule.mutate(schedule, {
+  const handleAddSchedule = (values: ScheduleAPI) => {
+    addSchedule.mutate(values, {
       onSuccess: () => {
-        setIsCreating(false);
         refetch();
       },
     });
@@ -104,8 +105,10 @@ export function ManageSchedulesDialog() {
     });
   };
 
+  // Then update the handler:
   const handleDeleteSchedule = (id: string) => {
-    deleteSchedule.mutate(id);
+    setScheduleId(id);
+    deleteSchedule.mutate();
   };
 
   const childAvatar = child.avatarUrl;
@@ -124,12 +127,13 @@ export function ManageSchedulesDialog() {
           <DialogTitle>Manage Schedule</DialogTitle>
         </DialogHeader>
 
-        <Item variant="muted">
+        <Item variant="outline">
           <ItemMedia>
             <Avatar className="h-10 w-10">
               <AvatarImage
                 src={
-                childAvatar ||  "https://upload.wikimedia.org/wikipedia/en/thumb/b/b1/Portrait_placeholder.png/330px-Portrait_placeholder.png"
+                  childAvatar ||
+                  "https://upload.wikimedia.org/wikipedia/en/thumb/b/b1/Portrait_placeholder.png/330px-Portrait_placeholder.png"
                 }
               />
               <AvatarFallback>{"AA"}</AvatarFallback>
@@ -188,56 +192,60 @@ export function ManageSchedulesDialog() {
                       </TableCell>
                     </TableRow>
                   ) : (
-                    schedules.map((s) => (
-                      <TableRow key={s.id}>
-                        <TableCell className="font-medium">{s.day}</TableCell>
-                        <TableCell>
-                          <div className="inline-flex items-center gap-2">
-                            <Clock className="h-3.5 w-3.5" />
-                            <span>
-                              {format(new Date(s.startTime), "HH:mm")}
-                            </span>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="inline-flex items-center gap-2">
-                            <Clock className="h-3.5 w-3.5" />
-                            <span>{format(new Date(s.endTime), "HH:mm")}</span>
-                          </div>
-                        </TableCell>
-                        <TableCell className="flex gap-2">
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                disabled={isPending}
+                    schedules.map((s) => {
+                      return (
+                        <TableRow key={s.id}>
+                          <TableCell className="font-medium">{s.day}</TableCell>
+                          <TableCell>
+                            <div className="inline-flex items-center gap-2">
+                              <Clock className="h-3.5 w-3.5" />
+                              <span>{s.startTime}</span>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="inline-flex items-center gap-2">
+                              <Clock className="h-3.5 w-3.5" />
+                              <span>{s.endTime}</span>
+                            </div>
+                          </TableCell>
+                          <TableCell className="flex gap-2">
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  disabled={isPending}
+                                >
+                                  <MoreVertical className="h-4 w-4" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent
+                                align="end"
+                                className="w-[140px]"
                               >
-                                <MoreVertical className="h-4 w-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent
-                              align="end"
-                              className="w-[140px]"
-                            >
-                              <DropdownMenuItem
-                                onClick={() => setEditingScheduleId(s.id ?? "")}
-                              >
-                                <Pencil className="mr-2 h-4 w-4" />
-                                Edit
-                              </DropdownMenuItem>
-                              <DropdownMenuItem
-                                className="text-destructive focus:text-destructive"
-                                onClick={() => handleDeleteSchedule(s.id ?? "")}
-                              >
-                                <Trash2 className="mr-2 h-4 w-4" />
-                                Delete
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </TableCell>
-                      </TableRow>
-                    ))
+                                <DropdownMenuItem
+                                  onClick={() =>
+                                    setEditingScheduleId(s.id ?? "")
+                                  }
+                                >
+                                  <Pencil className="mr-2 h-4 w-4" />
+                                  Edit
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                  className="text-destructive focus:text-destructive"
+                                  onClick={() =>
+                                    handleDeleteSchedule(s.id ?? "")
+                                  }
+                                >
+                                  <Trash2 className="mr-2 h-4 w-4" />
+                                  Delete
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })
                   )}
                 </TableBody>
               </Table>

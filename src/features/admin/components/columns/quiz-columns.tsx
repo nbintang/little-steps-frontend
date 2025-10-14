@@ -81,7 +81,7 @@ export const quizColumns: ColumnDef<QuizzesAPI>[] = [
           isOpen: true,
           title: "Hapus Quiz",
           description: "Apakah anda yakin ingin menghapus quiz ini?",
-          onConfirm: () => (closeDialog(), deleteQuiz()),
+          onConfirm: () => (closeDialog(), deleteQuiz(undefined)),
         });
       return (
         <DropdownMenu>

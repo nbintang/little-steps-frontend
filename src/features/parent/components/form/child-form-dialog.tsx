@@ -166,7 +166,7 @@ export const ChildFormDialog = () => {
       avatarUrl = undefined;
     }
 
-    if (child) {
+    if (child && child.id) {
       await updateChild({ ...values, avatarUrl });
     } else {
       await createChild({ ...values, avatarUrl });
@@ -188,7 +188,7 @@ export const ChildFormDialog = () => {
                 avatar
               </p>
             </div>
-            <div className="grid place-items-center">
+            <div className="grid place-items-center my-4">
               {selectedFile ? (
                 <ImageCropper
                   size="32"

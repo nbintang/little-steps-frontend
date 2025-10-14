@@ -1,7 +1,7 @@
 import { ProfileAPI } from "@/types/profile";
 import { useFetch } from "./use-fetch";
 
-type ChildProfileAPI = {
+export type ChildProfileAPI = {
     id: string;
     name: string;
     birthDate: Date;

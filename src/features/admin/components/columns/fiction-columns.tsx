@@ -120,7 +120,7 @@ export const fictionColumns: ColumnDef<ContentAPI>[] = [
           isOpen: true,
           title: "Hapus Fiction",
           description: "Apakah anda yakin ingin menghapus fiction ini?",
-          onConfirm: () => (closeDialog(), deleteArticle()),
+          onConfirm: () => (closeDialog(), deleteArticle(undefined)),
         });
       const handleToggleStatus = () =>
         setOpenDeleteDialog({

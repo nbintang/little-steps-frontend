@@ -4,6 +4,7 @@ import React from "react";
 import { usePathname } from "next/navigation";
 import SiteFooter from "../site-footer";
 import SiteHeader, { NavTab } from "../site-header";
+import { useLogout } from "@/features/auth/hooks/use-logout";
 
 const EXCLUDE_ROUTES = [
   "/login",

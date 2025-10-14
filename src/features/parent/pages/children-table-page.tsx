@@ -101,7 +101,9 @@ export function ChildrenTablePage<T>({
         <TableSkeleton />
       ) : (
         <>
-          <TableMain<T> table={table} />
+          <div className="w-full max-w-sm md:max-w-md lg:max-w-3xl">
+            <TableMain<T> table={table} />
+          </div>
           <TablePagination<T>
             limit={limit}
             page={page}

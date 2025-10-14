@@ -14,7 +14,7 @@ export const DashboardPageLayout = ({
   return (
     <div
       className={cn(
-        "flex flex-1 flex-col mx-3 md:mx-5 gap-2 py-4  md:gap-4 md:py-6",
+        "flex flex-1 flex-col mx-3 md:mx-5 gap-2 py-4  md:gap-4 md:py-6  min-h-[calc(100vh-0px)]",
         className
       )}
       {...props}
