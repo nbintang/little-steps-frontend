@@ -15,7 +15,7 @@ export default function LoginPage() {
     if (!effectRan.current && accessToken) {
       saveToken({ token: accessToken });
       toast.success("Logged in successfully");
-      router.push("/parent/dashboard");
+      router.push("/");
       effectRan.current = true;
     }
   }, [accessToken, router]);
