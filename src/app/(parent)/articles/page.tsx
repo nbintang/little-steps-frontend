@@ -66,6 +66,7 @@ import Link from "next/link";
 import { ContentType } from "@/lib/enums/content-type";
 import { ContentSort } from "@/lib/enums/content-sort";
 import { formatCapitalize, formatInitials } from "@/helpers/string-formatter";
+import { CategoryType } from "@/lib/enums/category-type";
 type ArticleQueryParams = {
   page?: string;
   limit?: string;
@@ -141,6 +142,9 @@ export default function ArticlesPage() {
     key: ["categories"],
     endpoint: "categories",
     protected: false,
+    query: {
+      type: CategoryType.PARENT,
+    },
   });
 
   useEffect(() => {

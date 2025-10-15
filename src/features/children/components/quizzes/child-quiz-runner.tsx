@@ -1,402 +1,214 @@
-"use client"
- 
-import { useCallback, useEffect, useMemo, useState } from "react"
-import Link from "next/link" 
-import { Progress } from "@/components/ui/progress"
-import { Button } from "@/components/ui/button" 
-import { toast } from "sonner"
-import { useFetch } from "@/hooks/use-fetch"
-import QuestionCard from "./child-question-card"
-import Timer from "./quiz-timer"
-type Answer = {
-  id: string
-  text: string
-  imageAnswer: string
-  isCorrect: boolean
-}
+"use client";
 
-type Question = {
-  id: string
-  questionJson: any
-  answers: Answer[]
-}
+import { useCallback, useEffect, useState } from "react";
+import Link from "next/link";
+import { Progress } from "@/components/ui/progress";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import QuestionCard from "./child-question-card";
+import Timer from "./quiz-timer";
 
-type QuizDetail = {
-  id: string
-  createdAt: string
-  title: string
-  description: string
-  timeLimit: number // seconds
-  rating: number
-  category: { id: string; name: string; slug: string }
-  questions: Question[]
-}
+import {
+  useQuizProgress,
+  useQuizQuestions,
+  useSubmitQuiz,
+} from "../../hooks/use-quiz";
+import { SubmitQuizPayload } from "@/types/quiz-play";
 
-type ProgressType = {
-  id: string
-  quizId: string
-  childId: string
-  score: number
-  completionPercent: number
-  startedAt: string
-  submittedAt: string | null
-  // local supplement
-  selections: Record<string, string | undefined> // questionId -> answerId
-}
-
-const DB: Record<string, any> = {
-  "quiz-1": {
-    id: "quiz-1",
-    createdAt: new Date().toISOString(),
-    title: "General Knowledge Basics",
-    description: "Test your knowledge across mixed topics.",
-    timeLimit: 60 * 8,
-    rating: 4.5,
-    category: { id: "cat-1", name: "General", slug: "general" },
-    questions: [
-      {
-        id: "q1",
-        questionJson: { text: "What is the capital of France?" },
-        answers: [
-          { id: "q1a1", text: "Paris", imageAnswer: "", isCorrect: true },
-          { id: "q1a2", text: "Lyon", imageAnswer: "", isCorrect: false },
-          { id: "q1a3", text: "Marseille", imageAnswer: "", isCorrect: false },
-          { id: "q1a4", text: "Nice", imageAnswer: "", isCorrect: false },
-        ],
-      },
-      {
-        id: "q2",
-        questionJson: { text: "2 + 2 equals?" },
-        answers: [
-          { id: "q2a1", text: "3", imageAnswer: "", isCorrect: false },
-          { id: "q2a2", text: "4", imageAnswer: "", isCorrect: true },
-          { id: "q2a3", text: "5", imageAnswer: "", isCorrect: false },
-        ],
-      },
-      {
-        id: "q3",
-        questionJson: { text: "Select the mammal.", image: "/animal-images.jpg" },
-        answers: [
-          { id: "q3a1", text: "Salmon", imageAnswer: "/colorful-fish-shoal.png", isCorrect: false },
-          { id: "q3a2", text: "Dolphin", imageAnswer: "/playful-dolphin.png", isCorrect: true },
-          { id: "q3a3", text: "Eagle", imageAnswer: "/colorful-bird-perched.png", isCorrect: false },
-        ],
-      },
-      {
-        id: "q4",
-        questionJson: { text: "Which language runs in a web browser?" },
-        answers: [
-          { id: "q4a1", text: "Java", imageAnswer: "", isCorrect: false },
-          { id: "q4a2", text: "C", imageAnswer: "", isCorrect: false },
-          { id: "q4a3", text: "Python", imageAnswer: "", isCorrect: false },
-          { id: "q4a4", text: "JavaScript", imageAnswer: "", isCorrect: true },
-        ],
-      },
-      {
-        id: "q5",
-        questionJson: { text: "Which planet is known as the Red Planet?" },
-        answers: [
-          { id: "q5a1", text: "Venus", imageAnswer: "", isCorrect: false },
-          { id: "q5a2", text: "Mars", imageAnswer: "", isCorrect: true },
-          { id: "q5a3", text: "Jupiter", imageAnswer: "", isCorrect: false },
-        ],
-      },
-    ],
-  },
-  "quiz-2": {
-    id: "quiz-2",
-    createdAt: new Date().toISOString(),
-    title: "Science & Nature",
-    description: "A quick dive into science and the natural world.",
-    timeLimit: 60 * 10,
-    rating: 4.2,
-    category: { id: "cat-2", name: "Science", slug: "science" },
-    questions: [
-      {
-        id: "s1",
-        questionJson: { text: "What gas do plants absorb from the atmosphere?" },
-        answers: [
-          { id: "s1a1", text: "Oxygen", imageAnswer: "", isCorrect: false },
-          { id: "s1a2", text: "Carbon Dioxide", imageAnswer: "", isCorrect: true },
-          { id: "s1a3", text: "Nitrogen", imageAnswer: "", isCorrect: false },
-        ],
-      },
-      {
-        id: "s2",
-        questionJson: { text: "The process of water cycle includes evaporation, condensation and …" },
-        answers: [
-          { id: "s2a1", text: "Insulation", imageAnswer: "", isCorrect: false },
-          { id: "s2a2", text: "Precipitation", imageAnswer: "", isCorrect: true },
-          { id: "s2a3", text: "Carbonation", imageAnswer: "", isCorrect: false },
-        ],
-      },
-      {
-        id: "s3",
-        questionJson: { text: "What is H2O commonly known as?" },
-        answers: [
-          { id: "s3a1", text: "Salt", imageAnswer: "", isCorrect: false },
-          { id: "s3a2", text: "Water", imageAnswer: "", isCorrect: true },
-          { id: "s3a3", text: "Hydrogen", imageAnswer: "", isCorrect: false },
-        ],
-      },
-      {
-        id: "s4",
-        questionJson: { text: "What organ pumps blood through the body?" },
-        answers: [
-          { id: "s4a1", text: "Lungs", imageAnswer: "", isCorrect: false },
-          { id: "s4a2", text: "Heart", imageAnswer: "", isCorrect: true },
-          { id: "s4a3", text: "Kidney", imageAnswer: "", isCorrect: false },
-        ],
-      },
-    ],
-  },
-}
+type SelectionsState = Record<string, string | undefined>;
 
 export default function QuizRunner({ quizId }: { quizId: string }) {
+  // --- Hooks (tetap di bagian atas, tidak ada return sebelum ini) ---
+  const [selections, setSelections] = useState<SelectionsState>({});
+  const [currentIndex, setCurrentIndex] = useState(0);
 
-  const totalQuestions = DB?.questions?.length ?? 0
+  const { data: progress, isLoading: progressLoading } =
+    useQuizProgress(quizId);
+  const { data: quizData, isLoading: questionsLoading } = useQuizQuestions(
+    quizId,
+    1,
+    50
+  );
+  const submitMutation = useSubmitQuiz(quizId);
 
-  // restore progress from localStorage
-  const storageKey = `quiz-progress:${quizId}`
-  const [progress, setProgress] = useState<ProgressType | null>(null)
-  const [currentIndex, setCurrentIndex] = useState(0)
-  const [submitted, setSubmitted] = useState(false)
-  const [finalScore, setFinalScore] = useState(0)
+  const questions = quizData?.data || [];
+  const totalQuestions = quizData?.meta.totalQuestions || 0;
 
-  // Initialize progress when DB loads
-  useEffect(() => {
-    if (!DB) return
-    const savedRaw = typeof window !== "undefined" ? window.localStorage.getItem(storageKey) : null
-    const saved: ProgressType | null = savedRaw ? JSON.parse(savedRaw) : null
-    if (saved && saved.submittedAt == null) {
-      setProgress(saved)
-      // best-effort: set index based on completion
-      const answered = Object.values(saved.selections).filter(Boolean).length
-      setCurrentIndex(Math.min(answered, DB.questions.length - 1))
-    } else {
-      const init: ProgressType = {
-        id: crypto.randomUUID(),
-        quizId,
-        childId: "demo-child", // simulation
-        score: 0,
-        completionPercent: 0,
-        startedAt: new Date().toISOString(),
-        submittedAt: null,
-        selections: {},
-      }
-      setProgress(init)
-      window.localStorage.setItem(storageKey, JSON.stringify(init))
-    }
-  }, [DB, quizId]) // eslint-disable-line
+  // --- Derived values & handlers (masih sebelum return) ---
+  const answeredCount = Object.values(selections).filter(Boolean).length;
+  const completion = Math.round((answeredCount / (totalQuestions || 1)) * 100);
 
-  const persist = useCallback(
-    (p: ProgressType) => {
-      setProgress(p)
-      if (typeof window !== "undefined") {
-        window.localStorage.setItem(storageKey, JSON.stringify(p))
-      }
-    },
-    [storageKey],
-  )
-
-  const completion = useMemo(() => {
-    if (!progress || !DB) return 0
-    const answered = Object.values(progress.selections).filter(Boolean).length
-    return Math.round((answered / (DB.questions.length || 1)) * 100)
-  }, [progress, DB])
-
-  const onSelectAnswer = (qid: string, aid: string) => {
-    if (!progress || submitted) return
-    const next: ProgressType = {
-      ...progress,
-      selections: { ...progress.selections, [qid]: aid },
-    }
-    next.completionPercent = completion // will be recalculated on next render, but good to keep close
-    persist(next)
-  }
+  const onSelectAnswer = (questionId: string, answerId: string) => {
+    if (progress?.submittedAt) return;
+    setSelections((prev) => ({ ...prev, [questionId]: answerId }));
+  };
 
   const goNext = () => {
-    if (!DB) return
-    setCurrentIndex((i) => Math.min(i + 1, DB.questions.length - 1))
-  }
+    if (currentIndex < questions.length - 1) {
+      setCurrentIndex((i) => i + 1);
+    }
+  };
 
   const goPrev = () => {
-    setCurrentIndex((i) => Math.max(i - 1, 0))
-  }
-
-  const computeScore = useCallback(() => {
-    if (!DB || !progress) return 0
-    let correct = 0
-    for (const q of DB.questions) {
-      const selected = progress.selections[q.id]
-      if (!selected) continue
-      const ans = q.answers.find((a) => a.id === selected)
-      if (ans?.isCorrect) correct += 1
+    if (currentIndex > 0) {
+      setCurrentIndex((i) => i - 1);
     }
-    return correct
-  }, [DB, progress])
+  };
 
-  const submit = useCallback(() => {
-    if (!DB || !progress) return
-    const score = computeScore()
-    const final: ProgressType = {
-      ...progress,
-      score,
-      submittedAt: new Date().toISOString(),
-      completionPercent: 100,
+  const handleSubmit = useCallback(async () => {
+    const payload: SubmitQuizPayload = {
+      answers: questions.map((q) => ({
+        questionId: q.id,
+        selectedAnswerId: selections[q.id] || null,
+      })),
+    };
+
+    try {
+      const result = await submitMutation.mutateAsync(payload);
+      toast.success(`Quiz submitted! Score: ${result.score}/${totalQuestions}`);
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || "Failed to submit quiz");
     }
-    persist(final)
-    setFinalScore(score)
-    setSubmitted(true)
-
-    const json = JSON.stringify(
-      {
-        id: final.id,
-        quizId: final.quizId,
-        childId: final.childId,
-        score: final.score,
-        completionPercent: final.completionPercent,
-        startedAt: final.startedAt,
-        submittedAt: final.submittedAt,
-        selections: final.selections,
-      },
-      null,
-      2,
-    )
-    toast.success(`Submitted quiz. Score: ${score}/${DB.questions.length}. Your answers: ${json}`)
-  }, [computeScore, DB, progress, persist])
+  }, [questions, selections, submitMutation, totalQuestions]);
 
   const handleTimeExpire = useCallback(() => {
-    if (!submitted) submit()
-  }, [submitted, submit])
+    if (!progress?.submittedAt) {
+      toast.warning("Time's up! Auto-submitting...");
+      void handleSubmit();
+    }
+  }, [progress?.submittedAt, handleSubmit]);
 
-  // If loading
-  // if (isLoading) {
-  //   return <div className="rounded-lg border bg-card p-6">Loading quiz…</div>
-  // }
+  // --- Semua pemeriksaan / conditional returns setelah semua hooks & callbacks ---
+  if (progressLoading || questionsLoading) {
+    return (
+      <div className="rounded-lg border bg-card p-6">
+        <div className="flex items-center justify-center py-12">
+          <div className="text-center space-y-2">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto" />
+            <p className="text-muted-foreground">Loading quiz...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
-  // // If error
-  // if (error || !DB) {
-  //   return <div className="rounded-lg border bg-card p-6">Failed to load quiz.</div>
-  // }
+  if (!progress || !quizData) {
+    return (
+      <div className="rounded-lg border bg-card p-6">
+        <p className="text-destructive">Failed to load quiz.</p>
+      </div>
+    );
+  }
 
-  // If submitted, show results
-  if (submitted || progress?.submittedAt) {
-    const score = submitted ? finalScore : computeScore()
-    const percent = Math.round(((score ?? 0) / (totalQuestions || 1)) * 100)
+  if (progress.submittedAt) {
+    const score = progress.score || 0;
+    const percent = Math.round((score / (totalQuestions || 1)) * 100);
+
     return (
       <div className="rounded-lg border bg-card p-6">
         <div className="flex items-center justify-between gap-3">
-          <h1 className="text-xl md:text-2xl font-semibold text-balance">{DB.title}</h1>
-          <Link href="/quizzes" className="text-sm underline underline-offset-4">
+          <h1 className="text-xl md:text-2xl font-semibold">Quiz Completed!</h1>
+          <Link
+            href="/children/playground/quizzes"
+            className="text-sm underline underline-offset-4"
+          >
             Back to list
           </Link>
         </div>
-        <p className="mt-1 text-muted-foreground">{DB.description}</p>
-        <div className="mt-4 grid gap-2">
-          <span className="text-sm">
-            Your Score: <strong>{score}</strong> / {totalQuestions}
-          </span>
-          <Progress value={percent} />
-        </div>
-        <div className="mt-6 flex flex-wrap gap-3">
-          <Button
-            onClick={() => {
-              // reset attempt
-              const fresh: ProgressType = {
-                id: crypto.randomUUID(),
-                quizId,
-                childId: "demo-child",
-                score: 0,
-                completionPercent: 0,
-                startedAt: new Date().toISOString(),
-                submittedAt: null,
-                selections: {},
-              }
-              persist(fresh)
-              setSubmitted(false)
-              setCurrentIndex(0)
-              setFinalScore(0)
-            }}
-          >
-            Retry Quiz
-          </Button>
-          <Button
-            variant="secondary"
-            onClick={() => {
-              const stored = typeof window !== "undefined" ? window.localStorage.getItem(storageKey) : null
-              const parsed = stored ? JSON.parse(stored) : null
-              const json = JSON.stringify(parsed, null, 2)
-              toast.success(json)
 
-            }}
-          >
-            Show JSON
-          </Button>
-          <Button asChild variant="outline">
-            <Link href="/quizzes">Choose another quiz</Link>
-          </Button>
-        </div>
-      </div>
-    )
-  }
+        <div className="mt-6 grid gap-4">
+          <div className="text-center py-8">
+            <div className="text-6xl font-bold text-primary mb-2">
+              {score}/{totalQuestions}
+            </div>
+            <p className="text-muted-foreground">Correct Answers</p>
+          </div>
 
-  const q = DB.questions[currentIndex]
-  const qText =
-    q?.questionJson && typeof q.questionJson === "object" && "text" in q.questionJson
-      ? String((q.questionJson as any).text)
-      : `Question ${currentIndex + 1}`
-  const qImage =
-    q?.questionJson && typeof q.questionJson === "object" && "image" in q.questionJson
-      ? String((q.questionJson as any).image)
-      : undefined
-  const selected = progress?.selections[q.id]
+          <Progress value={percent} className="h-3" />
 
-  return (
-    <div className="space-y-5">
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
-        <div>
-          <h1 className="text-xl md:text-2xl font-semibold text-balance">{DB.title}</h1>
-          <p className="text-muted-foreground">{DB.description}</p>
-          <div className="mt-2 text-sm text-muted-foreground flex flex-wrap items-center gap-3">
-            <span>Category: {DB.category.name}</span>
-            <span>•</span>
-            <span>Questions: {DB.questions.length}</span>
-            <span>•</span>
-            <span>Rating: {DB.rating.toFixed(1)}</span>
+          <div className="grid grid-cols-2 gap-4 text-sm">
+            <div className="rounded-lg border p-4">
+              <div className="text-muted-foreground mb-1">Score</div>
+              <div className="text-2xl font-semibold">{percent}%</div>
+            </div>
+            <div className="rounded-lg border p-4">
+              <div className="text-muted-foreground mb-1">Completion</div>
+              <div className="text-2xl font-semibold">
+                {progress.completionPercent}%
+              </div>
+            </div>
           </div>
         </div>
-        <Timer totalSeconds={DB.timeLimit} onExpire={handleTimeExpire} />
+
+        <div className="mt-6 flex flex-wrap gap-3">
+          <Button asChild>
+            <Link href="/children/quizzes">Choose Another Quiz</Link>
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  const currentQuestion = questions[currentIndex];
+  if (!currentQuestion) {
+    return (
+      <div className="rounded-lg border bg-card p-6">No questions found.</div>
+    );
+  }
+
+  // --- Main render ---
+  return (
+    <div className="space-y-5">
+      {/* Header */}
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
+        <div className="flex-1">
+          <div className="text-sm text-muted-foreground mb-1">
+            Question {currentIndex + 1} of {totalQuestions}
+          </div>
+          <Progress value={completion} className="h-2" />
+        </div>
+        {progress.timeLimit && (
+          <Timer
+            totalSeconds={progress.timeLimit * 60}
+            onExpire={handleTimeExpire}
+          />
+        )}
       </div>
 
-      <Progress value={completion} />
-
+      {/* Question Card */}
       <QuestionCard
         index={currentIndex}
         total={totalQuestions}
-        text={qText}
-        image={qImage}
-        answers={q.answers}
-        selectedAnswerId={selected}
-        onSelect={(aid) => onSelectAnswer(q.id, aid)}
+        questionJson={currentQuestion.questionJson}
+        answers={currentQuestion.answers}
+        selectedAnswerId={selections[currentQuestion.id]}
+        onSelect={(aid) => onSelectAnswer(currentQuestion.id, aid)}
       />
 
+      {/* Navigation */}
       <div className="flex items-center justify-between gap-3">
-        <Button variant="outline" onClick={goPrev} disabled={currentIndex === 0}>
+        <Button
+          variant="outline"
+          onClick={goPrev}
+          disabled={currentIndex === 0}
+        >
           Previous
         </Button>
+
+        <div className="text-sm text-muted-foreground">
+          {answeredCount} of {totalQuestions} answered
+        </div>
+
         <div className="flex items-center gap-3">
-          {currentIndex < totalQuestions - 1 ? (
-            <Button onClick={goNext} disabled={!selected}>
-              Next
-            </Button>
+          {currentIndex < questions.length - 1 ? (
+            <Button onClick={goNext}>Next</Button>
           ) : (
-            <Button onClick={submit} disabled={!selected}>
-              Submit
+            <Button onClick={handleSubmit} disabled={submitMutation.isPending}>
+              {submitMutation.isPending ? "Submitting..." : "Submit Quiz"}
             </Button>
           )}
         </div>
       </div>
     </div>
-  )
+  );
 }
