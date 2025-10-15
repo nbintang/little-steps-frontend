@@ -88,7 +88,7 @@ export function CompleteRegisterForm({
         const accessToken = res.data?.data?.accessToken!;
         saveToken({ token: accessToken });
         toast.success(res.data.message);
-        router.push("/parent/dashboard");
+        router.push("/");
       }
     } catch (error) {
       console.log(error);
