@@ -1,5 +1,6 @@
-import { CreateForumForm } from "@/features/parent/components/create-forum-form";
+import { CreateForumForm } from "@/features/parent/components/form/create-forum-form";
 
+ 
 export default function CreateForumPage() {
   return (
     <div className="max-w-4xl min-h-screen mx-auto ">

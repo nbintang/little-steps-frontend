@@ -1,6 +1,5 @@
 "use client";
-import { notFound } from "next/navigation";
-import { getFictionBySlug } from "@/lib/data";
+import { notFound } from "next/navigation"; 
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { RichTextRenderer } from "@/components/rich-text-renderer";
