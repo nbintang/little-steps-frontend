@@ -1,4 +1,3 @@
-"use server";
 import { removeToken } from "@/helpers/remove-token";
 import { api } from "@/lib/axios-instance/api";
 export const logoutService = async () => {

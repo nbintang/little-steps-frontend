@@ -9,6 +9,8 @@ import { useChildExit } from "@/features/auth/hooks/use-child-exit";
 import { NavbarProfile } from "@/components/navbar/navbar-profile";
 import useChildProfile from "@/hooks/use-child-profile";
 import { NavChildProfile } from "./nav-child-profile";
+import { NavChildMobile } from "./nav-child-mobile";
+import { NavChild } from "./nav-child";
 export type NavTab = {
   href?: string;
   label: string;
@@ -19,6 +21,16 @@ export type NavTab = {
   }[];
 };
 
+const navTabs: NavTab[] = [
+                {
+                  href: "/children/playground/stories",
+                  label: "Stories",
+                },
+                {
+                  label: "Quizzes",
+                  href: "/children/playground/quizzes",
+                },
+              ];
 
 export default function ChildHeader() {
   const profile = useChildProfile();
@@ -34,11 +46,21 @@ export default function ChildHeader() {
           <Tornado className="h-6 w-6 rotate-180" />
           <span className="font-semibold tracking-tight">Little Steps</span>
           <span className="sr-only">Go to homepage</span>
-        </Link> 
-
+        </Link>
+<NavChild tabs={navTabs}/>
         {/* Right: Avatar (visible on all sizes) */}
         <div className="flex gap-3 items-center">
-          <NavChildProfile handleLogout={() => handleLogout(profile.data?.id ?? "")} userProfile={profile} />
+          <NavChildProfile
+            handleLogout={() => handleLogout(profile.data?.id ?? "")}
+            userProfile={profile}
+          />
+          <div className="flex items-center gap-2">
+            {/* Mobile: Sheet trigger */}
+            <NavChildMobile
+              userProfile={profile}
+              tabs={navTabs}
+            />
+          </div>
         </div>
       </div>
     </header>

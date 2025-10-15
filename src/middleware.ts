@@ -12,66 +12,88 @@ const AUTH_PATHS = [
 ];
 
 const ADMIN_PREFIX = "/admin";
-
-const PARENT_ONLY_PREFIX = ["/settings"];
-
 const CHILDREN_PREFIX = "/children";
+const PARENT_ONLY_PREFIX = ["/settings"];
 
 export async function middleware(req: NextRequest) {
   const accessToken = req.cookies.get("accessToken")?.value;
   const childStatusCookie = req.cookies.get("childStatus")?.value;
   const pathname = req.nextUrl.pathname;
+
   const isAdminPath = pathname.startsWith(ADMIN_PREFIX);
-  // 1️⃣ Redirect kalau tidak ada token
+  const isChildrenPath = pathname.startsWith(CHILDREN_PREFIX);
+  const isParentOnlyPath = PARENT_ONLY_PREFIX.some((p) =>
+    pathname.startsWith(p)
+  );
+
+  // ✅ 1. Belum login → hanya public routes
   if (!accessToken) {
-    if (
-      isAdminPath ||
-      PARENT_ONLY_PREFIX.some((prefix) => pathname.startsWith(prefix))
-    ) {
+    if (isAdminPath || isChildrenPath || isParentOnlyPath) {
       return NextResponse.redirect(new URL("/login", req.url));
     }
     return NextResponse.next();
   }
 
-  // 3️⃣ Decode JWT
+  // ✅ 2. Decode token
   let userPayload: UserPayload;
   try {
     userPayload = jwtDecode(accessToken);
   } catch {
-    if (isAdminPath) {
+    if (isAdminPath || isChildrenPath || isParentOnlyPath) {
       return NextResponse.redirect(new URL("/login", req.url));
     }
-    return NextResponse.next(); // parent tetap bisa ke public
+    return NextResponse.next();
   }
 
   const { role } = userPayload;
 
-  if (pathname.startsWith(ADMIN_PREFIX) && role !== "ADMINISTRATOR") {
-    return NextResponse.redirect(new URL("/", req.url));
+  // ✅ 3. Role-based logic
+
+  // Admin hanya boleh di area admin
+  if (role === "ADMINISTRATOR") {
+    if (!isAdminPath) {
+      return NextResponse.redirect(new URL("/admin/dashboard", req.url));
+    }
+    return NextResponse.next();
   }
 
-  if (role === "ADMINISTRATOR" && !pathname.startsWith(ADMIN_PREFIX)) {
-    return NextResponse.redirect(new URL("/admin/dashboard", req.url));
-  }
-  const isChildrenPath = pathname.startsWith(CHILDREN_PREFIX);
+  // Kalau parent login
+  if (role === "PARENT") {
+    // 🚨 Tambahan: kalau akses /children tapi childStatus tidak ada → redirect /
+    if (isChildrenPath && !childStatusCookie) {
+      return NextResponse.redirect(new URL("/", req.url));
+    }
 
-  if (role === "PARENT" && !isChildrenPath) {
     if (childStatusCookie) {
       try {
         const childStatus = JSON.parse(childStatusCookie);
+
+        // 🚸 Kalau anak aktif → HANYA boleh di `/children/...`
         if (childStatus.isAllowed && childStatus.isActive) {
-          // redirect ke playground/children path
-          return NextResponse.redirect(
-            new URL("/children/playground", req.url)
-          );
+          if (!isChildrenPath) {
+            return NextResponse.redirect(
+              new URL("/children/playground", req.url)
+            );
+          }
+          return NextResponse.next(); // tetap di area anak
         }
       } catch {
-        // invalid cookie → biarkan akses public
+        // invalid cookie, abaikan
       }
     }
+
+    // kalau tidak child mode, parent hanya tidak boleh ke admin
+    if (isAdminPath) {
+      return NextResponse.redirect(new URL("/", req.url));
+    }
+    return NextResponse.next();
   }
 
-  // 5️⃣ Parent bebas ke public path → tidak ada redirect
+  // Kalau role lain (misal anak langsung login) → batasi ke /children
+  if (role === "CHILD" && !isChildrenPath) {
+    return NextResponse.redirect(new URL("/children/playground", req.url));
+  }
+
   return NextResponse.next();
 }
 

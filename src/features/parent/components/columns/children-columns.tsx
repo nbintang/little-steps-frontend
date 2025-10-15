@@ -19,6 +19,7 @@ import { useScheduleDialogStore } from "../../hooks/use-schedule";
 import { useChildDialog } from "../../hooks/use-open-child-form-dialog";
 import { useDelete } from "@/hooks/use-delete";
 import { ChildGender } from "@/lib/enums/child-gender";
+import { useDisplayWarningDialog } from "@/hooks/use-display-warning-dialog";
 
 export const childrenColumns: ColumnDef<ChildrenAPI>[] = [
   {
@@ -78,10 +79,15 @@ export const childrenColumns: ColumnDef<ChildrenAPI>[] = [
     cell: ({ row }) => {
       const child = row.original;
       const openDialog = useScheduleDialogStore((state) => state.openDialog);
+      const setOpenDeleteDialog = useDisplayWarningDialog(
+        (state) => state.setOpenDialog
+      );
+      const closeDialog = useDisplayWarningDialog((state) => state.closeDialog);
       const { mutate: deleteChild } = useDelete({
         endpoint: `parent/children/${child.id}`,
         keys: ["children"],
       });
+
       const { openDialog: openChildDialog } = useChildDialog();
       const handleManageSchedule = () => {
         openDialog({
@@ -91,8 +97,13 @@ export const childrenColumns: ColumnDef<ChildrenAPI>[] = [
         });
       };
 
-      const handleDelete = () => deleteChild();
-
+      const handleDelete = () =>
+        setOpenDeleteDialog({
+          isOpen: true,
+          title: "Hapus Akun Anak",
+          description: "Apakah anda yakin ingin menghapus akun anak ini?",
+          onConfirm: () => (closeDialog(), deleteChild()),
+        });
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

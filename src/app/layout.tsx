@@ -7,7 +7,7 @@ import { Toaster } from "@/components/ui/sonner";
 import WarningDialog from "@/components/warning-dialog";
 import { PublicLayout } from "@/components/layouts/public-layout";
 import { ChildAccessDialog } from "@/features/parent/components/child-access-dialog";
-import { ChildFormDialog } from "@/features/parent/components/form/child-form-dialog";
+import { ChildFormDialog } from "@/features/parent/components/form/manage-child-form-dialog";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

@@ -22,8 +22,16 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { CategoryType } from "@/lib/enums/category-type";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
-export const CategoryDialogForm = ( ) => {
+export const CategoryDialogForm = () => {
   const { isOpen, data, mode, close } = useDisplayCategoryDialog(
     useShallow((state) => ({
       isOpen: state.isOpen,
@@ -37,11 +45,12 @@ export const CategoryDialogForm = ( ) => {
     defaultValues: {
       id: data?.id || "",
       name: data?.name || "",
+      type: data?.type as CategoryType,
     },
   });
   const id = form.watch("id") || data?.id;
   const { mutate: updateCategory } = usePatch<CategoryAPI, { name: string }>({
-    keys: ["categories"], 
+    keys: ["categories"],
   });
 
   const { mutate: createCategory } = usePost<CategoryAPI, { name: string }>({
@@ -54,32 +63,36 @@ export const CategoryDialogForm = ( ) => {
       form.reset({
         id: data.id || "",
         name: data.name || "",
+        type: data.type as CategoryType,
       });
     }
   }, [isOpen, data, form]);
   useEffect(() => {
     console.log("Form errors:", form.formState.errors);
   }, [form.formState.errors]);
- 
-const onSubmit = async (formData: CategorySchema) => {
-  const { name } = formData;
-  try {
-    if (mode === "edit") {
-      const realId = data?.id || form.getValues("id");
-      if (!realId) throw new Error("Missing category id");
-      await updateCategory({ payload: { name: name || "" }, endpoint: `categories/${realId}` });
-    }
 
-    if (mode === "create") {
-      await createCategory({ name: name || "" });  
+  const onSubmit = async (formData: CategorySchema) => {
+    const { name, type } = formData;
+    try {
+      if (mode === "edit") {
+        const realId = data?.id || form.getValues("id");
+        if (!realId) throw new Error("Missing category id");
+        await updateCategory({
+          payload: { name: name || "" },
+          endpoint: `categories/${realId}`,
+        });
+      }
+
+      if (mode === "create") {
+        await createCategory({ name: name || "" });
+      }
+
+      close();
+      form.reset();
+    } catch (err: any) {
+      console.error("Failed to save category:", err);
     }
- 
-    close();
-    form.reset();
-  } catch (err: any) { 
-    console.error("Failed to save category:", err);
-  }
-};
+  };
   return (
     <DialogLayout
       isOpen={isOpen}
@@ -101,6 +114,31 @@ const onSubmit = async (formData: CategorySchema) => {
                     disabled={form.formState.isSubmitting}
                     {...field}
                   />
+                </FormControl>
+                <FormDescription />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="type"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel />
+                <FormControl>
+                  <Select
+                    defaultValue={field.value}
+                    onValueChange={field.onChange}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a category type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="PARENT">Parent</SelectItem>
+                      <SelectItem value="CHILD">Children</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </FormControl>
                 <FormDescription />
                 <FormMessage />

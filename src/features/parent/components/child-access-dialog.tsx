@@ -38,15 +38,17 @@ import { useRouter } from "next/navigation";
 import { useProgress } from "@bprogress/next";
 import { toast } from "sonner";
 import useChildProfile from "@/hooks/use-child-profile";
-import { isAxiosError } from "axios";
+import axios, { isAxiosError } from "axios";
 import { ChildGender } from "@/lib/enums/child-gender";
 import { useChildDialog } from "../hooks/use-open-child-form-dialog";
 import { accessChildService } from "../services/access-child-service";
+import Link from "next/link";
 
 export const ChildAccessDialog = () => {
-  const { openDialog, setOpenDialog } = useOpenChildAccessDialog(
+  const { openDialog, setOpenDialog, closeDialog } = useOpenChildAccessDialog(
     useShallow((state) => ({
       openDialog: state.openDialog,
+      closeDialog: state.closeDialog,
       setOpenDialog: state.setOpenDialog,
     }))
   );
@@ -67,13 +69,13 @@ export const ChildAccessDialog = () => {
 
   const accessChild = async (childId: string) => {
     setIsPending(true);
+   
     return await toast
       .promise(() => accessChildService(childId), {
         loading: "Accessing child...",
         success: (res) => {
           if (res.data?.accessInfo.isAllowed) {
             router.push("/children/playground");
-            closeChildDialog();
           }
           return "Child accessed successfully";
         },
@@ -83,7 +85,8 @@ export const ChildAccessDialog = () => {
             : "Failed to access child",
         finally: () => {
           setIsPending(false);
-        }
+           closeDialog();
+        },
       })
       .unwrap();
   };
@@ -97,7 +100,13 @@ export const ChildAccessDialog = () => {
     error,
   } = useFetchInfinite<ChildrenAPI>({
     endpoint: `parent/children`,
-    keys: ["children", debouncedSearch, genderFilter],
+    keys: [
+      "children",
+      debouncedSearch,
+      genderFilter,
+      "schedules",
+      childProfile?.id ?? "",
+    ],
     enabled: openDialog,
     protected: true,
     config: {
@@ -170,7 +179,9 @@ export const ChildAccessDialog = () => {
                 variant="outline"
                 className="rounded-full"
                 aria-label="Add"
-                onClick={() => openChildDialog()}
+                onClick={() => {
+                  openChildDialog();
+                }}
               >
                 <Plus />
               </Button>
@@ -209,7 +220,14 @@ export const ChildAccessDialog = () => {
                   </Avatar>
                 </ItemMedia>
                 <ItemContent>
-                  <ItemTitle>{child.name}</ItemTitle>
+                  <ItemTitle
+                    className="hover:underline"
+                    onClick={() => (
+                      router.push("/settings/children"), closeDialog()
+                    )}
+                  >
+                    {child.name}
+                  </ItemTitle>
                   <ItemDescription>
                     Gender: {formatCapitalize(child.gender) || "N/A"}
                   </ItemDescription>

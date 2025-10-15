@@ -54,6 +54,7 @@ import { ButtonGroup } from "@/components/ui/button-group";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { formatCapitalize } from "@/helpers/string-formatter";
 import { ContentSort } from "@/lib/enums/content-sort";
+import { CategoryType } from "@/lib/enums/category-type";
 export default function FictionsPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -119,6 +120,9 @@ export default function FictionsPage() {
     key: ["categories"],
     endpoint: "categories",
     protected: false,
+    query: {
+      type: CategoryType.CHILD,
+    }
   });
 
   // Flatten pages into single list

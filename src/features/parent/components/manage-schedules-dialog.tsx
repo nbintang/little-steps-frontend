@@ -24,7 +24,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ScheduleFormDialog } from "./form/schedule-form-dialog";
+import { ScheduleForm } from "./form/schedule-form";
 import { DayOfWeek } from "@/lib/enums/day-of-week";
 import { useScheduleDialogStore } from "../hooks/use-schedule";
 import { useShallow } from "zustand/shallow";
@@ -256,7 +256,7 @@ export function ManageSchedulesDialog() {
 
         {(isCreating || editingSchedule) && (
           <div className="mt-4 border-t pt-4">
-            <ScheduleFormDialog
+            <ScheduleForm
               key={editingSchedule?.id || "create"}
               isLoading={isPending}
               defaultValues={
