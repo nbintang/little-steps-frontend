@@ -17,8 +17,8 @@ import { useAuth } from "@/hooks/use-auth";
 import { ForumAside } from "@/components/forum/forum-aside";
 
 export default function ForumThread() {
-  const [searchKeyword, setSearchKeyword] = useState<string>("");
   const searchParams = useSearchParams();
+  const [searchKeyword, setSearchKeyword] = useState<string>("");
   const [debouncedSearch, debouncedState] = useDebounce(searchKeyword, 300);
   const [isSearching, setIsSearching] = useState(false);
   const isMobile = useIsMobile();

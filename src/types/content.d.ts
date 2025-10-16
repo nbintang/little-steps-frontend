@@ -1,3 +1,5 @@
+import { ContentType } from "@/lib/enums/content-type";
+
 export interface ContentAPI {
   id: string;
   slug: string;
@@ -68,7 +70,7 @@ export type ContentsPublicAPI = {
   id: string;
   slug: string;
   title: string;
-  type: string;
+  type: "ARTICLE" | "FICTION_STORY";
   coverImage: string;
   excerpt: string;
   status: string;

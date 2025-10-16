@@ -161,12 +161,12 @@ export const ChildFormDialog = () => {
     data,
     isSuccess,
   } = usePost<ChildrenMutateResponseAPI>({
-    keys: ["children", "schedules", child?.id ?? ""],
+    keys: ["children", child?.id ?? ""],
     endpoint: `parent/children`,
   });
   const { mutate: updateChild, isPending: updatePending } =
     usePatch<ChildrenMutateResponseAPI>({
-      keys: ["children", "schedules", child?.id ?? ""],
+      keys: ["children", child?.id ?? ""],
       endpoint: `parent/children/${child?.id}`,
     });
 

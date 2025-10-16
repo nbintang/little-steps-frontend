@@ -1,4 +1,4 @@
-export enum ContentSort {
+export enum QuerySort {
   NEWEST = 'newest',
   OLDEST = 'oldest',
   HIGHEST_RATED = 'highest_rated',

@@ -28,20 +28,6 @@ export function useStartQuiz(quizId: string) {
   });
 }
 
-// Hook untuk get progress
-export function useQuizProgress(quizId: string) {
-  return useQuery({
-    queryKey: ["quiz-progress", quizId],
-    queryFn: async () => {
-      const { data } = await api.get<{ message: string; data: Progress }>(
-        `/protected/progress`,
-        { params: { quizId } }
-      );
-      return data.data;
-    },
-    retry: false, // Tidak retry jika progress belum ada
-  });
-}
 
 // Hook untuk get quiz questions (dengan pagination)
 export function useQuizQuestions(

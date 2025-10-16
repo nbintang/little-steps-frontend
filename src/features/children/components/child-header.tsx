@@ -22,15 +22,19 @@ export type NavTab = {
 };
 
 const navTabs: NavTab[] = [
-                {
-                  href: "/children/playground/stories",
-                  label: "Stories",
-                },
-                {
-                  label: "Quizzes",
-                  href: "/children/playground/quizzes",
-                },
-              ];
+  {
+    href: "/children/playground/stories",
+    label: "Stories",
+  },
+  {
+    label: "Quizzes",
+    href: "/children/playground/quizzes",
+  },
+  {
+    label: "Progress",
+    href: "/children/playground/progress",
+  },
+];
 
 export default function ChildHeader() {
   const profile = useChildProfile();
@@ -47,7 +51,7 @@ export default function ChildHeader() {
           <span className="font-semibold tracking-tight">Little Steps</span>
           <span className="sr-only">Go to homepage</span>
         </Link>
-<NavChild tabs={navTabs}/>
+        <NavChild tabs={navTabs} />
         {/* Right: Avatar (visible on all sizes) */}
         <div className="flex gap-3 items-center">
           <NavChildProfile
@@ -56,10 +60,7 @@ export default function ChildHeader() {
           />
           <div className="flex items-center gap-2">
             {/* Mobile: Sheet trigger */}
-            <NavChildMobile
-              userProfile={profile}
-              tabs={navTabs}
-            />
+            <NavChildMobile userProfile={profile} tabs={navTabs} />
           </div>
         </div>
       </div>

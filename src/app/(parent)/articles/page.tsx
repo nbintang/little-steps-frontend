@@ -64,7 +64,7 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { ContentType } from "@/lib/enums/content-type";
-import { ContentSort } from "@/lib/enums/content-sort";
+import { QuerySort } from "@/lib/enums/content-sort";
 import { formatCapitalize, formatInitials } from "@/helpers/string-formatter";
 import { CategoryType } from "@/lib/enums/category-type";
 type ArticleQueryParams = {
@@ -85,11 +85,12 @@ export default function ArticlesPage() {
 
   const initialKeyword = searchParams.get("keyword") ?? "";
   const initialSort =
-    (searchParams.get("sort") as ContentSort) ?? ContentSort.NEWEST;
+    (searchParams.get("sort") as QuerySort) ?? QuerySort.NEWEST;
   const initialCategory = searchParams.get("category") ?? "";
   const [sortBy, setSortBy] = useState<string>(initialSort);
   const [searchKeyword, setSearchKeyword] = useState<string>(initialKeyword);
   const [debounceSearch] = useDebounce(searchKeyword, 500);
+
   const {
     data: topArticles,
     isLoading: isTopLoading,
@@ -100,7 +101,7 @@ export default function ArticlesPage() {
     endpoint: "contents",
     query: {
       type: ContentType.ARTICLE,
-      sort: ContentSort.HIGHEST_RATED,
+      sort: QuerySort.HIGHEST_RATED,
       limit: 3,
     },
     protected: false,
@@ -145,6 +146,7 @@ export default function ArticlesPage() {
     query: {
       type: CategoryType.PARENT,
     },
+    enabled: !!initialCategory,
   });
 
   useEffect(() => {
@@ -223,7 +225,7 @@ export default function ArticlesPage() {
                 <SelectContent>
                   <SelectGroup>
                     <SelectLabel>Sort by</SelectLabel>
-                    {Array.from(Object.values(ContentSort)).map((sort) => (
+                    {Array.from(Object.values(QuerySort)).map((sort) => (
                       // your code here
                       <SelectItem key={sort} value={sort}>
                         {formatCapitalize(sort)}
@@ -355,12 +357,11 @@ export default function ArticlesPage() {
             <ButtonGroup>
               <Select value={sortBy} onValueChange={(val) => setSortBy(val)}>
                 <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Sort" />
+                  <SelectValue placeholder="Sort by" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    <SelectLabel>Sort by</SelectLabel>
-                    {Array.from(Object.values(ContentSort)).map((sort) => (
+                    {Array.from(Object.values(QuerySort)).map((sort) => (
                       // your code here
                       <SelectItem key={sort} value={sort}>
                         {formatCapitalize(sort)}

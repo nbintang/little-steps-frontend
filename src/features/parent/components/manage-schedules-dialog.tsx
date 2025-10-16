@@ -36,6 +36,7 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { useFetch } from "@/hooks/use-fetch";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Item, ItemContent, ItemMedia, ItemTitle } from "@/components/ui/item";
+import { useQueryClient } from "@tanstack/react-query";
 export function ManageSchedulesDialog() {
   const { isOpen, child, closeDialog } = useScheduleDialogStore(
     useShallow((state) => ({
@@ -49,6 +50,7 @@ export function ManageSchedulesDialog() {
   const [isCreating, setIsCreating] = React.useState(false);
   const { editingScheduleId, setEditingScheduleId } = useScheduleDialogStore();
   const [scheduleId, setScheduleId] = React.useState<string | null>(null);
+  const queryClient = useQueryClient();
   // Fetch schedules
   const {
     data: schedules = [],
@@ -90,7 +92,13 @@ export function ManageSchedulesDialog() {
 
   const handleAddSchedule = (values: ScheduleAPI) => {
     addSchedule.mutate(values, {
-      onSuccess: () => {
+      onSuccess: async () => {
+        await queryClient.invalidateQueries({
+          predicate: (query) =>
+            query.queryKey.some(
+              (key) => key === "schedules" || key === "children"
+            ),
+        });
         refetch();
       },
     });
@@ -98,7 +106,13 @@ export function ManageSchedulesDialog() {
 
   const handleUpdateSchedule = (schedule: ScheduleAPI) => {
     updateSchedule.mutate(schedule, {
-      onSuccess: () => {
+      onSuccess: async () => {
+        await queryClient.invalidateQueries({
+          predicate: (query) =>
+            query.queryKey.some(
+              (key) => key === "schedules" || key === "children"
+            ),
+        });
         setEditingScheduleId(null);
         refetch();
       },
@@ -108,7 +122,16 @@ export function ManageSchedulesDialog() {
   // Then update the handler:
   const handleDeleteSchedule = (id: string) => {
     setScheduleId(id);
-    deleteSchedule.mutate();
+    deleteSchedule.mutate(undefined, {
+      onSuccess: async () => {
+        await queryClient.invalidateQueries({
+          predicate: (query) =>
+            query.queryKey.some(
+              (key) => key === "schedules" || key === "children"
+            ),
+        });
+      },
+    });
   };
 
   const childAvatar = child.avatarUrl;

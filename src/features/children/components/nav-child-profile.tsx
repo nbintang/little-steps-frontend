@@ -10,7 +10,14 @@ import {
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { LogOut, LogInIcon, Baby, Settings, UserCog } from "lucide-react";
+import {
+  LogOut,
+  LogInIcon,
+  Baby,
+  Settings,
+  UserCog,
+  ChartSpline,
+} from "lucide-react";
 import { useLogout } from "@/features/auth/hooks/use-logout";
 import { ProfileAPI } from "@/types/profile";
 import { UseQueryResult } from "@tanstack/react-query";
@@ -18,6 +25,7 @@ import { useOpenChildAccessDialog } from "@/features/parent/hooks/use-open-child
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { ChildProfileAPI } from "@/hooks/use-child-profile";
+import { useOpenProgress } from "../hooks/use-open-progress";
 
 export const NavChildProfile = ({
   userProfile: { data: user, isError },
@@ -29,9 +37,7 @@ export const NavChildProfile = ({
   const setOpenDialog = useOpenChildAccessDialog(
     (state) => state.setOpenDialog
   );
-  const pathname = usePathname();
-  const handleOpenChildAccessDialog = () => setOpenDialog(true);
-  // guest
+  const openProgressDialog = useOpenProgress((state) => state.open);
   if (isError || !user) {
     return (
       <Button variant="outline" size="sm" asChild>
@@ -79,8 +85,19 @@ export const NavChildProfile = ({
           </DropdownMenuLabel>
 
           <DropdownMenuSeparator />
+          <DropdownMenuGroup>
+            <DropdownMenuItem onClick={openProgressDialog} className="cursor-pointer">
+              <ChartSpline className="h-4 w-4 mr-2" />
+              Progress
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+          <DropdownMenuSeparator />
 
-          <DropdownMenuItem onClick={handleLogout} className="cursor-pointer">
+          <DropdownMenuItem
+            variant="destructive"
+            onClick={handleLogout}
+            className="cursor-pointer"
+          >
             <LogOut className="h-4 w-4 mr-2" />
             Log out
           </DropdownMenuItem>

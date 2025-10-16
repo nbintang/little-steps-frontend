@@ -53,7 +53,7 @@ import { cn } from "@/lib/utils";
 import { ButtonGroup } from "@/components/ui/button-group";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { formatCapitalize } from "@/helpers/string-formatter";
-import { ContentSort } from "@/lib/enums/content-sort";
+import { QuerySort } from "@/lib/enums/content-sort";
 import { CategoryType } from "@/lib/enums/category-type";
 export default function FictionsPage() {
   const searchParams = useSearchParams();
@@ -65,7 +65,7 @@ export default function FictionsPage() {
   const [debounceSearch, setDebouncedSearch] = useState<string>("");
   const inputRef = useRef<HTMLInputElement | null>(null);
   const initialSort =
-    (searchParams.get("sort") as ContentSort) ?? ContentSort.NEWEST;
+    (searchParams.get("sort") as QuerySort) ?? QuerySort.NEWEST;
   const initialCategory = searchParams.get("category") ?? "";
   const [sortBy, setSortBy] = useState<string>(initialSort);
   const { ref: sentinelRef, inView } = useInView({
@@ -79,11 +79,11 @@ export default function FictionsPage() {
     error: topError,
     isError: isTopError,
   } = useFetchPaginated<ContentsPublicAPI[]>({
-    key: ["contents-top", "fiction", ContentSort.HIGHEST_RATED],
+    key: ["contents-top", "fiction", QuerySort.HIGHEST_RATED],
     endpoint: "contents",
     query: {
       type: ContentType.FICTION,
-      sort: ContentSort.HIGHEST_RATED,
+      sort: QuerySort.HIGHEST_RATED,
       limit: 3,
     },
     protected: false,
@@ -122,7 +122,7 @@ export default function FictionsPage() {
     protected: false,
     query: {
       type: CategoryType.CHILD,
-    }
+    },
   });
 
   // Flatten pages into single list
@@ -344,7 +344,6 @@ export default function FictionsPage() {
                 <InputGroupInput
                   placeholder="Search Stories..."
                   value={searchKeyword}
-                  
                   onChange={(e) => setSearchKeyword(e.target.value)}
                   disabled={isSearching}
                 />
@@ -362,12 +361,11 @@ export default function FictionsPage() {
             <ButtonGroup>
               <Select value={sortBy} onValueChange={(val) => setSortBy(val)}>
                 <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Sort" />
+                  <SelectValue placeholder="Sort by" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    <SelectLabel>Sort by</SelectLabel>
-                    {Array.from(Object.values(ContentSort)).map((sort) => (
+                    {Array.from(Object.values(QuerySort)).map((sort) => (
                       // your code here
                       <SelectItem key={sort} value={sort}>
                         {formatCapitalize(sort)}

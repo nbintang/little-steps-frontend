@@ -1,34 +1,43 @@
-"use client"
+"use client";
 
-import { use, useEffect } from "react"
-import { useRouter } from "next/navigation"
-import { toast } from "sonner"  
-import { Button } from "@/components/ui/button"
-import { useQuizProgress, useStartQuiz } from "@/features/children/hooks/use-quiz"
-import QuizRunner from "@/features/children/components/quizzes/child-quiz-runner"
+import { use, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import {
+  useQuizProgress,
+  useStartQuiz,
+} from "@/features/children/hooks/use-quiz";
+import QuizRunner from "@/features/children/components/quizzes/child-quiz-runner";
+import useChildProfile from "@/hooks/use-child-profile";
 
 export default function QuizPlayPage({
   params,
 }: {
-  params: Promise<{ quizId: string }>
+  params: Promise<{ quizId: string }>;
 }) {
-  const { quizId } = use(params)
-  const router = useRouter()
-  
+  const { quizId } = use(params);
+  const router = useRouter();
+  const childProfile = useChildProfile();
+
   // Check if quiz already started
-  const { data: progress, isLoading, error } = useQuizProgress(quizId)
-  const startMutation = useStartQuiz(quizId)
+  const {
+    data: progress,
+    isLoading,
+    error,
+  } = useQuizProgress(quizId, childProfile?.data?.id || "");
+  const startMutation = useStartQuiz(quizId);
 
   // Auto-start quiz jika belum ada progress
   useEffect(() => {
     if (!isLoading && !progress && !error) {
       startMutation.mutate(undefined, {
         onError: (err: any) => {
-          toast.error(err.response?.data?.message || "Failed to start quiz")
-        }
-      })
+          toast.error(err.response?.data?.message || "Failed to start quiz");
+        },
+      });
     }
-  }, [isLoading, progress, error]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [isLoading, progress, error]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (isLoading || startMutation.isPending) {
     return (
@@ -44,7 +53,7 @@ export default function QuizPlayPage({
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   if (error) {
@@ -64,7 +73,7 @@ export default function QuizPlayPage({
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -73,5 +82,5 @@ export default function QuizPlayPage({
         <QuizRunner quizId={quizId} />
       </div>
     </main>
-  )
+  );
 }

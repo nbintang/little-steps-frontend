@@ -1,1 +1,1 @@
-export const BACKEND_URL = "https://little-steps-backend.vercel.app";
+export const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
