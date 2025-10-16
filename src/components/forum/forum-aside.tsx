@@ -42,6 +42,8 @@ interface ForumAsideProps {
   setSearchKeyword: Dispatch<SetStateAction<string>>;
   isSearching: boolean;
   isLoading: boolean;
+  isSuccess?: boolean;
+  isError?: boolean;
   threads: SuccessResponsePaginated<ForumThreadListItemAPI[]> | undefined;
   sortBy?: string;
   setSortBy?: Dispatch<SetStateAction<string>>;
@@ -54,6 +56,8 @@ export const ForumAside = ({
   isLoading,
   threads,
   sortBy,
+  isSuccess,
+  isError,
   setSortBy,
   user,
 }: ForumAsideProps) => {
@@ -135,38 +139,38 @@ export const ForumAside = ({
             <Separator orientation="horizontal" className="" />
           </div>
         </div>
-        {!isLoading && user ? (
-          <div className="my-3 hidden md:inline">
-            <div className="my-3">
-              <h1 className="text-lg font-semibold">Your Threads</h1>
-            </div>
-            <ScrollArea
-              className={cn(
-                threads?.data?.length! > 0 ? "h-[200px]" : "h-[50px]"
-              )}
-            >
-              <div className="space-y-2">
-                {threads?.data?.map((thread) => (
-                  <ForumThreadCard
-                    redirectUrl={`/forum/${thread?.id}`}
-                    key={thread?.id}
-                    thread={thread as ForumThreadListItemAPI}
-                  />
-                ))}
+        {isLoading && <ForumThreadCardSkeleton />}
+        {isSuccess &&
+          threads?.data !== undefined &&
+          threads.data.length > 0 && (
+            <div className="my-3 hidden md:inline">
+              <div className="my-3">
+                <h1 className="text-lg font-semibold">Your Threads</h1>
               </div>
-              <ScrollBar orientation="vertical" />
-            </ScrollArea>
-            <Button variant={"link"} asChild>
-              <Link href={"/author/forum"}>
-                See More
-                <ArrowUpRight />
-              </Link>
-            </Button>
-          </div>
-        ) : (
-          <ForumThreadCardSkeleton />
-        )}
-        <div></div>
+              <ScrollArea
+                className={cn(
+                  threads?.data?.length! > 0 ? "h-[200px]" : "h-[50px]"
+                )}
+              >
+                <div className="space-y-2">
+                  {threads?.data?.map((thread) => (
+                    <ForumThreadCard
+                      redirectUrl={`/forum/${thread?.id}`}
+                      key={thread?.id}
+                      thread={thread as ForumThreadListItemAPI}
+                    />
+                  ))}
+                </div>
+                <ScrollBar orientation="vertical" />
+              </ScrollArea>
+              <Button variant={"link"} asChild>
+                <Link href={"/author/forum"}>
+                  See More
+                  <ArrowUpRight />
+                </Link>
+              </Button>
+            </div>
+          )}
       </div>
     </header>
   );

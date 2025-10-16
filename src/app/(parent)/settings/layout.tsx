@@ -1,5 +1,4 @@
 import React from "react";
-import { ManageSchedulesDialog } from "@/features/parent/components/manage-schedules-dialog";
 import { SettingsLayout } from "@/components/layouts/settings-layout";
 const settingsLinks = [
   { label: "Account", href: "/settings/account" },
@@ -9,7 +8,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div className="max-w-5xl mx-auto">
       <SettingsLayout navigateLinks={settingsLinks}>{children}</SettingsLayout>
-      <ManageSchedulesDialog />
+   
     </div>
   );
 }

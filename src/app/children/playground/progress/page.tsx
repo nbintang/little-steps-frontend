@@ -1,6 +1,18 @@
-import { Suspense } from "react"
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
-import QuizProgressDemo from "@/components/quiz-progress-demo"
+"use client";
+import { Suspense } from "react";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardDescription,
+} from "@/components/ui/card";
+import QuizProgressDemo from "@/components/quiz-progress-demo";
+import { useFetchPaginated } from "@/hooks/use-fetch-paginated";
+import { QuizDatum, SuccessResponseQuizProgress } from "@/types/progress";
+import { useQuery } from "@tanstack/react-query";
+import { api } from "@/lib/axios-instance/api";
+import useChildProfile from "@/hooks/use-child-profile";
 
 // NOTE: This page is a Server Component and passes initial data down.
 // The actual interactive UI is in the client component.
@@ -19,7 +31,8 @@ const SAMPLE_DATA = [
     date: "2024-10-19",
     score: 56,
     completionPercent: 100,
-    quizTitle: "Viduo appello vulnus viridis correptius conicio tumultus depopulo.",
+    quizTitle:
+      "Viduo appello vulnus viridis correptius conicio tumultus depopulo.",
     category: "Indonesian Language",
     childName: "Winifred",
   },
@@ -57,21 +70,55 @@ const SAMPLE_DATA = [
     category: "Indonesian Language",
     childName: "Winifred",
   },
-]
+];
 
 export default function Page() {
+  const childProfile = useChildProfile();
+  const {
+    data: quizProgress,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["quiz-progress"],
+    queryFn: async (): Promise<SuccessResponseQuizProgress> => {
+      const res = await api.get<SuccessResponseQuizProgress>(
+        "/protected/statistics/quizzes",
+        {
+          params: {
+            childId: childProfile.data?.id,
+          },
+        }
+      );
+      return res.data;
+    },
+    enabled: !!childProfile.data?.id,
+  });
+  const progress = quizProgress?.data ?? [];
+  const meta = quizProgress?.meta;
+
+  if (isLoading) return <div>Loading...</div>;
+  if (isError || !progress) return <div>Error</div>;
+
   return (
     <main className="min-h-dvh px-4 py-6 md:px-8 md:py-10">
       <Card className="mx-auto w-full max-w-5xl">
         <CardHeader className="pb-2">
-          <CardTitle className="text-balance text-xl md:text-2xl">Quiz Progress</CardTitle>
+          <CardTitle className="text-balance text-xl md:text-2xl">
+            Quiz Progress
+          </CardTitle>
+          <CardDescription>
+            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Nisi rerum
+            aliquid reiciendis?
+          </CardDescription>
         </CardHeader>
         <CardContent>
-          <Suspense fallback={<div className="text-muted-foreground">Loading…</div>}>
-            <QuizProgressDemo initialData={SAMPLE_DATA} />
+          <Suspense
+            fallback={<div className="text-muted-foreground">Loading…</div>}
+          >
+            <QuizProgressDemo initialData={progress ?? []} initialMeta={meta} />
           </Suspense>
         </CardContent>
       </Card>
     </main>
-  )
+  );
 }

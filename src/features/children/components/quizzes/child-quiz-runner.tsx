@@ -8,12 +8,10 @@ import { toast } from "sonner";
 import QuestionCard from "./child-question-card";
 import Timer from "./quiz-timer";
 
-import {
-  useQuizProgress,
-  useQuizQuestions,
-  useSubmitQuiz,
-} from "../../hooks/use-quiz";
+import { useQuizQuestions, useSubmitQuiz } from "../../hooks/use-quiz";
 import { SubmitQuizPayload } from "@/types/quiz-play";
+import { useQuizProgress } from "../../hooks/use-quiz-progress";
+import useChildProfile from "@/hooks/use-child-profile";
 
 type SelectionsState = Record<string, string | undefined>;
 
@@ -21,9 +19,11 @@ export default function QuizRunner({ quizId }: { quizId: string }) {
   // --- Hooks (tetap di bagian atas, tidak ada return sebelum ini) ---
   const [selections, setSelections] = useState<SelectionsState>({});
   const [currentIndex, setCurrentIndex] = useState(0);
-
-  const { data: progress, isLoading: progressLoading } =
-    useQuizProgress(quizId);
+  const childProfile = useChildProfile();
+  const { data: progress, isLoading: progressLoading } = useQuizProgress({
+    quizId,
+    childId: childProfile?.data?.id,
+  });
   const { data: quizData, isLoading: questionsLoading } = useQuizQuestions(
     quizId,
     1,

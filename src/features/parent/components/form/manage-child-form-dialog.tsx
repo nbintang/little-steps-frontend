@@ -46,6 +46,7 @@ import { useChildDialog } from "../../hooks/use-open-child-form-dialog";
 import { usePatch } from "@/hooks/use-patch";
 import { useShallow } from "zustand/shallow";
 import { useScheduleDialogStore } from "../../hooks/use-schedule";
+import { useQueryClient } from "@tanstack/react-query";
 
 const accept: Record<string, string[]> = {
   "image/*": [".png", ".jpg", ".jpeg"],
@@ -64,6 +65,7 @@ export const ChildFormDialog = () => {
       openDialog: state.openDialog,
     }))
   );
+  const queryClient = useQueryClient();
 
   // don't initialize defaultValues from `child` here — reset on open instead
   const form = useForm<z.infer<typeof childrenSchema>>({
@@ -161,12 +163,12 @@ export const ChildFormDialog = () => {
     data,
     isSuccess,
   } = usePost<ChildrenMutateResponseAPI>({
-    keys: ["children", child?.id ?? ""],
+    keys: ["children"],
     endpoint: `parent/children`,
   });
   const { mutate: updateChild, isPending: updatePending } =
     usePatch<ChildrenMutateResponseAPI>({
-      keys: ["children", child?.id ?? ""],
+      keys: ["children"],
       endpoint: `parent/children/${child?.id}`,
     });
 
@@ -183,21 +185,45 @@ export const ChildFormDialog = () => {
     }
 
     if (child && child.id) {
-      await updateChild({ ...values, avatarUrl });
+      await updateChild(
+        { ...values, avatarUrl },
+        {
+          onSuccess: async () => {
+            await queryClient.invalidateQueries({
+              predicate: (query) =>
+                query.queryKey.some(
+                  (key) => key === "schedules" || key === "children"
+                ),
+            });
+          },
+        }
+      );
     } else {
-      const res = await createChild({ ...values, avatarUrl });
-      openScheduleDialog({
-        id: res?.data?.id ?? "",
-        name: res?.data?.name ?? "",
-        avatarUrl: res?.data?.avatarUrl ?? "",
-      });
+      const res = await createChild(
+        { ...values, avatarUrl },
+        {
+          onSuccess: async () => {
+            await queryClient.invalidateQueries({
+              predicate: (query) =>
+                query.queryKey.some(
+                  (key) => key === "schedules" || key === "children"
+                ),
+            });
+            openScheduleDialog({
+              id: res?.data?.id ?? "",
+              name: res?.data?.name ?? "",
+              avatarUrl: res?.data?.avatarUrl ?? "",
+            });
+          },
+        }
+      );
     }
     closeDialog();
     form.reset();
   };
 
   return (
-    <DialogLayout title="Inner Dialog" isOpen={isOpen} onOpenChange={setOpen}>
+    <DialogLayout title="Create New Child" isOpen={isOpen} onOpenChange={setOpen}>
       <Form {...form}>
         <form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
           <div>

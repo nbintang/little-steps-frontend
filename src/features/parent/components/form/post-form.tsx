@@ -26,6 +26,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { useDelete } from "@/hooks/use-delete";
 import { useShallow } from "zustand/shallow";
 import { usePatch } from "@/hooks/use-patch";
+import { useQueryClient } from "@tanstack/react-query";
 
 const postSchema = z.object({
   content: z.string(),
@@ -55,14 +56,33 @@ export default function PostForm({ threadId }: { threadId: string }) {
     keys: ["forum", threadId, "posts"],
     endpoint: `forum/${threadId}/posts/${post?.id}`,
   });
-
+  const queryClient = useQueryClient();
   function onSubmit(values: z.infer<typeof postSchema>) {
     if (type === "edit-post") {
-      updatePostReply(values);
+      updatePostReply(values, {
+        onSuccess: async () => {
+          await queryClient.invalidateQueries({
+            predicate: (query) =>
+              query.queryKey.some((key) =>
+                ["forum", "posts", threadId].includes(String(key))
+              ),
+          });
+          setOpenForm(false, "post");
+        },
+      });
     } else {
-      createPostReply(values);
+      createPostReply(values, {
+        onSuccess: async () => {
+          await queryClient.invalidateQueries({
+            predicate: (query) =>
+              query.queryKey.some((key) =>
+                ["forum", "posts", threadId].includes(String(key))
+              ),
+          });
+          setOpenForm(false, "post");
+        },
+      });
     }
-    setOpenForm(false, "post");
   }
 
   const isLoading = isPending || updatePending || form.formState.isSubmitting;

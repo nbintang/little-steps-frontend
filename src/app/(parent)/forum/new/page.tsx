@@ -1,4 +1,4 @@
-import { CreateForumForm } from "@/features/parent/components/form/create-forum-form";
+import { CreateThreadForm } from "@/features/parent/components/form/create-thread-form";
 
  
 export default function CreateForumPage() {
@@ -11,7 +11,7 @@ export default function CreateForumPage() {
           asperiores veritatis esse.
         </p>
       </div>
-      <CreateForumForm />
+      <CreateThreadForm />
     </div>
   );
 }

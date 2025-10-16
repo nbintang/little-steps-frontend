@@ -8,7 +8,7 @@ import WarningDialog from "@/components/warning-dialog";
 import { PublicLayout } from "@/components/layouts/public-layout";
 import { ChildAccessDialog } from "@/features/parent/components/child-access-dialog";
 import { ChildFormDialog } from "@/features/parent/components/form/manage-child-form-dialog";
-
+import { ManageSchedulesDialog } from "@/features/parent/components/manage-schedules-dialog";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -40,6 +40,7 @@ export default function RootLayout({
             <WarningDialog />
             <ChildAccessDialog/>
             <ChildFormDialog />
+               <ManageSchedulesDialog />
           </LoaderProvider>
           <Toaster position="top-right" />
         </ReactQueryProvider>

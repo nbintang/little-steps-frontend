@@ -46,4 +46,6 @@ export const useFetchInfinite = <T = any>({
     initialPageParam: 1,
     placeholderData: (prev) => prev,
     enabled,
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
   });

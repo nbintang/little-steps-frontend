@@ -4,12 +4,12 @@ import { use, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import {
-  useQuizProgress,
+import { 
   useStartQuiz,
 } from "@/features/children/hooks/use-quiz";
 import QuizRunner from "@/features/children/components/quizzes/child-quiz-runner";
 import useChildProfile from "@/hooks/use-child-profile";
+import { useQuizProgress } from "@/features/children/hooks/use-quiz-progress";
 
 export default function QuizPlayPage({
   params,
@@ -25,7 +25,10 @@ export default function QuizPlayPage({
     data: progress,
     isLoading,
     error,
-  } = useQuizProgress(quizId, childProfile?.data?.id || "");
+  } = useQuizProgress({
+    quizId,
+    childId: childProfile?.data?.id
+  });
   const startMutation = useStartQuiz(quizId);
 
   // Auto-start quiz jika belum ada progress

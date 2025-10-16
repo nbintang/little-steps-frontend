@@ -19,7 +19,7 @@ import { Pencil, Reply } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { formatInitials } from "@/helpers/string-formatter";
 import { Badge } from "@/components/ui/badge";
-import { UpdateForumForm } from "@/features/parent/components/update-thread-form";
+import { UpdateThreadForm } from "@/features/parent/components/form/update-thread-form";
 import { useOpenForm } from "@/features/parent/hooks/use-open-form";
 import PostForm from "@/features/parent/components/form/post-form";
 import { useAuth } from "@/hooks/use-auth";
@@ -137,7 +137,7 @@ export default function ForumPost({
       </header>
       <Separator className="my-6" />
       {openForm && type === "thread" && (
-        <UpdateForumForm data={thread as ForumThreadDetailAPI} />
+        <UpdateThreadForm data={thread as ForumThreadDetailAPI} />
       )}
       {((openForm && type === "post") || type === "edit-post") && (
         <PostForm threadId={thread?.id as string} />

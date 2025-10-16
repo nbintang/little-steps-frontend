@@ -43,7 +43,7 @@ export default function ForumThread() {
     error,
     isSuccess,
   } = useFetchInfinite<ForumThreadListItemAPI>({
-    keys: ["forum", sortBy, debouncedSearch],
+    keys: ["forum", sortBy, "posts", debouncedSearch],
     endpoint: "forum",
     config: {
       params: {
@@ -58,7 +58,7 @@ export default function ForumThread() {
     isLoading: isAuthorThreadsLoading,
     isError: isAuthorThreadsError,
   } = useFetchPaginated<ForumThreadListItemAPI[]>({
-    key: ["forum", "author", debouncedSearch],
+    key: ["forum", "author", "posts", debouncedSearch],
     endpoint: "forum",
     query: {
       userId: user?.sub,
@@ -124,6 +124,7 @@ export default function ForumThread() {
               threads: authorThreads,
               sortBy,
               setSortBy,
+              isSuccess,
               user,
             }}
           />
@@ -158,6 +159,7 @@ export default function ForumThread() {
             isLoading,
             threads: authorThreads,
             sortBy,
+            isSuccess,
             setSortBy,
             user,
           }}

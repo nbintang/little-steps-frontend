@@ -1,135 +1,136 @@
-"use client"
+"use client";
 
-import { useMemo, useState } from "react"
-import { Card, CardContent } from "@/components/ui/card"
-import { cn } from "@/lib/utils"
-import Filters, { type ChartType } from "./quiz-progress-filters"
-import QuizLineChart from "./quiz-line-chart"
+import { useMemo, useState } from "react";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
+import Filters, { type ChartType } from "./quiz-progress-filters";
+import QuizLineChart from "./quiz-line-chart";
+import { QuizDatum, QuizMeta } from "@/types/progress";
 
-type QuizDatum = {
-  date: string // YYYY-MM-DD
-  score: number
-  completionPercent: number
-  quizTitle: string
-  category: string
-  childName: string
-}
-
-export default function QuizProgressDemo({
+export default function   QuizProgressDemo({
   initialData,
+  initialMeta,
 }: {
-  initialData: QuizDatum[]
+  initialData: QuizDatum[];
+  initialMeta?: QuizMeta;
 }) {
-  // Derive unique options
-  const categories = useMemo(() => Array.from(new Set(initialData.map((d) => d.category))).sort(), [initialData])
-  const children = useMemo(() => Array.from(new Set(initialData.map((d) => d.childName))).sort(), [initialData])
-  const quizzes = useMemo(() => Array.from(new Set(initialData.map((d) => d.quizTitle))).sort(), [initialData])
+  const categories = useMemo(
+    () => Array.from(new Set(initialData.map((d) => d.category))).sort(),
+    [initialData]
+  );
 
-  // Filters state
-  const [type, setType] = useState<ChartType>("overall")
-  const [startDate, setStartDate] = useState<string>("")
-  const [endDate, setEndDate] = useState<string>("")
-  const [selectedCategory, setSelectedCategory] = useState<string>("")
-  const [selectedChild, setSelectedChild] = useState<string>("")
-  const [selectedQuiz, setSelectedQuiz] = useState<string>("")
+  const [type, setType] = useState<ChartType>("overall");
+  const [startDate, setStartDate] = useState<string>("");
+  const [endDate, setEndDate] = useState<string>("");
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [selectedChild, setSelectedChild] = useState<string>("");
+  const [selectedQuiz, setSelectedQuiz] = useState<string>("");
 
-  // Helper parsers/formatters
-  const parseDate = (v: string) => new Date(v + "T00:00:00")
-  const toKey = (d: Date) => d.toISOString().slice(0, 10)
-
-  // Week start (ISO Monday)
+  const parseDate = (v: string) => new Date(v + "T00:00:00");
+  const toKey = (d: Date) => d.toISOString().slice(0, 10);
   const startOfISOWeek = (d: Date) => {
-    const day = d.getDay() // 0..6, 0=Sunday
-    const diff = (day === 0 ? -6 : 1) - day
-    const nd = new Date(d)
-    nd.setDate(d.getDate() + diff)
-    nd.setHours(0, 0, 0, 0)
-    return nd
-  }
-
-  // Month key "YYYY-MM-01"
+    const day = d.getDay();
+    const diff = (day === 0 ? -6 : 1) - day;
+    const nd = new Date(d);
+    nd.setDate(d.getDate() + diff);
+    nd.setHours(0, 0, 0, 0);
+    return nd;
+  };
   const startOfMonth = (d: Date) => {
-    const nd = new Date(d.getFullYear(), d.getMonth(), 1)
-    nd.setHours(0, 0, 0, 0)
-    return nd
-  }
+    const nd = new Date(d.getFullYear(), d.getMonth(), 1);
+    nd.setHours(0, 0, 0, 0);
+    return nd;
+  };
 
-  // Filtering
+  // filter data sesuai kategori/anak/quiz/tanggal
   const filtered = useMemo(() => {
     return initialData
-      .filter((d) => (selectedCategory ? d.category === selectedCategory : true))
+      .filter((d) =>
+        selectedCategory ? d.category === selectedCategory : true
+      )
       .filter((d) => (selectedChild ? d.childName === selectedChild : true))
       .filter((d) => (selectedQuiz ? d.quizTitle === selectedQuiz : true))
       .filter((d) => {
-        if (startDate && parseDate(d.date) < parseDate(startDate)) return false
-        if (endDate && parseDate(d.date) > parseDate(endDate)) return false
-        return true
-      })
-  }, [initialData, selectedCategory, selectedChild, selectedQuiz, startDate, endDate])
+        if (startDate && parseDate(d.date) < parseDate(startDate)) return false;
+        if (endDate && parseDate(d.date) > parseDate(endDate)) return false;
+        return true;
+      });
+  }, [
+    initialData,
+    selectedCategory,
+    selectedChild,
+    selectedQuiz,
+    startDate,
+    endDate,
+  ]);
 
-  // Aggregation based on type
+  // data untuk chart
   const chartData = useMemo(() => {
     if (type === "overall") {
-      const sorted = [...filtered].sort((a, b) => parseDate(a.date).getTime() - parseDate(b.date).getTime())
-      return sorted.map((d) => ({
-        date: d.date,
-        score: d.score,
-      }))
+      return [...filtered]
+        .sort(
+          (a, b) => parseDate(a.date).getTime() - parseDate(b.date).getTime()
+        )
+        .map((d) => ({ date: d.date, score: d.score }));
     }
 
-    // group by week or month
-    const groups = new Map<string, { sum: number; count: number }>()
+    const groups = new Map<string, { sum: number; count: number }>();
     for (const d of filtered) {
-      const dt = parseDate(d.date)
-      const bucket = type === "weekly" ? startOfISOWeek(dt) : startOfMonth(dt)
-      const key = toKey(bucket)
-      const prev = groups.get(key) || { sum: 0, count: 0 }
-      prev.sum += d.score
-      prev.count += 1
-      groups.set(key, prev)
+      const dt = parseDate(d.date);
+      const bucket = type === "weekly" ? startOfISOWeek(dt) : startOfMonth(dt);
+      const key = toKey(bucket);
+      const prev = groups.get(key) || { sum: 0, count: 0 };
+      prev.sum += d.score;
+      prev.count += 1;
+      groups.set(key, prev);
     }
-    const rows = Array.from(groups.entries())
+
+    return Array.from(groups.entries())
       .map(([key, v]) => ({
         date: key,
         score: v.count ? Math.round((v.sum / v.count) * 10) / 10 : 0,
       }))
-      .sort((a, b) => parseDate(a.date).getTime() - parseDate(b.date).getTime())
-    return rows
-  }, [filtered, type])
+      .sort(
+        (a, b) => parseDate(a.date).getTime() - parseDate(b.date).getTime()
+      );
+  }, [filtered, type]);
 
-  // Header: child's name + average
-  const headerName = selectedChild || "All Children"
-  const averageScore = useMemo(() => {
-    if (!filtered.length) return 0
-    const sum = filtered.reduce((acc, d) => acc + d.score, 0)
-    return Math.round((sum / filtered.length) * 10) / 10
-  }, [filtered])
-
-  const noData = chartData.length === 0
+  const headerName = selectedChild || "All Children";
+  const noData = chartData.length === 0;
 
   return (
     <div className="flex flex-col gap-4 md:gap-6">
       <div
-        className={cn("grid grid-cols-1 gap-3 md:grid-cols-3 md:gap-4", "rounded-lg bg-secondary p-3 md:p-4")}
-        role="region"
-        aria-label="Selected summary"
+        className={cn(
+          "grid grid-cols-1 gap-3 md:grid-cols-3 md:gap-4",
+          "rounded-lg bg-secondary p-3 md:p-4"
+        )}
       >
         <div className="flex flex-col">
           <span className="text-sm text-muted-foreground">Child</span>
-          <span className="text-lg font-medium text-foreground">{headerName}</span>
+          <span className="text-lg font-medium text-foreground">
+            {headerName}
+          </span>
         </div>
         <div className="flex flex-col">
           <span className="text-sm text-muted-foreground">Average Score</span>
-          <span className="text-lg font-medium text-foreground">{averageScore}</span>
+          <span className="text-lg font-medium text-foreground">
+            {initialMeta?.avgScore ?? "-"}
+          </span>
         </div>
         <div className="flex flex-col">
-          <span className="text-sm text-muted-foreground">Points</span>
-          <span className="text-lg font-medium text-foreground">{chartData.length}</span>
+          <span className="text-sm text-muted-foreground">Total Quizzes</span>
+          <span className="text-lg font-medium text-foreground">
+            {initialMeta?.totalQuizzes ?? chartData.length}
+          </span>
         </div>
       </div>
 
       <Card>
         <CardContent className="pt-6">
+          <QuizLineChart data={chartData} type={type} empty={noData} />
+        </CardContent>
+        <CardFooter>
           <Filters
             type={type}
             onTypeChange={setType}
@@ -144,25 +145,17 @@ export default function QuizProgressDemo({
             quiz={selectedQuiz}
             onQuizChange={setSelectedQuiz}
             categoryOptions={categories}
-            childOptions={children}
-            quizOptions={quizzes}
             onReset={() => {
-              setType("overall")
-              setStartDate("")
-              setEndDate("")
-              setSelectedCategory("")
-              setSelectedChild("")
-              setSelectedQuiz("")
+              setType("overall");
+              setStartDate("");
+              setEndDate("");
+              setSelectedCategory("");
+              setSelectedChild("");
+              setSelectedQuiz("");
             }}
           />
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardContent className="pt-6">
-          <QuizLineChart data={chartData} type={type} empty={noData} />
-        </CardContent>
+        </CardFooter>
       </Card>
     </div>
-  )
+  );
 }

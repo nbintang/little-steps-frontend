@@ -109,9 +109,7 @@ export function ManageSchedulesDialog() {
       onSuccess: async () => {
         await queryClient.invalidateQueries({
           predicate: (query) =>
-            query.queryKey.some(
-              (key) => key === "schedules" || key === "children"
-            ),
+            query.queryKey.some((key) => key === "schedules"),
         });
         setEditingScheduleId(null);
         refetch();
@@ -126,9 +124,7 @@ export function ManageSchedulesDialog() {
       onSuccess: async () => {
         await queryClient.invalidateQueries({
           predicate: (query) =>
-            query.queryKey.some(
-              (key) => key === "schedules" || key === "children"
-            ),
+            query.queryKey.some((key) => key === "schedules"),
         });
       },
     });

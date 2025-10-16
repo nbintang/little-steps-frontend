@@ -1,5 +1,6 @@
 import { ProfileAPI } from "@/types/profile";
 import { useFetch } from "./use-fetch";
+import { useAuth } from "./use-auth";
 
 export type ChildProfileAPI = {
     id: string;
@@ -16,9 +17,11 @@ export type ChildProfileAPI = {
     };
 }
 const useChildProfile = () => {
+  const user = useAuth()
   return useFetch<ChildProfileAPI>({
     keys: "child-profile",
     endpoint: "children/profile",
+    enabled: !!user?.is_registered
   });
 };
 

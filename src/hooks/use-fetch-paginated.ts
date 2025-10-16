@@ -26,5 +26,7 @@ export const useFetchPaginated = <T = any>({
       return res.data;
     },
     enabled,
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
   });
 };

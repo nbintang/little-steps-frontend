@@ -2,7 +2,6 @@
 
 import { Line, LineChart, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from "recharts"
 import { useMemo } from "react"
-import { ChartTooltip, ChartTooltipContent } from "./ui/chart";
 
 export default function QuizLineChart({
   data,
@@ -33,52 +32,49 @@ export default function QuizLineChart({
     }
     return (
       <ResponsiveContainer width="100%" height={300}>
-          <LineChart
-            accessibilityLayer
-            data={chartData}
-            margin={{
-              left: 12,
-              right: 12,
+        <LineChart data={data} margin={{ top: 8, right: 12, left: 4, bottom: 0 }}>
+          <CartesianGrid stroke="hsl(var(--muted))" strokeDasharray="3 3" />
+          <XAxis
+            dataKey="date"
+            tickFormatter={tickFormatter}
+            stroke="var(--muted-foreground)"
+            fontSize={12}
+            tickMargin={8}
+          />
+          <YAxis
+            stroke="var(--muted-foreground)"
+            fontSize={12}
+            tickMargin={8}
+            domain={[0, 100]}
+            label={{
+              value: "Score",
+              angle: -90,
+              position: "insideLeft",
+              fill: "var(--muted-foreground)",
+              fontSize: 12,
             }}
-          >
-            <CartesianGrid vertical={false} />
-            <XAxis
-              dataKey="date"
-              tickLine={false}
-              axisLine={false}
-              tickMargin={8}
-              minTickGap={32}
-              tickFormatter={(value) => {
-                const date = new Date(value)
-                return date.toLocaleDateString("en-US", {
-                  month: "short",
-                  day: "numeric",
-                })
-              }}
-            />
-            <ChartTooltip
-              content={
-                <ChartTooltipContent
-                  className="w-[150px]"
-                  nameKey="views"
-                  labelFormatter={(value) => {
-                    return new Date(value).toLocaleDateString("en-US", {
-                      month: "short",
-                      day: "numeric",
-                      year: "numeric",
-                    })
-                  }}
-                />
-              }
-            />
-            <Line
-              dataKey={activeChart}
-              type="monotone"
-              stroke={`var(--color-${activeChart})`}
-              strokeWidth={2}
-              dot={false}
-            />
-          </LineChart>
+          />
+          <Tooltip
+            cursor={{ stroke: "var(--muted-foreground)", strokeDasharray: "3 3" }}
+            formatter={tooltipFormatter}
+            labelFormatter={(v: string) => `Date: ${tickFormatter(v)}`}
+            contentStyle={{
+              background: "var(--popover)",
+              border: "1px solid var(--border)",
+              borderRadius: "var(--radius-md)",
+              color: "hsl(var(--popover-foreground))",
+              fontSize: 12,
+            }}
+          />
+          <Line
+            type="monotone"
+            dataKey="score"
+            stroke="var(--chart-1)"
+            strokeWidth={3}
+            dot={{ r: 3, stroke: "var(--chart-1)", fill: "var(--background)" }}
+            activeDot={{ r: 5 }}
+          />
+        </LineChart>
       </ResponsiveContainer>
     )
   }, [data, empty])

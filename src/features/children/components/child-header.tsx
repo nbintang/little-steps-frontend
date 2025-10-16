@@ -1,6 +1,6 @@
 "use client";
 
-import type * as React from "react";
+import * as React from "react";
 import Link from "next/link";
 import { Tornado } from "lucide-react";
 import useProfile from "@/hooks/use-profile";
@@ -11,6 +11,8 @@ import useChildProfile from "@/hooks/use-child-profile";
 import { NavChildProfile } from "./nav-child-profile";
 import { NavChildMobile } from "./nav-child-mobile";
 import { NavChild } from "./nav-child";
+import { isAxiosError } from "axios";
+import Cookies from "js-cookie";
 export type NavTab = {
   href?: string;
   label: string;
@@ -38,8 +40,14 @@ const navTabs: NavTab[] = [
 
 export default function ChildHeader() {
   const profile = useChildProfile();
-
   const { handleLogout } = useChildExit();
+  React.useEffect(() => {
+    if (isAxiosError(profile.error) && profile.error.response?.status === 403) {
+      handleLogout(profile.data?.id ?? "");
+      Cookies.remove("childStatus");
+    }
+  }, [profile.error, profile.data?.id, handleLogout]);
+
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background">
       <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-4">

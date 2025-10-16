@@ -8,11 +8,13 @@ export const useFetch = <T = any>({
   endpoint,
   config,
   protected: isProtected = true,
+  enabled
 }: {
   keys: string | string[];
   endpoint: string;
   config?: AxiosRequestConfig;
   protected?: boolean;
+  enabled?: boolean;
 }) => {
   const queryKey = Array.isArray(keys) ? keys : [keys];
   return useQuery({
@@ -24,5 +26,8 @@ export const useFetch = <T = any>({
       );
       return res.data.data;
     },
+    enabled,
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
   });
 };

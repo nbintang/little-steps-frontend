@@ -5,5 +5,6 @@ export const useAuth = () => {
   const token = Cookies.get("accessToken");
   if (!token) return null;
   const user = jwtDecode(token);
+  if(!user) return null
   return user;
 };

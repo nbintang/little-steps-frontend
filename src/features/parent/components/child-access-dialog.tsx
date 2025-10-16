@@ -69,7 +69,7 @@ export const ChildAccessDialog = () => {
 
   const accessChild = async (childId: string) => {
     setIsPending(true);
-
+   
     return await toast
       .promise(() => accessChildService(childId), {
         loading: "Accessing child...",
@@ -85,7 +85,7 @@ export const ChildAccessDialog = () => {
             : "Failed to access child",
         finally: () => {
           setIsPending(false);
-          closeDialog();
+           closeDialog();
         },
       })
       .unwrap();
@@ -100,7 +100,13 @@ export const ChildAccessDialog = () => {
     error,
   } = useFetchInfinite<ChildrenAPI>({
     endpoint: `parent/children`,
-    keys: ["children", debouncedSearch, genderFilter, "schedules", childProfile?.id ?? ""],
+    keys: [
+      "children",
+      debouncedSearch,
+      genderFilter,
+      "schedules",
+      childProfile?.id ?? "",
+    ],
     enabled: openDialog,
     protected: true,
     config: {

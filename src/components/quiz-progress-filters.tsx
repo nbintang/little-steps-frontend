@@ -1,4 +1,3 @@
-"use client"
 
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Input } from "@/components/ui/input"
@@ -26,8 +25,6 @@ export default function Filters(props: {
   quiz: string
   onQuizChange: (v: string) => void
   categoryOptions: string[]
-  childOptions: string[]
-  quizOptions: string[]
   onReset: () => void
 }) {
   const {
@@ -44,22 +41,16 @@ export default function Filters(props: {
     quiz,
     onQuizChange,
     categoryOptions,
-    childOptions,
-    quizOptions,
     onReset,
   } = props
 
   // Local popover open states to improve a11y/focus
   const [catOpen, setCatOpen] = useState(false)
-  const [childOpen, setChildOpen] = useState(false)
-  const [quizOpen, setQuizOpen] = useState(false)
 
   const catLabel = category || "All categories"
-  const childLabel = child || "All children"
-  const quizLabel = quiz || "All quizzes"
 
   const hasAnyFilter = useMemo(
-    () => !!(startDate || endDate || category || child || quiz || type !== "overall"),
+    () => !!(startDate || endDate || category || type !== "overall"),
     [startDate, endDate, category, child, quiz, type],
   )
 
@@ -75,30 +66,6 @@ export default function Filters(props: {
             <TabsTrigger value="monthly">Monthly</TabsTrigger>
           </TabsList>
         </Tabs>
-      </div>
-
-      {/* Date range */}
-      <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="start">Start date</Label>
-          <Input
-            id="start"
-            type="date"
-            value={startDate}
-            onChange={(e) => onStartDateChange(e.target.value)}
-            className="bg-background"
-          />
-        </div>
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="end">End date</Label>
-          <Input
-            id="end"
-            type="date"
-            value={endDate}
-            onChange={(e) => onEndDateChange(e.target.value)}
-            className="bg-background"
-          />
-        </div>
       </div>
 
       {/* Combobox row */}

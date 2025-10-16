@@ -5,12 +5,23 @@ import { Badge } from "@/components/ui/badge";
 import type { ForumThreadListItemAPI } from "@/types/forum";
 import { format } from "date-fns";
 import { formatInitials } from "@/helpers/string-formatter";
-import { MessageCircle, Pencil } from "lucide-react";
+import { Ellipsis, MessageCircle, Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
 import { useOpenForm } from "@/features/parent/hooks/use-open-form";
 import { useRouter } from "next/navigation";
 import { useProgress } from "@bprogress/next";
+import { useDelete } from "@/hooks/use-delete";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
+import { useDisplayWarningDialog } from "@/hooks/use-display-warning-dialog";
+import { useQueryClient } from "@tanstack/react-query";
 
 export function ForumThreadCard({
   thread,
@@ -21,14 +32,43 @@ export function ForumThreadCard({
 }) {
   const user = useAuth();
   const setOpenForm = useOpenForm((state) => state.setOpenForm);
+  const setOpenWarningDialog = useDisplayWarningDialog(
+    (state) => state.setOpenDialog
+  );
+  const closeDialog = useDisplayWarningDialog((state) => state.closeDialog);
   const isAuthor = user?.sub === thread.author.id;
   const router = useRouter();
-  const progress = useProgress()
+  const progress = useProgress();
   const handleEdit = () => {
     progress.start();
     setOpenForm(true, "thread");
     router.push(`${redirectUrl}` || `/admin/dashboard/forum/${thread.id}`);
   };
+
+  const { mutate } = useDelete({
+    keys: ["forum"],
+    endpoint: `forum/${thread.id}`,
+  });
+  const queryClient = useQueryClient();
+  const handleDelete = () =>
+    setOpenWarningDialog({
+      isOpen: true,
+      title: "Delete Thread",
+      description: "Are you sure you want to delete this thread?",
+      onConfirm: () => {
+        mutate(undefined, {
+          onSuccess: async () => {
+            await queryClient.invalidateQueries({
+              predicate: (query) =>
+                query.queryKey.some((key) =>
+                  ["forum", "author"].includes(String(key))
+                ),
+            });
+            closeDialog();
+          },
+        });
+      },
+    });
   return (
     <Card>
       <CardHeader className="space-y-2">
@@ -72,10 +112,27 @@ export function ForumThreadCard({
           </Button>
 
           {isAuthor && (
-            <Button size={"sm"} variant={"ghost"} onClick={handleEdit}>
-              {thread.postCount}
-              <Pencil className="mr-2 h-4 w-4" />
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button size={"sm"} variant={"ghost"}>
+                  <Ellipsis />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuLabel>Edit text</DropdownMenuLabel>
+                <DropdownMenuGroup>
+                  <DropdownMenuItem onClick={handleEdit}>
+                    <Pencil /> Edit Thread
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    variant="destructive"
+                    onClick={handleDelete}
+                  >
+                    <Trash2 /> Delete Thread
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
           )}
         </div>
       </CardContent>

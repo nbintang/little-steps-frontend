@@ -7,15 +7,9 @@ import { Button } from "@/components/ui/button";
 import { Pencil, Trash2 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useOpenForm } from "@/features/parent/hooks/use-open-form";
-
-function initials(name: string) {
-  return name
-    .split(" ")
-    .map((n) => n[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase();
-}
+import { useQueryClient } from "@tanstack/react-query";
+import { formatInitials } from "@/helpers/string-formatter";
+ 
 
 export function PostItem({
   post,
@@ -30,9 +24,19 @@ export function PostItem({
     keys: ["forum", threadId ?? "", "posts"],
     endpoint: `forum/${threadId}/posts/${post.id}`,
   });
+  const queryClient = useQueryClient();
   const isAuthor = post.author.id === user?.sub;
   const handleDelete = () => {
-    deletePost();
+    deletePost(undefined, {
+      onSuccess: async () => {
+        await queryClient.invalidateQueries({
+          predicate: (query) =>
+            query.queryKey.some((key) =>
+              ["forum", "posts", threadId].includes(String(key))
+            ),
+        });
+      },
+    });
     setOpenForm(false);
   };
 
@@ -49,7 +53,7 @@ export function PostItem({
               alt={`Avatar of ${post.author.name}`}
             />
             <AvatarFallback aria-hidden>
-              {initials(post.author.name)}
+              {formatInitials(post.author.name)}
             </AvatarFallback>
           </Avatar>
           <div className="flex-1 min-w-0">

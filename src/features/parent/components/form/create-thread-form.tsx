@@ -14,9 +14,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { forumSchema } from "../schemas/forum-schema";
-import { CategoryAPI } from "../../../types/category";
+import { Textarea } from "@/components/ui/textarea"; 
 import { AsyncSelect } from "@/components/ui/async-select";
 import { categoryService } from "@/services/category-service";
 import {
@@ -31,38 +29,28 @@ import { api } from "@/lib/axios-instance/api";
 import { SuccessResponsePaginated } from "@/types/response";
 import { usePost } from "@/hooks/use-post";
 import { useRouter } from "next/navigation";
-import { ForumThreadDetailAPI } from "@/types/forum";
-import { ButtonGroup } from "@/components/ui/button-group";
-import { useOpenForm } from "../hooks/use-open-form";
-import { usePatch } from "@/hooks/use-patch";
-import { useShallow } from "zustand/shallow";
+import { forumSchema } from "../../schemas/forum-schema";
+import { CategoryAPI } from "@/types/category";
 
-export const UpdateForumForm = ({ data }: { data: ForumThreadDetailAPI }) => {
+export const CreateThreadForm = () => {
   const form = useForm<z.infer<typeof forumSchema>>({
     resolver: zodResolver(forumSchema),
     defaultValues: {
-      title: data.title,
-      description: data.description,
-      categoryId: data.category.id,
+      title: "",
+      description: "",
+      categoryId: "",
     },
   });
-  const { openForm, type, setOpenForm } = useOpenForm(
-    useShallow((state) => ({
-      openForm: state.openForm,
-      type: state.type,
-      setOpenForm: state.setOpenForm,
-    }))
-  );
-  const router = useRouter();
+  const router =useRouter()
   const [refreshKey, setRefreshKey] = useState(0);
-  const { mutate, isPending } = usePatch({
+  const { mutate, isPending } = usePost({
+    endpoint: "forum",
     keys: ["forum"],
-    endpoint: `forum/${data.id}`,
   });
   function onSubmit(values: z.infer<typeof forumSchema>) {
     mutate(values);
-    setOpenForm(false, "thread"); 
-    form.reset();
+    router.push("/forum");
+    form.reset()
   }
 
   const isLoading = isPending || form.formState.isSubmitting;
@@ -70,7 +58,7 @@ export const UpdateForumForm = ({ data }: { data: ForumThreadDetailAPI }) => {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-8   mx-auto my-5"
+        className="space-y-8   mx-auto py-10 my-5"
       >
         <FormField
           control={form.control}
@@ -169,33 +157,15 @@ export const UpdateForumForm = ({ data }: { data: ForumThreadDetailAPI }) => {
             </FormItem>
           )}
         />
-        <ButtonGroup>
-          <ButtonGroup>
-            <Button type="submit" disabled={isLoading}>
-              {isLoading ? (
-                <>
-                  <Spinner /> Submitting...
-                </>
-              ) : (
-                "Submit"
-              )}
-            </Button>
-          </ButtonGroup>
-          <ButtonGroup>
-            <Button
-              onClick={() =>
-                openForm
-                  ? setOpenForm(false, "thread")
-                  : router.push(`/forum/${data.id}`)
-              }
-              type="button"
-              variant={"secondary"}
-              disabled={isLoading}
-            >
-              Cancel
-            </Button>
-          </ButtonGroup>
-        </ButtonGroup>
+        <Button type="submit" disabled={isLoading}>
+          {isLoading ? (
+            <>
+              <Spinner /> Submitting...
+            </>
+          ) : (
+            "Submit"
+          )}
+        </Button>
       </form>
     </Form>
   );
