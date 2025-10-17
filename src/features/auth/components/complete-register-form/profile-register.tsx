@@ -131,7 +131,7 @@ export const ProfileRegister = () => {
             <FormDescription>
               Your date of birth is used to calculate your age.
             </FormDescription>
-            <FormMessage></FormMessage>
+            <FormMessage className="text-xs" />
           </FormItem>
         )}
       />

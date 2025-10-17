@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -38,11 +38,14 @@ import {
   LinkIcon,
   MapPinIcon,
   PhoneIcon,
+  Trash2,
   UserIcon,
 } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { ProfileAPI, ProfileDetailAPIWithLocation } from "@/types/profile";
+import { AvatarUploader } from "./avatar-uploader";
 
 const schema = z.object({
   fullName: z.string().min(2, "Full name must be at least 2 characters"),
@@ -51,10 +54,10 @@ const schema = z.object({
     const d = parseISO(val);
     return val && isValid(d) && d <= new Date();
   }, "Please select a valid birth date"),
-  avatarUrl: z.url("Please enter a valid URL"),
+  avatarUrl: z.url("Please enter a valid URL").optional(),
   location: z.string().min(2, "Location is required"),
   phone: z.string().regex(/^\+?[0-9\-() ]{7,}$/, "Enter a valid phone number"),
-  createdAt: z.string(),
+  createdAt: z.date().or(z.string()),
   user: z.object({
     name: z.string(),
     email: z.email(),
@@ -63,25 +66,45 @@ const schema = z.object({
 
 type Profile = z.infer<typeof schema>;
 
-const dummyData: Profile = {
-  fullName: "John Doe",
-  bio: "I'm a software developer",
-  birthDate: "1990-01-01",
-  avatarUrl: "/placeholder-user.jpg",
-  location: "New York, USA",
-  phone: "+1 (123) 456-7890",
-  createdAt: new Date().toISOString(),
-  user: {
-    name: "John Doe",
-    email: "aL2oE@example.com",
-  },
-};
-
-export default function SettingAccount() {
-  const form = useForm<z.infer<typeof schema>>({
+export default function SettingAccount({
+  profile,
+}: {
+  profile: ProfileDetailAPIWithLocation;
+}) {
+  const form = useForm<Profile>({
     resolver: zodResolver(schema),
-    defaultValues: dummyData,
+    defaultValues: {
+      fullName: "",
+      bio: "",
+      birthDate: "",
+      avatarUrl: "",
+      location: "",
+      phone: "",
+      createdAt: "",
+      user: {
+        name: "",
+        email: "",
+      },
+    },
   });
+
+  useEffect(() => {
+    if (profile) {
+      form.reset({
+        fullName: profile.fullName,
+        bio: profile.bio,
+        birthDate: format(profile.birthDate, "yyyy-MM-dd"),
+        avatarUrl: profile.avatarUrl,
+        location: profile.location ?? "",
+        phone: profile.phone,
+        createdAt: profile.createdAt,
+        user: {
+          name: profile.user.name,
+          email: profile.user.email,
+        },
+      });
+    }
+  }, [profile, form]);
 
   const values = form.watch();
   const avatarPreview = values.avatarUrl?.trim()
@@ -110,31 +133,18 @@ export default function SettingAccount() {
     <div className="flex flex-col gap-8">
       <section className="flex flex-col items-start gap-4 md:flex-row md:items-center md:justify-between">
         <div className="flex items-center gap-4">
-          <Avatar className="size-16">
-            <AvatarImage
-              src={avatarPreview || "/placeholder.svg"}
-              alt="Profile avatar preview"
-            />
-            <AvatarFallback>AJ</AvatarFallback>
-          </Avatar>
           <div>
             <h1 className="text-pretty text-xl font-semibold">
               {values.fullName || "Your Name"}
             </h1>
             <p className="text-muted-foreground text-sm">
               {values.user.email} • Joined{" "}
-              {format(parseISO(values.createdAt), "LLL d, yyyy")}
+              {values.createdAt
+                ? format(parseISO(values.createdAt.toString()), "LLL d, yyyy")
+                : "Unknown date"}
             </p>
           </div>
         </div>
-        <Button
-          type="button"
-          variant="outline"
-          onClick={() => form.reset(dummyData)}
-          className="w-full md:w-auto"
-        >
-          Reset to dummy data
-        </Button>
       </section>
 
       <Form {...form}>
@@ -142,6 +152,20 @@ export default function SettingAccount() {
           onSubmit={form.handleSubmit(onSubmit)}
           className="flex flex-col gap-10"
         >
+          <AvatarUploader<Profile> name="avatarUrl" label="Avatar" />
+          {values.avatarUrl && (
+            <Button
+              type="button"
+              size={"icon"}
+              variant={"destructive"}
+              onClick={() => {
+                form.setValue("avatarUrl", undefined);
+              }}
+              disabled={!values.avatarUrl}
+            >
+              <Trash2 />{" "}
+            </Button>
+          )}
           <FieldGroup className="rounded-lg border p-4 md:p-6">
             <FieldLegend>Profile details</FieldLegend>
             <FieldSet>
@@ -382,7 +406,12 @@ export default function SettingAccount() {
                 <FieldLabel>Created at</FieldLabel>
                 <FieldContent>
                   <div className="text-sm rounded-md border bg-secondary/40 px-3 py-2">
-                    {format(parseISO(values.createdAt), "PPpp")}
+                    {values.createdAt
+                      ? format(
+                          parseISO(values.createdAt.toString()),
+                          "LLL d, yyyy"
+                        )
+                      : "Unknown date"}
                   </div>
                 </FieldContent>
               </Field>

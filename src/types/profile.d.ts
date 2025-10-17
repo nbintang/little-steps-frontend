@@ -15,3 +15,6 @@ export interface ProfileAPI {
     email: string
   }
 }
+
+
+export type ProfileDetailAPIWithLocation = ProfileAPI & { location: string };

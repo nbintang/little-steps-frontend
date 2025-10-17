@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card" 
-import SettingAccount from "@/features/admin/components/setting-account"
+import SettingAccount from "@/components/setting-account"
 
 export default function Page() {
   return (

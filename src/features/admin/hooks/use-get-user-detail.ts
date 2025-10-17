@@ -3,8 +3,7 @@ import { UserDetailAPI } from "@/types/user";
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
 import { getLocationService } from "../services/get-location-service";
-
-const mapUrl = "https://nominatim.openstreetmap.org/reverse";
+ 
 export type UserDetailAPIWithLocation = Partial<UserDetailAPI> & { location: string };
 
 const useGetUserDetail = (id: string) => {
