@@ -9,7 +9,7 @@ import {
 } from "@/features/children/hooks/use-quiz";
 import QuizRunner from "@/features/children/components/quizzes/child-quiz-runner";
 import useChildProfile from "@/hooks/use-child-profile";
-import { useQuizProgress } from "@/features/children/hooks/use-quiz-progress";
+import { useStatistics } from "@/features/children/hooks/use-statistics";
 
 export default function QuizPlayPage({
   params,
@@ -25,7 +25,7 @@ export default function QuizPlayPage({
     data: progress,
     isLoading,
     error,
-  } = useQuizProgress({
+  } = useStatistics({
     quizId,
     childId: childProfile?.data?.id
   });

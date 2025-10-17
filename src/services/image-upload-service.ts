@@ -1,5 +1,5 @@
 import { base64ToFile } from "@/helpers/base64-to-file";
-import { UploadImageApiResponse } from "@/hooks/use-upload-image";
+import { UploadImageApiResponse } from "@/hooks/use-image-uploader";
 import { api } from "@/lib/axios-instance/api";
 import { SuccessResponse } from "@/types/response";
 export enum MediaFolder {

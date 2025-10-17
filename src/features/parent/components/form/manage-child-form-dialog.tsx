@@ -36,7 +36,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { FileWithPath, useDropzone } from "react-dropzone";
 import { FileWithPreview, ImageCropper } from "@/components/ui/image-cropper";
 import { usePost } from "@/hooks/use-post";
-import useUploadImage from "@/hooks/use-upload-image";
+import useImageUploader from "@/hooks/use-image-uploader";
 import { Spinner } from "@/components/ui/spinner";
 import { useRouter } from "next/navigation";
 import { useProgress } from "@bprogress/next";
@@ -156,7 +156,7 @@ export const ChildFormDialog = () => {
     },
     [form]
   );
-  const { mutateAsync: upload } = useUploadImage();
+  const { mutateAsync: upload } = useImageUploader();
   const {
     mutateAsync: createChild,
     isPending: createPending,

@@ -19,6 +19,8 @@ import { cn } from "@/lib/utils";
 import { StarFilledIcon } from "@radix-ui/react-icons";
 import { IconStarHalfFilled } from "@tabler/icons-react";
 import { StarRatings } from "@/components/star-ratings";
+import { useRates } from "@/hooks/use-open-rates";
+import { Rating, RatingButton } from "@/components/ui/rating";
 
 type Params = { slug: string };
 
@@ -28,6 +30,7 @@ export default function ArticleDetailPage({
   params: Promise<Params>;
 }) {
   const { slug } = use(params);
+  const openRatingDialog = useRates((state) => state.openRatingDialog);
   const {
     data: article,
     isError,
@@ -126,10 +129,17 @@ export default function ArticleDetailPage({
           </MotionFade>
           <div className="mt-8">
             <div className="flex items-center gap-x-1">
-              <StarRatings rating={article.rating} />
-              <span>({article.rating.toFixed(1)})</span>
+              <Rating defaultValue={article.rating}>
+                {Array.from({ length: 5 }).map((_, index) => (
+                  <RatingButton key={index} />
+                ))}
+              </Rating>
             </div>
-            <Button variant={"secondary"} className="mt-2">
+            <Button
+              variant={"secondary"}
+              onClick={() => openRatingDialog("content", article.slug)}
+              className="mt-2"
+            >
               Rate this article
             </Button>
           </div>

@@ -4,7 +4,7 @@ import { useCallback } from "react";
 import { toast } from "sonner";
 import { QuizMutateResponseAPI } from "@/types/quizzes";
 import { usePost } from "@/hooks/use-post";
-import useUploadImage from "@/hooks/use-upload-image";
+import useImageUploader from "@/hooks/use-image-uploader";
 import { useRouter } from "next/navigation";
 import { UseFormReturn } from "react-hook-form";
 import { QuizSchema } from "../schemas/quiz-schema";
@@ -12,7 +12,7 @@ import { createQuestionsService } from "../services/create-questions-service";
 import useLoadingStore from "@/hooks/use-loading-store";
 export const useCreateQuiz = (form: UseFormReturn<QuizSchema>) => {
   const router = useRouter();
-  const { mutateAsync: uploadImageAnswer } = useUploadImage();
+  const { mutateAsync: uploadImageAnswer } = useImageUploader();
   const { mutateAsync: createQuiz } = usePost<QuizMutateResponseAPI>({
     keys: ["quizzes"],
     endpoint: "quizzes",

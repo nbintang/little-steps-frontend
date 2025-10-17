@@ -12,7 +12,7 @@ import { AuthFormHeader } from "../auth-form-header";
 import { ChevronsLeft, ChevronsRight, LogInIcon } from "lucide-react";
 import { Spinner } from "@/components/ui/spinner";
 import z from "zod";
-import useUploadImage from "@/hooks/use-upload-image";
+import useImageUploader from "@/hooks/use-image-uploader";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -61,7 +61,7 @@ export function CompleteRegisterForm({
     },
   });
   const router = useRouter();
-  const uploadImage = useUploadImage();
+  const uploadImage = useImageUploader();
   const onSubmit = async () => {
     const isValid = await form.trigger();
     console.log(isValid);

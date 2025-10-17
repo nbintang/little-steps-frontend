@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
@@ -8,10 +8,15 @@ import { toast } from "sonner";
 import QuestionCard from "./child-question-card";
 import Timer from "./quiz-timer";
 
-import { useQuizQuestions, useSubmitQuiz } from "../../hooks/use-quiz";
+import {
+  useQuizProgress,
+  useQuizQuestions,
+  useSubmitQuiz,
+} from "../../hooks/use-quiz";
 import { SubmitQuizPayload } from "@/types/quiz-play";
-import { useQuizProgress } from "../../hooks/use-quiz-progress";
-import useChildProfile from "@/hooks/use-child-profile";
+import { useRouter } from "next/navigation";
+import { isAxiosError } from "axios";
+import { Confetti, ConfettiRef } from "@/components/ui/confetti";
 
 type SelectionsState = Record<string, string | undefined>;
 
@@ -19,11 +24,12 @@ export default function QuizRunner({ quizId }: { quizId: string }) {
   // --- Hooks (tetap di bagian atas, tidak ada return sebelum ini) ---
   const [selections, setSelections] = useState<SelectionsState>({});
   const [currentIndex, setCurrentIndex] = useState(0);
-  const childProfile = useChildProfile();
-  const { data: progress, isLoading: progressLoading } = useQuizProgress({
-    quizId,
-    childId: childProfile?.data?.id,
-  });
+  const router = useRouter();
+  const {
+    data: progress,
+    isLoading: progressLoading,
+    error,
+  } = useQuizProgress(quizId);
   const { data: quizData, isLoading: questionsLoading } = useQuizQuestions(
     quizId,
     1,
@@ -33,7 +39,38 @@ export default function QuizRunner({ quizId }: { quizId: string }) {
 
   const questions = quizData?.data || [];
   const totalQuestions = quizData?.meta.totalQuestions || 0;
+  const confettiRef = useRef<ConfettiRef>(null);
 
+  useEffect(() => {
+    if (progress?.submittedAt) {
+      const duration = 5 * 1000;
+      const animationEnd = Date.now() + duration;
+      const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+      const randomInRange = (min: number, max: number) =>
+        Math.random() * (max - min) + min;
+
+      const interval = window.setInterval(() => {
+        const timeLeft = animationEnd - Date.now();
+        if (timeLeft <= 0) return clearInterval(interval);
+
+        const particleCount = 50 * (timeLeft / duration);
+
+        confettiRef.current?.fire({
+          ...defaults,
+          particleCount,
+          origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
+        });
+
+        confettiRef.current?.fire({
+          ...defaults,
+          particleCount,
+          origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
+        });
+      }, 250);
+
+      return () => clearInterval(interval);
+    }
+  }, [progress?.submittedAt]);
   // --- Derived values & handlers (masih sebelum return) ---
   const answeredCount = Object.values(selections).filter(Boolean).length;
   const completion = Math.round((answeredCount / (totalQuestions || 1)) * 100);
@@ -67,16 +104,25 @@ export default function QuizRunner({ quizId }: { quizId: string }) {
       const result = await submitMutation.mutateAsync(payload);
       toast.success(`Quiz submitted! Score: ${result.score}/${totalQuestions}`);
     } catch (error: any) {
-      toast.error(error?.response?.data?.message || "Failed to submit quiz");
+      if (error.response.status === 409) {
+        router.push(`/children/playground/quizzes/${quizId}`);
+        toast.error(error?.response?.data?.message);
+      } else {
+        toast.error("Failed to submit quiz.");
+      }
     }
   }, [questions, selections, submitMutation, totalQuestions]);
 
-  const handleTimeExpire = useCallback(() => {
-    if (!progress?.submittedAt) {
+  const handleTimeExpire = useCallback(async () => {
+    if (
+      !progress?.submittedAt ||
+      (isAxiosError(error) && error.response?.status === 409)
+    ) {
       toast.warning("Time's up! Auto-submitting...");
-      void handleSubmit();
+      await handleSubmit(); // tunggu submit dulu
+      router.push(`/children/playground/quizzes/${quizId}`);
     }
-  }, [progress?.submittedAt, handleSubmit]);
+  }, [progress?.submittedAt, handleSubmit, router, quizId, error]);
 
   // --- Semua pemeriksaan / conditional returns setelah semua hooks & callbacks ---
   if (progressLoading || questionsLoading) {
@@ -105,7 +151,11 @@ export default function QuizRunner({ quizId }: { quizId: string }) {
     const percent = Math.round((score / (totalQuestions || 1)) * 100);
 
     return (
-      <div className="rounded-lg border bg-card p-6">
+      <div className="rounded-lg border bg-card p-6 relative">
+        <Confetti
+          ref={confettiRef}
+          className="absolute inset-0 w-full h-full pointer-events-none z-50"
+        />
         <div className="flex items-center justify-between gap-3">
           <h1 className="text-xl md:text-2xl font-semibold">Quiz Completed!</h1>
           <Link
@@ -142,7 +192,7 @@ export default function QuizRunner({ quizId }: { quizId: string }) {
 
         <div className="mt-6 flex flex-wrap gap-3">
           <Button asChild>
-            <Link href="/children/quizzes">Choose Another Quiz</Link>
+            <Link href="/children/playground/quizzes">Choose Another Quiz</Link>
           </Button>
         </div>
       </div>

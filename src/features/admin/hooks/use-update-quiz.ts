@@ -3,7 +3,7 @@
 import { useCallback } from "react";
 import { toast } from "sonner";
 import { QuizMutateResponseAPI } from "@/types/quizzes";
-import useUploadImage from "@/hooks/use-upload-image";
+import useImageUploader from "@/hooks/use-image-uploader";
 import { useRouter } from "next/navigation";
 import { UseFormReturn } from "react-hook-form";
 import { QuizSchema } from "../schemas/quiz-schema";
@@ -18,7 +18,7 @@ export const useUpdateQuiz = (
   const router = useRouter();
   const show = useLoadingStore((s) => s.show);
   const hide = useLoadingStore((s) => s.hide);
-  const { mutateAsync: uploadImageAnswer } = useUploadImage();
+  const { mutateAsync: uploadImageAnswer } = useImageUploader();
   const { mutateAsync: updateQuiz } = usePatch<QuizMutateResponseAPI>({
     keys: ["quizzes", quizId],
     endpoint: `quizzes/${quizId}`,

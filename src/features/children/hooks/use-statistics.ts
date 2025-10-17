@@ -17,16 +17,30 @@ export interface QueryStatisticQuiz {
   quizId?: string;
   category?: string;
 }
-
+type ProgressResponse = {
+  date: string;
+  score: number;
+  completionPercent: number;
+  quizTitle: string;
+  category: string;
+  childName: string;
+}[];
+type ProgressMeta = {
+  totalQuizzes: number;
+  totalScore: number;
+  avgScore: number;
+  avgCompletion: number;
+};
 // Hook untuk get progress
-export function useQuizProgress(query: QueryStatisticQuiz) {
+export function useStatistics(query: QueryStatisticQuiz) {
   return useQuery({
     queryKey: ["quiz-progress", query.childId, query.quizId],
     queryFn: async () => {
-      const { data } = await api.get<{ message: string; data: Progress }>(
-        `/protected/statistics/quiz-progress`,
-        { params: query }
-      );
+      const { data } = await api.get<{
+        message: string;
+        data: ProgressResponse[];
+        meta: ProgressMeta;
+      }>(`/protected/statistics/quizzes`, { params: query });
       return data.data;
     },
     retry: false, // Tidak retry jika progress belum ada

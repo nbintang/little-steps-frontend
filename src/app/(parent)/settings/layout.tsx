@@ -8,7 +8,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div className="max-w-5xl mx-auto">
       <SettingsLayout navigateLinks={settingsLinks}>{children}</SettingsLayout>
-   
     </div>
   );
 }

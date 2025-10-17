@@ -18,16 +18,11 @@ export const SettingsLayout = ({
   navigateLinks?: { label: string; href: string }[];
 }) => {
   const pathname = usePathname();
-  const router = useRouter();
   return (
     <DashboardPageLayout className="" title="Pengaturan">
       <div className="mx-auto flex flex-col sm:flex-row gap-6 items-start w-full">
         <nav className="sticky top-0 self-start text-sm md:w-[180px] lg:w-[250px] shrink-0">
-          <Tabs
-            orientation="vertical"
-            value={pathname}
-            onValueChange={(v) => router.push(v)}
-          >
+          <Tabs orientation="vertical" value={pathname}>
             <TabsList className="bg-background h-full flex-col rounded-none p-0">
               {navigateLinks?.map((item, idx) => (
                 <TabsTrigger
@@ -37,8 +32,9 @@ export const SettingsLayout = ({
                     "bg-background data-[state=active]:border-primary dark:data-[state=active]:border-primary h-full w-full cursor-pointer hover:bg-muted data-[state=active]:bg-muted justify-start rounded-none border-0  border-transparent data-[state=active]:shadow-none",
                     item.href === pathname && `border-l-2 `
                   )}
+                  asChild
                 >
-                  {item.label}
+                  <Link href={item.href}>{item.label}</Link>
                 </TabsTrigger>
               ))}
             </TabsList>

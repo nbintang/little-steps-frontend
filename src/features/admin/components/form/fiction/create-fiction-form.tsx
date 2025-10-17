@@ -42,7 +42,7 @@ import { categoryService } from "@/services/category-service";
 import { Spinner } from "@/components/ui/spinner";
 import { usePost } from "@/hooks/use-post";
 import { ContentMutateResponseAPI } from "@/types/content";
-import useUploadImage from "@/hooks/use-upload-image";
+import useImageUploader from "@/hooks/use-image-uploader";
 import { ContentType } from "../../../../../lib/enums/content-type";
 import MinimalTiptapFictionEditor from "../../content-editor/minimal-tiptap-fiction";
 import {
@@ -89,7 +89,7 @@ export const CreateFictionForm = () => {
     [form]
   );
 
-  const { mutateAsync: uploadCoverImage } = useUploadImage();
+  const { mutateAsync: uploadCoverImage } = useImageUploader();
   const { mutate: createContent, isPending } =
     usePost<ContentMutateResponseAPI>({
       keys: ["fictions"],

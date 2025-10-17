@@ -28,7 +28,6 @@ export function useStartQuiz(quizId: string) {
   });
 }
 
-
 // Hook untuk get quiz questions (dengan pagination)
 export function useQuizQuestions(
   quizId: string,
@@ -47,7 +46,18 @@ export function useQuizQuestions(
     staleTime: 5 * 60 * 1000, // Cache 5 menit karena questions tidak berubah
   });
 }
-
+export function useQuizProgress(quizId: string) {
+  return useQuery({
+    queryKey: ["quiz-progress", quizId],
+    queryFn: async () => {
+      const { data } = await api.get<{ message: string; data: Progress }>(
+        `/protected/children/quizzes/${quizId}/progress`
+      );
+      return data.data;
+    },
+    retry: false, // Tidak retry jika progress belum ada
+  });
+}
 // Hook untuk submit quiz
 export function useSubmitQuiz(quizId: string) {
   const queryClient = useQueryClient();

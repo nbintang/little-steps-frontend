@@ -42,7 +42,7 @@ import { type Content as EditorContent, Editor } from "@tiptap/react";
 import { categoryService } from "@/services/category-service";
 import { Spinner } from "@/components/ui/spinner";
 import { ContentsAPI, ContentMutateResponseAPI } from "@/types/content";
-import useUploadImage from "@/hooks/use-upload-image";
+import useImageUploader from "@/hooks/use-image-uploader";
 import { urlToFile } from "@/helpers/url-to-file";
 import { usePatch } from "@/hooks/use-patch";
 import MinimalTiptapArticleEditor from "../../content-editor/minimal-tiptap-article";
@@ -89,7 +89,7 @@ export const UpdateArticleForm = ({ article }: { article: ContentsAPI }) => {
     [form]
   );
 
-  const { mutateAsync: uploadCoverImage } = useUploadImage();
+  const { mutateAsync: uploadCoverImage } = useImageUploader();
   const { mutate: updateContent, isPending } =
     usePatch<ContentMutateResponseAPI>({
       keys: ["articles", article.slug],

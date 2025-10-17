@@ -42,7 +42,7 @@ import { categoryService } from "@/services/category-service";
 import { Spinner } from "@/components/ui/spinner";
 import { usePost } from "@/hooks/use-post";
 import { ContentMutateResponseAPI } from "@/types/content";
-import useUploadImage from "@/hooks/use-upload-image";
+import useImageUploader from "@/hooks/use-image-uploader";
 import MinimalTiptapArticleEditor from "../../content-editor/minimal-tiptap-article";
 import { ContentType } from "../../../../../lib/enums/content-type";
 import {
@@ -90,7 +90,7 @@ export const CreateArticleForm = () => {
     [form]
   );
 
-  const { mutateAsync: uploadCoverImage } = useUploadImage();
+  const { mutateAsync: uploadCoverImage } = useImageUploader();
   const { mutate: createContent, isPending } =
     usePost<ContentMutateResponseAPI>({
       keys: ["articles"],

@@ -29,7 +29,7 @@ import {
   RegisterInput,
   registerService,
 } from "../../services/register-service";
-import useUploadImage from "@/hooks/use-upload-image";
+import useImageUploader from "@/hooks/use-image-uploader";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -76,7 +76,7 @@ export function RegisterForm({
     },
   });
   const router = useRouter();
-  const uploadImage = useUploadImage();
+  const uploadImage = useImageUploader();
   const onSubmit = async () => {
     try {
       if (stepper.isLast) {

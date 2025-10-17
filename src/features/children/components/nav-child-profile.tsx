@@ -85,13 +85,6 @@ export const NavChildProfile = ({
           </DropdownMenuLabel>
 
           <DropdownMenuSeparator />
-          <DropdownMenuGroup>
-            <DropdownMenuItem onClick={openProgressDialog} className="cursor-pointer">
-              <ChartSpline className="h-4 w-4 mr-2" />
-              Progress
-            </DropdownMenuItem>
-          </DropdownMenuGroup>
-          <DropdownMenuSeparator />
 
           <DropdownMenuItem
             variant="destructive"
