@@ -33,7 +33,7 @@ export const Navbar = ({
                 <React.Fragment>
                   <NavigationMenuTrigger
                     className={cn(
-                      " text-sm font-medium rounded-md transition-colors"
+                      " text-xs font-medium rounded-md transition-colors"
                     )}
                   >
                     {tab.label}
@@ -77,7 +77,7 @@ export const Navbar = ({
                             href={child.href !== undefined ? child.href : ""}
                             className={cn("flex flex-col")}
                           >
-                            <div className="text-sm leading-none font-medium">
+                            <div className=" text-xs  leading-none font-medium">
                               {child.label}
                             </div>
                             <p className="text-muted-foreground line-clamp-2 text-sm leading-snug">
@@ -100,7 +100,7 @@ export const Navbar = ({
                     href={tab.href !== undefined ? tab.href : ""}
                     className="flex flex-col "
                   >
-                    <div className="text-sm leading-none font-medium">
+                    <div className="text-xs leading-none font-medium">
                       {tab.label}
                     </div>
                   </Link>

@@ -17,8 +17,10 @@ const EXCLUDE_ROUTES = [
 
 const TABS: NavTab[] = [
   { href: "/", label: "Home" },
-  { href: "/articles", label: "Articles" },
   {href: '/about', label: 'About Us'},
+  {href: '/parenting-tips', label: 'Parenting Tips'},
+  {href: '/resources', label: 'Resources'},
+  { href: "/articles", label: "Articles" },
   { href: "/forum", label: "Parent Discussion" },
 ];
 export const PublicLayout = ({ children }: { children: React.ReactNode }) => {

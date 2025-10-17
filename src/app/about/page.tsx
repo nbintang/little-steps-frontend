@@ -27,9 +27,7 @@ export default function AboutPage() {
   ]
 
   return (
-    <div className="min-h-screen bg-background">
-      <Navigation />
-
+    <div className="min-h-screen bg-background"> 
       <main className="py-16 md:py-24">
         <div className="max-w-6xl mx-auto px-5">
           {/* Header */}
@@ -108,8 +106,7 @@ export default function AboutPage() {
           </div>
         </div>
       </main>
-
-      <Footer />
+ 
     </div>
   )
 }
