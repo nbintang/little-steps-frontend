@@ -123,12 +123,6 @@ export const ForumAside = ({
                 </Select>
               </ButtonGroup>
             </ButtonGroup>
-            <ButtonGroup>
-              <Button variant={"secondary"} className="w-full max-w-md">
-                <Sparkles className="size-4" />
-                <span className="ml-2">Try AI Disscussion</span>
-              </Button>
-            </ButtonGroup>
           </ButtonGroup>
         </ButtonGroup>
         <div className="flex items-center  my-5  gap-x-3">

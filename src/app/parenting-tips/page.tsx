@@ -7,49 +7,49 @@ export default function ParentingTipsPage() {
   const tips = [
     {
       icon: Heart,
-      title: "Active Listening",
+      title: "Mendengarkan Aktif",
       description:
-        "Learn how to truly listen to your child without judgment. Active listening builds trust and helps children feel heard and valued.",
+        "Pelajari cara mendengarkan anak Anda tanpa menghakimi. Mendengarkan aktif membangun kepercayaan dan membuat anak merasa didengar dan dihargai.",
       tips: [
-        "Put away distractions when your child is talking",
-        "Make eye contact and show genuine interest",
-        "Reflect back what you hear to confirm understanding",
-        "Validate their feelings even if you disagree with their actions",
+        "Jauhkan gangguan saat anak Anda berbicara",
+        "Buat kontak mata dan tunjukkan minat yang tulus",
+        "Ulang kembali apa yang Anda dengar untuk memastikan pemahaman",
+        "Validasi perasaan mereka meskipun Anda tidak setuju dengan tindakan mereka",
       ],
     },
     {
       icon: Brain,
-      title: "Emotional Regulation",
+      title: "Regulasi Emosi",
       description:
-        "Help your child develop healthy ways to manage big emotions. Teaching emotional regulation is a lifelong skill.",
+        "Bantu anak Anda mengembangkan cara sehat untuk mengelola emosi besar. Mengajarkan regulasi emosi adalah keterampilan seumur hidup.",
       tips: [
-        "Name emotions to help children identify what they're feeling",
-        "Teach breathing exercises and grounding techniques",
-        "Model healthy emotional expression yourself",
-        "Create a calm-down space in your home",
+        "Namai emosi untuk membantu anak-anak mengidentifikasi apa yang mereka rasakan",
+        "Ajarkan latihan pernapasan dan teknik grounding",
+        "Modelkan ekspresi emosi yang sehat sendiri",
+        "Buat ruang untuk menenangkan diri di rumah Anda",
       ],
     },
     {
       icon: Users,
-      title: "Building Strong Relationships",
-      description: "Foster deep connections with your children through quality time and meaningful interactions.",
+      title: "Membangun Hubungan yang Kuat",
+      description: "Perkuat koneksi mendalam dengan anak-anak Anda melalui waktu berkualitas dan interaksi bermakna.",
       tips: [
-        "Schedule regular one-on-one time with each child",
-        "Engage in activities your child enjoys",
-        "Share meals together without screens",
-        "Express affection and appreciation regularly",
+        "Jadwalkan waktu satu lawan satu secara teratur dengan setiap anak",
+        "Terlibat dalam aktivitas yang disukai anak Anda",
+        "Makan bersama tanpa gadget",
+        "Ekspresikan kasih sayang dan apresiasi secara teratur",
       ],
     },
     {
       icon: Lightbulb,
-      title: "Setting Healthy Boundaries",
+      title: "Menetapkan Batasan yang Sehat",
       description:
-        "Clear boundaries help children feel safe and secure. Learn how to set limits with love and consistency.",
+        "Batasan yang jelas membantu anak merasa aman dan terlindungi. Pelajari cara menetapkan batas dengan penuh kasih sayang dan konsistensi.",
       tips: [
-        "Be clear and consistent with rules",
-        "Explain the reasons behind boundaries",
-        "Follow through with natural consequences",
-        "Adjust boundaries as children grow and develop",
+        "Jadilah jelas dan konsisten dengan aturan",
+        "Jelaskan alasan di balik batasan",
+        "Tindaklanjuti dengan konsekuensi alami",
+        "Sesuaikan batasan seiring anak tumbuh dan berkembang",
       ],
     },
   ]
@@ -61,10 +61,9 @@ export default function ParentingTipsPage() {
         <div className="max-w-6xl mx-auto px-5">
           {/* Header */}
           <div className="text-center mb-16">
-            <h1 className="text-4xl md:text-6xl font-bold text-primary mb-4">Parenting Tips</h1>
+            <h1 className="text-4xl md:text-6xl font-bold text-primary mb-4">Tips Parenting</h1>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Evidence-based strategies and practical advice to support your child's emotional development and
-              strengthen your family relationships.
+              Strategi berbasis bukti dan saran praktis untuk mendukung perkembangan emosional anak Anda dan memperkuat hubungan keluarga.
             </p>
           </div>
 
@@ -84,7 +83,7 @@ export default function ParentingTipsPage() {
                     </div>
                   </CardHeader>
                   <CardContent className="pt-6">
-                    <h4 className="font-semibold text-foreground mb-4">Key Strategies:</h4>
+                    <h4 className="font-semibold text-foreground mb-4">Strategi Utama:</h4>
                     <ul className="space-y-3">
                       {tip.tips.map((item, idx) => (
                         <li key={idx} className="flex items-start gap-3">
@@ -101,13 +100,12 @@ export default function ParentingTipsPage() {
 
           {/* CTA Section */}
           <div className="mt-16 bg-card rounded-lg p-8 md:p-12 text-center">
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">Need Professional Guidance?</h2>
+            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">Butuh Panduan Profesional?</h2>
             <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
-              Our licensed therapists can provide personalized parenting coaching and family therapy tailored to your
-              specific needs.
+              Terapis berlisensi kami dapat memberikan coaching parenting dan terapi keluarga yang dipersonalisasi sesuai kebutuhan spesifik Anda.
             </p>
             <button className="bg-primary text-primary-foreground px-8 py-3 rounded-lg hover:bg-primary/90 transition">
-              Schedule a Consultation
+              Jadwalkan Konsultasi
             </button>
           </div>
         </div>

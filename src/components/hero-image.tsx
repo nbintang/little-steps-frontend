@@ -5,10 +5,10 @@ import { cn } from "@/lib/utils"
 
 export default async function HeroImg() {
   const images = [
-    "/happy-diverse-family.png",
+    "/happy-diverse-family.jpg",
     "/parent-and-child-bonding.jpg",
-    "/children-playing-together.jpg",
-    "/family-therapy.png",
+    "/dad-kids.jpeg",
+    "/family-therapy.jpeg",
   ]
 
   const gridLayout = [

@@ -8,15 +8,15 @@ export default function Hero() {
         <div className="flex flex-col gap-5 md:gap-10 mx-auto order-last md:order-first items-center md:items-start">
           <div className="space-y-4 text-center md:text-start">
             <h1 className="text-4xl md:text-6xl font-bold text-primary leading-tight">
-              Empowering Minds, Healing Hearts
+              Memberdayakan Pikiran, Menyembuhkan Hati
             </h1>
             <p className="text-base md:text-lg text-muted-foreground max-w-lg">
-              Professional mental health support for every stage of life. From children to adults, and for parents
-              striving to nurture emotionally strong families.
+              Dukungan kesehatan mental profesional untuk setiap tahap kehidupan. Dari anak-anak hingga orang dewasa,
+              serta dukungan bagi orang tua yang ingin membentuk keluarga yang kuat secara emosional.
             </p>
           </div>
           <Button size="lg" className="bg-primary hover:bg-primary/90">
-            Try It Free
+            Coba Gratis
           </Button>
         </div>
         <HeroImg />

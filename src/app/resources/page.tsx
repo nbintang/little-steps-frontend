@@ -7,38 +7,38 @@ export default function ResourcesPage() {
   const resources = [
     {
       icon: BookOpen,
-      title: "Mental Health Guide for Parents",
-      description: "A comprehensive guide to understanding and supporting your child's mental health.",
-      type: "PDF Guide",
+      title: "Panduan Kesehatan Mental untuk Orang Tua",
+      description: "Panduan komprehensif untuk memahami dan mendukung kesehatan mental anak Anda.",
+      type: "Panduan PDF",
     },
     {
       icon: Video,
-      title: "Understanding Anxiety in Children",
-      description: "Video series exploring common anxiety disorders and evidence-based treatment approaches.",
-      type: "Video Series",
+      title: "Memahami Kecemasan pada Anak",
+      description: "Seri video yang mengeksplorasi gangguan kecemasan umum dan pendekatan pengobatan berbasis bukti.",
+      type: "Seri Video",
     },
     {
       icon: Download,
-      title: "Coping Strategies Workbook",
-      description: "Interactive workbook with practical exercises for managing stress and emotions.",
-      type: "Workbook",
+      title: "Buku Kerja Strategi Mengatasi",
+      description: "Buku kerja interaktif dengan latihan praktis untuk mengelola stres dan emosi.",
+      type: "Buku Kerja",
     },
     {
       icon: HelpCircle,
-      title: "Crisis Resources",
-      description: "Emergency contacts and resources for mental health crises and urgent support.",
-      type: "Directory",
+      title: "Sumber Daya Krisis",
+      description: "Kontak darurat dan sumber daya untuk krisis kesehatan mental dan dukungan mendesak.",
+      type: "Direktori",
     },
     {
       icon: BookOpen,
-      title: "Building Resilience in Teens",
-      description: "Evidence-based strategies for helping teenagers develop emotional resilience.",
-      type: "Article",
+      title: "Membangun Ketangguhan pada Remaja",
+      description: "Strategi berbasis bukti untuk membantu remaja mengembangkan ketangguhan emosional.",
+      type: "Artikel",
     },
     {
       icon: Video,
-      title: "Family Communication Workshop",
-      description: "Learn effective communication techniques to strengthen family relationships.",
+      title: "Workshop Komunikasi Keluarga",
+      description: "Pelajari teknik komunikasi efektif untuk memperkuat hubungan keluarga.",
       type: "Workshop",
     },
   ]
@@ -49,9 +49,9 @@ export default function ResourcesPage() {
         <div className="max-w-6xl mx-auto px-5">
           {/* Header */}
           <div className="text-center mb-16">
-            <h1 className="text-4xl md:text-6xl font-bold text-primary mb-4">Resources</h1>
+            <h1 className="text-4xl md:text-6xl font-bold text-primary mb-4">Sumber Daya</h1>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Free tools, guides, and educational materials to support your family's mental health journey.
+              Alat gratis, panduan, dan materi edukatif untuk mendukung perjalanan kesehatan mental keluarga Anda.
             </p>
           </div>
 
@@ -76,13 +76,12 @@ export default function ResourcesPage() {
 
           {/* Featured Section */}
           <div className="bg-gradient-to-r from-blue-50 to-teal-50 rounded-lg p-8 md:p-12">
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">Featured Resource</h2>
+            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">Sumber Daya Unggulan</h2>
             <p className="text-muted-foreground mb-6">
-              Our comprehensive "Mental Health Guide for Parents" covers everything from recognizing warning signs to
-              finding the right support. Download it free today.
+              Panduan komprehensif kami "Panduan Kesehatan Mental untuk Orang Tua" mencakup semua hal mulai dari mengenali tanda-tanda peringatan hingga menemukan dukungan yang tepat. Unduh secara gratis hari ini.
             </p>
             <button className="bg-primary text-primary-foreground px-6 py-2 rounded-lg hover:bg-primary/90 transition">
-              Download Now
+              Unduh Sekarang
             </button>
           </div>
         </div>

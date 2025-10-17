@@ -1,9 +1,9 @@
 import React from "react";
-// Changed: Import Link and Image from Next.js
+// Diubah: Import Link dan Image dari Next.js
 import Link from "next/link";
 import Image from "next/image";
 
-// Changed: Import Tabler Icons
+// Diubah: Import Tabler Icons
 import {
   IconBrandFacebook,
   IconBrandInstagram,
@@ -31,35 +31,25 @@ interface Footer7Props {
 
 const defaultSections = [
   {
-    title: "Product",
+    title: "Produk",
     links: [
-      { name: "Overview", href: "#" },
-      { name: "Pricing", href: "#" },
-      { name: "Marketplace", href: "#" },
-      { name: "Features", href: "#" },
+      { name: "Beranda", href: "/" },
+      { name: "Tentang Kami", href: "/about" },
+      { name: "Forum", href: "/forum" },
+      { name: "Artikel", href: "/articles" },
     ],
   },
   {
-    title: "Company",
+    title: "Perusahaan",
     links: [
-      { name: "About", href: "#" },
-      { name: "Team", href: "#" },
-      { name: "Blog", href: "#" },
-      { name: "Careers", href: "#" },
-    ],
-  },
-  {
-    title: "Resources",
-    links: [
-      { name: "Help", href: "#" },
-      { name: "Sales", href: "#" },
-      { name: "Advertise", href: "#" },
-      { name: "Privacy", href: "#" },
+      { name: "Sumber Daya", href: "/resources" },
+      { name: "Blog", href: "/articles" },
+      { name: "Komunitas", href: "/forum" }, 
     ],
   },
 ];
 
-// Changed: Using Tabler Icons
+// Diubah: Menggunakan Tabler Icons
 const defaultSocialLinks = [
   {
     icon: <IconBrandInstagram className="size-5" />,
@@ -84,8 +74,8 @@ const defaultSocialLinks = [
 ];
 
 const defaultLegalLinks = [
-  { name: "Terms and Conditions", href: "#" },
-  { name: "Privacy Policy", href: "#" },
+  { name: "Syarat dan Ketentuan", href: "#" },
+  { name: "Kebijakan Privasi", href: "#" },
 ];
 
 const SiteFooter = ({
@@ -94,25 +84,25 @@ const SiteFooter = ({
   legalLinks = defaultLegalLinks,
 }: Footer7Props) => {
   return (
-    <section className="flex h-16 w-full px-3 md:p-0  ">
+    <section className="flex h-16 w-full px-3 md:pt-9  ">
       <div className="w-full">
         <div className="flex w-full mx-auto max-w-7xl   flex-col justify-between gap-10 lg:flex-row lg:items-start lg:text-left">
           <div className="flex w-full flex-col justify-between gap-6 lg:items-start">
             {/* Logo */}
             <div className="flex items-center gap-2 lg:justify-start">
-              {/* Changed: <a> to <Link> and <img> to <Image> */}
+              {/* Diubah: <a> menjadi <Link> dan <img> menjadi <Image> */}
               <Tornado className="rotate-180" />
               <h2 className="text-xl font-semibold">Little Steps</h2>
             </div>
             <p className="text-muted-foreground max-w-[70%] text-sm">
-              Lorem ipsum dolor sit, amet consectetur adipisicing elit. Culpa
-              eligendi omnis dignissimos tempore dolores quia qui sint sapiente
-              tempora atque impedit saepe, natus maxime!.
+              Kami berkomitmen untuk memberikan solusi parenting terbaik anda.
+              Dengan teknologi terkini dan tim profesional, kami siap membantu
+              mewujudkan impian Anda menjadi kenyataan.
             </p>
             <ul className="text-muted-foreground flex items-center space-x-6">
               {socialLinks.map((social, idx) => (
                 <li key={idx} className="hover:text-primary font-medium">
-                  {/* Changed: <a> to <Link> */}
+                  {/* Diubah: <a> menjadi <Link> */}
                   <Link href={social.href} aria-label={social.label}>
                     {social.icon}
                   </Link>
@@ -130,7 +120,7 @@ const SiteFooter = ({
                       key={linkIdx}
                       className="hover:text-primary font-medium"
                     >
-                      {/* Changed: <a> to <Link> */}
+                      {/* Diubah: <a> menjadi <Link> */}
                       <Link href={link.href}>{link.name}</Link>
                     </li>
                   ))}
@@ -142,12 +132,12 @@ const SiteFooter = ({
         <Separator orientation="horizontal" className="my-8 w-full " />
         <div className="text-muted-foreground mx-auto max-w-7xl pb-8 flex flex-col justify-between gap-4 text-xs font-medium md:flex-row md:items-center md:text-left">
           <p className="order-2 lg:order-1">
-            © 2024 Shadcnblocks.com. All rights reserved.
+            © 2024 LittelSteps.com. Semua hak dilindungi.
           </p>
           <ul className="order-1 flex flex-col gap-2 md:order-2 md:flex-row">
             {legalLinks.map((link, idx) => (
               <li key={idx} className="hover:text-primary">
-                {/* Changed: <a> to <Link> */}
+                {/* Diubah: <a> menjadi <Link> */}
                 <Link href={link.href}> {link.name}</Link>
               </li>
             ))}

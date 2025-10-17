@@ -103,15 +103,14 @@ export default function ForumThread() {
     (isSearching && (debouncedState.isPending() || isFetching)) ||
     isAuthorThreadsLoading;
 
-  // Show loading skeleton
+  // Tampilkan skeleton loading
   if (showSkeleton) {
     return (
       <>
         <div className="mb-4">
           <h1 className="text-3xl font-semibold text-pretty">Forum</h1>
           <p className="text-muted-foreground mt-2">
-            Insights and deep dives across design, performance, and
-            architecture.
+            Diskusi mendalam tentang parenting, perkembangan anak, dan strategi keluarga.
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -138,7 +137,7 @@ export default function ForumThread() {
     );
   }
 
-  // Show error state
+  // Tampilkan state error
   if (isError || error || isAuthorThreadsError)
     return <ErrorDynamicPage statusCode={500} message={error?.message} />;
 
@@ -147,7 +146,7 @@ export default function ForumThread() {
       <div className="mb-4">
         <h1 className="text-3xl font-semibold text-pretty">Forum</h1>
         <p className="text-muted-foreground mt-2">
-          Insights and deep dives across design, performance, and architecture.
+          Diskusi mendalam tentang parenting, perkembangan anak, dan strategi keluarga.
         </p>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -185,8 +184,8 @@ export default function ForumThread() {
                 <div>
                   <p className="text-sm text-muted-foreground">
                     {searchKeyword
-                      ? `No more threads found for "${searchKeyword}". Try a different search.`
-                      : "No more threads available yet."}
+                      ? `Tidak ada lagi diskusi yang ditemukan untuk "${searchKeyword}". Coba pencarian yang berbeda.`
+                      : "Tidak ada diskusi tersedia lagi."}
                   </p>
                 </div>
               )}
@@ -195,8 +194,8 @@ export default function ForumThread() {
             <div className="flex flex-col items-center justify-center py-12 text-center">
               <p className="text-sm text-muted-foreground">
                 {searchKeyword
-                  ? `No threads found for "${searchKeyword}". Try a different search.`
-                  : "No threads available yet."}
+                  ? `Tidak ada diskusi ditemukan untuk "${searchKeyword}". Coba pencarian yang berbeda.`
+                  : "Belum ada diskusi tersedia."}
               </p>
             </div>
           )}

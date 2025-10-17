@@ -199,17 +199,16 @@ export default function ArticlesPage() {
           <header className="mb-8">
             <div>
               <h1 className="text-3xl font-semibold text-pretty">
-                Latest Articles
+                Artikel Terbaru
               </h1>
               <p className="text-muted-foreground mt-2">
-                Insights and deep dives across design, performance, and
-                architecture.
+                Diskusi mendalam tentang parenting, perkembangan anak, dan strategi keluarga.
               </p>
             </div>
             <div className="lg:max-w-md w-full flex gap-3 items-center">
               <InputGroup>
                 <InputGroupInput
-                  placeholder="Search threads..."
+                  placeholder="Cari artikel..."
                   value={searchKeyword}
                   onChange={(e) => setSearchKeyword(e.target.value)}
                   disabled
@@ -220,11 +219,11 @@ export default function ArticlesPage() {
               </InputGroup>
               <Select value={sortBy} onValueChange={(val) => setSortBy(val)}>
                 <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Sort" />
+                  <SelectValue placeholder="Urutkan" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    <SelectLabel>Sort by</SelectLabel>
+                    <SelectLabel>Urutkan berdasarkan</SelectLabel>
                     {Array.from(Object.values(QuerySort)).map((sort) => (
                       // your code here
                       <SelectItem key={sort} value={sort}>
@@ -292,7 +291,7 @@ export default function ArticlesPage() {
                         : "text-muted-foreground"
                     )}
                   >
-                    All
+                    Semua
                   </Link>
                 </NavigationMenuLink>
               </NavigationMenuItem>
@@ -323,11 +322,10 @@ export default function ArticlesPage() {
         <header className="mb-8 flex items-end justify-between flex-wrap ">
           <div>
             <h1 className="text-3xl font-semibold text-pretty">
-              {formatCapitalize(sortBy)} Articles
+              Artikel {formatCapitalize(sortBy)}
             </h1>
             <p className="text-muted-foreground mt-2">
-              Insights and deep dives across design, performance, and
-              architecture.
+              Diskusi mendalam tentang parenting, perkembangan anak, dan strategi keluarga.
             </p>
           </div>
 
@@ -338,7 +336,7 @@ export default function ArticlesPage() {
             <ButtonGroup className="w-full max-w-md">
               <InputGroup>
                 <InputGroupInput
-                  placeholder="Search threads..."
+                  placeholder="Cari artikel..."
                   value={searchKeyword}
                   onChange={(e) => setSearchKeyword(e.target.value)}
                   disabled={isPaginatedLoading}
@@ -357,7 +355,7 @@ export default function ArticlesPage() {
             <ButtonGroup>
               <Select value={sortBy} onValueChange={(val) => setSortBy(val)}>
                 <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Sort by" />
+                  <SelectValue placeholder="Urutkan berdasarkan" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
@@ -395,20 +393,20 @@ export default function ArticlesPage() {
             <Empty className="col-span-1 sm:col-span-2 lg:col-span-3 min-h-[400px]">
               <EmptyHeader>
                 <EmptyTitle className="text-2xl font-semibold">
-                  No articles found
+                  Tidak ada artikel ditemukan
                 </EmptyTitle>
                 <EmptyDescription className="text-muted-foreground mt-2 text-center max-w-md">
-                  We couldn't find any articles matching{" "}
+                  Kami tidak dapat menemukan artikel yang sesuai dengan{" "}
                   <span className="font-medium">"{searchKeyword}"</span>.
                 </EmptyDescription>
               </EmptyHeader>
 
               <EmptyContent>
                 <Button onClick={clearSearch} variant={"secondary"} size={"sm"}>
-                  Clear search
+                  Hapus pencarian
                 </Button>
                 <EmptyDescription>
-                  Need help? <a href="#">Contact support</a>
+                  Butuh bantuan? <a href="#">Hubungi dukungan</a>
                 </EmptyDescription>
               </EmptyContent>
             </Empty>

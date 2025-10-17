@@ -18,6 +18,7 @@ import { UseQueryResult } from "@tanstack/react-query";
 import { useOpenChildAccessDialog } from "@/features/parent/hooks/use-open-child-access-dialog";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { IconRegistered } from "@tabler/icons-react";
 
 export const NavbarProfile = ({
   userProfile: { data: user, isError },
@@ -33,13 +34,20 @@ export const NavbarProfile = ({
   const handleOpenChildAccessDialog = () => setOpenDialog(true);
   // guest
   if (isError || !user) {
-    return (
+    return (<>
+    
       <Button variant="outline" size="sm" asChild>
         <Link href="/login" className="gap-2">
           <LogInIcon className="h-4 w-4" />
           Login
         </Link>
       </Button>
+      <Button variant="default" size="sm" asChild>
+        <Link href="/register" className="gap-2">
+          Register
+        </Link>
+      </Button>
+    </>
     );
   }
 

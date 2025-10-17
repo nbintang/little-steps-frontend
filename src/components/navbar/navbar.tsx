@@ -45,7 +45,7 @@ export const Navbar = ({
                           <NavigationMenuLink asChild>
                             <Link
                               className={cn(
-                                `from-muted/50 to-muted flex h-full w-full flex-col justify-end rounded-md bg-linear-to-b p-6 no-underline outline-hidden select-none focus:shadow-md`,
+                                ` flex h-full w-full flex-col justify-end rounded-md bg-linear-to-b p-6 no-underline outline-hidden select-none focus:shadow-md`,
                               
                               )}
                               href={
@@ -80,7 +80,7 @@ export const Navbar = ({
                             <div className=" text-xs  leading-none font-medium">
                               {child.label}
                             </div>
-                            <p className="text-muted-foreground line-clamp-2 text-sm leading-snug">
+                            <p className=" line-clamp-2 text-sm leading-snug">
                               {child.highlight
                                 ? `Featured: ${child.label}`
                                 : `Learn more about ${child.label}`}
@@ -93,7 +93,7 @@ export const Navbar = ({
                 </React.Fragment>
               ) : (
                 <NavigationMenuLink
-                  className={cn(pathname === tab.href ? "bg-accent" : "")}
+                  className={cn(pathname === tab.href ? "bg-accent text-primary-foreground" : "")}
                   asChild
                 >
                   <Link

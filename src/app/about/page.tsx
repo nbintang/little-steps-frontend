@@ -5,24 +5,24 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 export default function AboutPage() {
   const team = [
     {
-      name: "Dr. Sarah Johnson",
-      role: "Clinical Director",
-      bio: "Licensed psychologist with 15+ years of experience in child and family therapy.",
+      name: "Nur Bintang Hidayat",
+      role: "Direktur Parenting",
+      bio: "Psikolog bersertifikat dengan 15+ tahun pengalaman dalam perkembangan anak dan konseling keluarga.",
     },
     {
-      name: "Michael Chen",
-      role: "Lead Therapist",
-      bio: "Specializes in adolescent mental health and family dynamics.",
+      name: "Alif Marullah",
+      role: "Ahli Pendidikan Anak",
+      bio: "Spesialis dalam perkembangan psikologis anak dan strategi pembelajaran yang efektif.",
     },
     {
-      name: "Emily Rodriguez",
-      role: "Child Psychologist",
-      bio: "Expert in early childhood development and behavioral therapy.",
+      name: "Nia Febriana",
+      role: "Penulis Konten Anak",
+      bio: "Kreator novel dan cerita anak dengan fokus pada pendidikan karakter dan imajinasi.",
     },
     {
-      name: "James Wilson",
-      role: "Family Counselor",
-      bio: "Focuses on parenting skills and family communication strategies.",
+      name: "Nur Bintang",
+      role: "Desainer Game Edukatif",
+      bio: "Pengembang game interaktif yang menggabungkan hiburan dan pembelajaran untuk anak-anak.",
     },
   ]
 
@@ -32,38 +32,34 @@ export default function AboutPage() {
         <div className="max-w-6xl mx-auto px-5">
           {/* Header */}
           <div className="text-center mb-16">
-            <h1 className="text-4xl md:text-6xl font-bold text-primary mb-4">About MindfulCare</h1>
+            <h1 className="text-4xl md:text-6xl font-bold text-primary mb-4">Tentang Little Steps</h1>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Dedicated to providing compassionate, evidence-based mental health support for children, teens, and
-              families.
+              Platform terpadu untuk parenting yang lebih baik, mendukung orang tua dengan informasi, komunitas, dan menyediakan konten edukatif serta game untuk anak-anak.
             </p>
           </div>
 
           {/* Our Story */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-16">
             <div>
-              <h2 className="text-3xl font-bold text-foreground mb-4">Our Story</h2>
+              <h2 className="text-3xl font-bold text-foreground mb-4">Kisah Kami</h2>
               <p className="text-muted-foreground leading-relaxed mb-4">
-                MindfulCare was founded on the belief that every child and family deserves access to quality mental
-                health support. Our team of experienced therapists and counselors came together with a shared mission:
-                to make professional mental health care accessible, affordable, and effective.
+                Little Steps didirikan dengan visi bahwa setiap orang tua berhak mendapatkan dukungan, informasi, dan panduan terbaik dalam perjalanan parenting mereka. Tim kami yang berpengalaman berkumpul dengan misi bersama: membuat perkembangan anak lebih optimal melalui pendekatan holistik yang melibatkan orang tua, pendidik, dan psikolog profesional.
               </p>
               <p className="text-muted-foreground leading-relaxed">
-                Since our inception, we've helped hundreds of families navigate challenges, build stronger
-                relationships, and develop the emotional resilience needed to thrive.
+                Sejak berdiri, kami telah membantu ribuan keluarga memahami tahap perkembangan anak, mengatasi tantangan parenting, dan menciptakan lingkungan yang mendukung pertumbuhan emosional, intelektual, dan sosial anak.
               </p>
             </div>
             <div className="bg-gradient-to-br from-blue-100 to-teal-100 rounded-lg p-8 flex items-center justify-center">
               <div className="text-center">
-                <div className="text-5xl font-bold text-primary mb-2">500+</div>
-                <p className="text-muted-foreground">Families Supported</p>
+                <div className="text-5xl font-bold text-primary mb-2">5000+</div>
+                <p className="text-muted-foreground">Keluarga yang Terlayani</p>
               </div>
             </div>
           </div>
 
           {/* Team */}
           <div className="mb-16">
-            <h2 className="text-3xl font-bold text-foreground mb-8 text-center">Our Team</h2>
+            <h2 className="text-3xl font-bold text-foreground mb-8 text-center">Tim Kami</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {team.map((member, index) => (
                 <Card key={index} className="border-border">
@@ -81,25 +77,24 @@ export default function AboutPage() {
 
           {/* Values */}
           <div className="bg-card rounded-lg p-8 md:p-12">
-            <h2 className="text-3xl font-bold text-foreground mb-8 text-center">Our Values</h2>
+            <h2 className="text-3xl font-bold text-foreground mb-8 text-center">Nilai-Nilai Kami</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <div>
-                <h3 className="text-xl font-bold text-primary mb-3">Compassion</h3>
+                <h3 className="text-xl font-bold text-primary mb-3">Kepedulian</h3>
                 <p className="text-muted-foreground">
-                  We approach every client with empathy, understanding, and genuine care for their wellbeing.
+                  Kami memahami setiap tantangan unik yang dihadapi orang tua dan anak, dengan pendekatan yang penuh empati dan dukungan nyata.
                 </p>
               </div>
               <div>
-                <h3 className="text-xl font-bold text-primary mb-3">Excellence</h3>
+                <h3 className="text-xl font-bold text-primary mb-3">Kualitas</h3>
                 <p className="text-muted-foreground">
-                  We maintain the highest standards of clinical practice and professional ethics.
+                  Kami menjamin setiap konten, forum, novel, dan game dikurasi oleh para ahli dengan standar edukatif dan keamanan tertinggi.
                 </p>
               </div>
               <div>
-                <h3 className="text-xl font-bold text-primary mb-3">Accessibility</h3>
+                <h3 className="text-xl font-bold text-primary mb-3">Aksesibilitas</h3>
                 <p className="text-muted-foreground">
-                  We believe quality mental health care should be available to everyone, regardless of background or
-                  circumstances.
+                  Kami percaya bahwa sumber daya parenting berkualitas harus mudah diakses oleh semua orang tua, tanpa memandang latar belakang.
                 </p>
               </div>
             </div>

@@ -9,7 +9,7 @@ export default function Home() {
     <div className="min-h-screen bg-background">
       <Hero />
       <AboutUs />
-      <Contact /> 
+      {/* <Contact />  */}
     </div>
   )
 }

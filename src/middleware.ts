@@ -13,7 +13,8 @@ const AUTH_PATHS = [
 
 const ADMIN_PREFIX = "/admin";
 const CHILDREN_PREFIX = "/children";
-const PARENT_ONLY_PREFIX = ["/settings"];
+const PARENT_ONLY_PREFIX = ["/settings", "/forum"];
+
 
 export async function middleware(req: NextRequest) {
   const accessToken = req.cookies.get("accessToken")?.value;
