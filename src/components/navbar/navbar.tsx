@@ -93,7 +93,7 @@ export const Navbar = ({
                 </React.Fragment>
               ) : (
                 <NavigationMenuLink
-                  className={cn(pathname === tab.href ? "bg-accent text-primary-foreground" : "")}
+                  className={cn(pathname === tab.href ? "bg-accent" : "")}
                   asChild
                 >
                   <Link
